@@ -20,6 +20,8 @@ from astroML.plotting import hist as histML
 
 """
 
+Code is to be hosted on github at willettk/galaxyzoo2.
+
 To do:
 
  - find the proper bin size for each task
