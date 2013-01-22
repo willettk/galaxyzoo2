@@ -7,8 +7,8 @@ magstep =  0.250
 sizemin =  0.000 
 sizemax = 15.000 
 sizestep =  0.500 
-task_names_wf = "t04_spiral_a09_no_spiral_weighted_fraction, t04_spiral_a08_spiral_weighted_fraction" 
-vardef = "task04" 
+task_names_wf = "t01_smooth_or_features_a01_smooth_weighted_fraction, t01_smooth_or_features_a02_features_or_disk_weighted_fraction, t01_smooth_or_features_a03_star_or_artifact_weighted_fraction" 
+var_def = "task01" 
 
 ;+
 ; NAME:
@@ -56,7 +56,7 @@ fitsdir = gz2dir+'fits/'
 
 ; Read in the masked data created by Python module
 
-gz2 = mrdfits(fitsdir+vardef+'_data_for_idl.fits',1,/silent)
+gz2 = mrdfits(fitsdir+var_def+'_data_for_idl.fits',1,/silent)
 tagnames=tag_names(gz2)
 
 ; Create array of bins in redshift, abs mag, and size space
@@ -112,8 +112,8 @@ a = {edges_redshift:edges_redshift, $
 ; add the bin edges and centers as binary tables in secondary HDU. 
 ; Data can now be read back into Python.
 
-mwrfits, transpose(hcube), fitsdir+vardef+'_idlbinned.fits', /create,/silent
-mwrfits, a, fitsdir+vardef+'_idlbinned.fits',/silent
+mwrfits, transpose(hcube), fitsdir+var_def+'_idlbinned.fits', /create,/silent
+mwrfits, a, fitsdir+var_def+'_idlbinned.fits',/silent
 
 ; Create temp file to indicate that process has finished
 
