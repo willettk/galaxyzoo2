@@ -12,6 +12,7 @@ from matplotlib import rc
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.font_manager import FontProperties
+from itertools import chain
 from scipy.stats import scoreatpercentile
 from scipy.stats import tsem
 from scipy.optimize import fmin_powell
@@ -28,11 +29,7 @@ To do:
  - find the proper bin size for each task
  - find the proper limits on probability, number of classifications per galaxy, number of galaxies per bin for each task
  - input different probabilities for different variables
- - Odd features task is not yet quantified. Sheer number of unrelated classifications make it difficult to establish a local baseline.
-
- - compute the correction
- - apply the correction to Task 01
- - compare results to Steven's catalog
+ - Odd features task is not quantified. Sheer number of unrelated classifications make it difficult to establish a local baseline.
 
 """
 
@@ -68,44 +65,6 @@ SBlim_size = np.arange(200) / 10.0
 
 gc.collect()
 plt.ion()
-
-def plot_redshifts():
-    
-    gz2main_fitsfile = '/Users/willettk/Astronomy/Research/GalaxyZoo/fits/gz2main_table_sample.fits'
-    hdulist = pyfits.open(gz2main_fitsfile)
-    gz2main = hdulist[1].data
-    hdulist.close()
-
-    redshift_all = gz2main['redshift']
-    redshift_finite = redshift_all[np.isfinite(redshift_all)]
-
-    fig = plt.figure(11)
-    ax = fig.add_subplot(111)
-#   histML(redshift_finite, bins='blocks', ax=ax, histtype='stepfilled', color='r', ec='r', normed=True)
-    histML(redshift_finite, bins='scotts', ax=ax, histtype='step', color='b',normed=True)
-    histML(redshift_finite, bins='freedman', ax=ax, histtype='step', color='y',normed=True)
-    histML(redshift_finite, bins='knuth', ax=ax, histtype='step', color='y',normed=True)
-    ax.set_xlabel('Redshift')
-    ax.set_ylabel('Frequency')
-    
-    #plt.show()
-
-    return None
-
-def weighted_parameter(task_dict, data):
-
-    wfnames = task_dict['task_names_wf']
-    n_responses = len(wfnames)
-    temparr = np.zeros((n_responses,len(data)))
-    for index,responses in enumerate(wfnames):
-        temparr[index,:] = data[responses]
-
-    w = np.arange(n_responses)/np.float(n_responses - 1)
-    weights = np.resize(w,temparr.T.shape).T
-
-    wbp_val = np.sum(weights * temparr,axis=0)
-
-    return wbp_val
 
 def bin_data_idl(task_dict,
                            zmin = 0.00, zmax = 0.26, zstep = 0.01,
@@ -369,6 +328,7 @@ def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
         ax.set_aspect('auto')
         ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
         ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
+        ax.set_title('%s baseline ratio sigma' % var_def,fontsize=22)
 
     pyfits.writeto(fits_path+'%s_r%s%s_local_ratio_baseline_sigma.fits' % (var_def,vartop,varbot),
            sigma, clobber=True)    
@@ -548,7 +508,7 @@ def bootstrap_fmin(f, p0, x, y, z, mask, nboot=50):
     plist = np.zeros((nboot, len(p0)), np.float)                                # Zero array for number of tries, number of parameters
     ndata = len(mask.ravel().nonzero()[0])                                      # number of non-masked cells in the ratio data
     for i in range(nboot):
-        bootmask = np.zeros(mask.shape)                                         # Grid of zeroes same size as mask, data
+        bootmask = np.zeros(mask.shape)                                         # Grid of zeros same size as mask, data
         while bootmask.sum() < ndata:                                           # Loop until grid is filled at data locations
             rx = int(np.random.uniform(0, x.shape))                             # Pick random indices from the bin arrays
             ry = int(np.random.uniform(0, y.shape))                             # 
@@ -753,6 +713,7 @@ def plot_ratio_baseline_fit(task_dict,
 
     ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
     ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
+    ax.set_title('Baseline ratio data + fit',fontsize=22)
     ax.set_aspect('auto')
     rc(('xtick','ytick'), labelsize=12)
 
@@ -803,6 +764,7 @@ def plot_ratio_function(p=np.array([-3.5, 1.9, -22.8, 0.3, 0.3, -4.4, 2.2, 1.1, 
     ax.set_aspect('auto')
     ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
     ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
+    ax.set_title('Ratio function',fontsize=22)
 
     #plt.show()
     #plt.draw()
@@ -1352,71 +1314,21 @@ def p_sp_adj(p_el,p_sp,correction,ratio_type):
 
     return p_sp_adj
 
-def p_n6_adj(f_i, f_j, f_k, f_l, f_m, f_n, corr_ji, corr_ki, corr_li, corr_mi, corr_ni, ratio_type):
+def p_adj_new(f, corr):
 
-    K_ji = 10.**(corr_ji) 
-    term_ji = K_ji * (f_j / f_i)
-    K_ki = 10.**(corr_ki) 
-    term_ki = K_ki * (f_k / f_i)
-    K_li = 10.**(corr_li) 
-    term_li = K_li * (f_l / f_i)
-    K_mi = 10.**(corr_mi) 
-    term_mi = K_mi * (f_m / f_i)
-    K_ni = 10.**(corr_ni) 
-    term_ni = K_ni * (f_n / f_i)
+    assert len(f) - 1 == len(corr), \
+        'There must be exactly one more element in the vote fraction (%i) than in the correction (%i) array' % (len(f),len(corr))
 
-    denom = term_ji + term_ki + term_li + term_mi + term_ni + 1.
+    K = 10.**corr
+    termlist = K * (f[1:].astype(float)/ f[0].astype(float))
+
+    denom = np.sum(termlist) + 1.
 
     p_adj = 1. / denom
 
     return p_adj
 
-def p_n5_adj(f_i, f_j, f_k, f_l, f_m, corr_ji, corr_ki, corr_li, corr_mi, ratio_type):
-
-    K_ji = 10.**(corr_ji) 
-    term_ji = K_ji * (f_j / f_i)
-    K_ki = 10.**(corr_ki) 
-    term_ki = K_ki * (f_k / f_i)
-    K_li = 10.**(corr_li) 
-    term_li = K_li * (f_l / f_i)
-    K_mi = 10.**(corr_mi) 
-    term_mi = K_mi * (f_m / f_i)
-
-    denom = term_ji + term_ki + term_li + term_mi + 1.
-
-    p_adj = 1. / denom
-
-    return p_adj
-
-def p_n4_adj(f_i, f_j, f_k, f_l, corr_ji, corr_ki, corr_li, ratio_type):
-
-    K_ji = 10.**(corr_ji) 
-    term_ji = K_ji * (f_j / f_i)
-    K_ki = 10.**(corr_ki) 
-    term_ki = K_ki * (f_k / f_i)
-    K_li = 10.**(corr_li) 
-    term_li = K_li * (f_l / f_i)
-
-    denom = term_ji + term_ki + term_li + 1.
-
-    p_adj = 1. / denom
-
-    return p_adj
-
-def p_n3_adj(f_i, f_j, f_k, corr_ji, corr_ki, ratio_type):
-
-    K_ji = 10.**(corr_ji) 
-    term_ji = K_ji * (f_j / f_i)
-    K_ki = 10.**(corr_ki) 
-    term_ki = K_ki * (f_k / f_i)
-
-    denom = term_ji + term_ki + 1.
-
-    p_adj = 1. / denom
-
-    return p_adj
-
-def adjust_probabilities_n6(task_dict, plot=False, stripe82=False):
+def adjust_probabilities_new(task_dict, plot=False, stripe82=False):
 
     # Load in the raw probabilities from the GZ2 catalog
 
@@ -1424,243 +1336,109 @@ def adjust_probabilities_n6(task_dict, plot=False, stripe82=False):
         p = pyfits.open(gz2_stripe82_data_file)
         s82_str = 'stripe82_'
     else:
-        p = pyfits.open(gz2_full_data_file)
+        p = pyfits.open(fits_path+'%s_data_for_idl.fits' % task_dict['var_def'])
         s82_str = ''
 
     gzdata = p[1].data
     p.close()
 
-    var_def = task_dict['var_def']
-    var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
+    # Load in the bin sizes
 
-    # Load in the bin sizes from the fits
-
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path+'%s_%s_binned_%s.fits' % (var_def,var_str[0],bintype))
-
-        edges_redshift = p_var1['REDSHIFT_BIN_EDGES'].data['edges']
-        edges_mag = p_var1['MR_BIN_EDGES'].data['edges']
-        edges_size = p_var1['R50_KPC_BIN_EDGES'].data['edges']
-
-        p_var1.close()
-
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-
+    if task_dict['bintype'] is 'rawlikelihood':
         centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-        p_allvar.close()
+    # Take each galaxy, find which bin it corresponds to, adjust probability via new SPB method #1
 
-    """
-    Take each galaxy, find which bin it corresponds to, adjust probability via Bamford+09 method
-    """
+    redshift = gzdata['REDSHIFT']
+    mr = gzdata['PETROMAG_MR']
+    r50_kpc = gzdata['PETROR50_R_KPC']
 
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
+    ntask = len(task_dict['task_names_wf'])
+    ngals = len(redshift)
 
     zstep = edges_redshift[1] - edges_redshift[0]
     magstep = edges_mag[1] - edges_mag[0]
     sizestep = edges_size[1] - edges_size[0]
 
+    corr_12, corrmasked_12, ratiomasked_12 = determine_baseline_correction(task_dict, 0, 1)
+    cshape = corr_12.shape
+
+    allcorr        = np.zeros((ntask,ntask-1,cshape[0],cshape[1],cshape[2]),dtype=float)
+    allcorrmasked  = np.zeros_like(allcorr)
+    allratiomasked = np.zeros_like(allcorr)
+
     # Loop over combinations of tasks
 
-    corr_12, corrmasked_12, ratiomasked_12 = determine_baseline_correction(task_dict, 0, 1)
-    corr_13, corrmasked_13, ratiomasked_13 = determine_baseline_correction(task_dict, 0, 2)
-    corr_14, corrmasked_14, ratiomasked_14 = determine_baseline_correction(task_dict, 0, 3)
-    corr_15, corrmasked_15, ratiomasked_15 = determine_baseline_correction(task_dict, 0, 4)
-    corr_16, corrmasked_16, ratiomasked_16 = determine_baseline_correction(task_dict, 0, 5)
-    corr_21, corrmasked_21, ratiomasked_21 = determine_baseline_correction(task_dict, 1, 0)
-    corr_23, corrmasked_23, ratiomasked_23 = determine_baseline_correction(task_dict, 1, 2)
-    corr_24, corrmasked_24, ratiomasked_24 = determine_baseline_correction(task_dict, 1, 3)
-    corr_25, corrmasked_25, ratiomasked_25 = determine_baseline_correction(task_dict, 1, 4)
-    corr_26, corrmasked_26, ratiomasked_26 = determine_baseline_correction(task_dict, 1, 5)
-    corr_32, corrmasked_32, ratiomasked_32 = determine_baseline_correction(task_dict, 2, 1)
-    corr_31, corrmasked_31, ratiomasked_31 = determine_baseline_correction(task_dict, 2, 0)
-    corr_34, corrmasked_34, ratiomasked_34 = determine_baseline_correction(task_dict, 2, 3)
-    corr_35, corrmasked_35, ratiomasked_35 = determine_baseline_correction(task_dict, 2, 4)
-    corr_36, corrmasked_36, ratiomasked_36 = determine_baseline_correction(task_dict, 2, 5)
-    corr_42, corrmasked_42, ratiomasked_42 = determine_baseline_correction(task_dict, 3, 1)
-    corr_43, corrmasked_43, ratiomasked_43 = determine_baseline_correction(task_dict, 3, 2)
-    corr_41, corrmasked_41, ratiomasked_41 = determine_baseline_correction(task_dict, 3, 0)
-    corr_45, corrmasked_45, ratiomasked_45 = determine_baseline_correction(task_dict, 3, 4)
-    corr_46, corrmasked_46, ratiomasked_46 = determine_baseline_correction(task_dict, 3, 5)
-    corr_52, corrmasked_52, ratiomasked_52 = determine_baseline_correction(task_dict, 4, 1)
-    corr_53, corrmasked_53, ratiomasked_53 = determine_baseline_correction(task_dict, 4, 2)
-    corr_54, corrmasked_54, ratiomasked_54 = determine_baseline_correction(task_dict, 4, 3)
-    corr_51, corrmasked_51, ratiomasked_51 = determine_baseline_correction(task_dict, 4, 0)
-    corr_56, corrmasked_56, ratiomasked_56 = determine_baseline_correction(task_dict, 4, 5)
-    corr_62, corrmasked_62, ratiomasked_62 = determine_baseline_correction(task_dict, 5, 1)
-    corr_63, corrmasked_63, ratiomasked_63 = determine_baseline_correction(task_dict, 5, 2)
-    corr_64, corrmasked_64, ratiomasked_64 = determine_baseline_correction(task_dict, 5, 3)
-    corr_65, corrmasked_65, ratiomasked_65 = determine_baseline_correction(task_dict, 5, 4)
-    corr_61, corrmasked_61, ratiomasked_61 = determine_baseline_correction(task_dict, 5, 0)
+    for idx1, var1 in enumerate(np.arange(ntask)):
+        setdiff = np.concatenate((np.arange(var1),np.arange(ntask - (var1+1)) + (var1+1) ))
+        for idx2, var2 in enumerate(setdiff):
+            corr, corrmasked, ratiomasked = determine_baseline_correction(task_dict, var1, var2)
+            allcorr[idx1,idx2,:,:,:] = corr
+            allcorrmasked[idx1,idx2,:,:,:] = corrmasked
+            allratiomasked[idx1,idx2,:,:,:] = ratiomasked
 
-    p_el_raw = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw = gzdata_withz[task_dict['task_names_wf'][2]]      # Designate the third variable (for now) as 'xx'
-    p_yy_raw = gzdata_withz[task_dict['task_names_wf'][3]]      
-    p_zz_raw = gzdata_withz[task_dict['task_names_wf'][4]]     
-    p_ww_raw = gzdata_withz[task_dict['task_names_wf'][5]]     
-    p_task_counts = gzdata_withz[task_dict['task_name_count']]
+    p_raw = np.zeros((ntask,ngals),dtype=float)
+    for idx,task in enumerate(task_dict['task_names_wf']):
+        p_raw[idx,:] = gzdata[task]
+
+    p_task_counts = gzdata[task_dict['task_name_count']]
 
     # Start adjusting
 
     timestart2 = time.time()
 
-    p_el_adj_arr2 = np.zeros_like(p_el_raw)
-    p_sp_adj_arr2 = np.zeros_like(p_sp_raw)
-    p_xx_adj_arr2 = np.zeros_like(p_xx_raw)
-    p_yy_adj_arr2 = np.zeros_like(p_yy_raw)
-    p_zz_adj_arr2 = np.zeros_like(p_zz_raw)
-    p_ww_adj_arr2 = np.zeros_like(p_ww_raw)
-    corrarr = np.zeros_like(p_sp_raw)
-    corrbinarr = np.zeros((3,len(p_el_raw)))                    # Three bins give the (z,M,r) coordinates of the matching bin
+    p_adj = np.zeros((ntask,ngals),dtype=float)
+    corrarr = np.zeros((ntask-1,ntask-1,ngals),dtype=float) + unknown_ratio
+    corrbinarr = np.zeros((3,ntask-1,ntask-1,ngals),dtype=int) + unknown_ratio
 
-    corrshape = corr_12.shape                                   # Should probably assert that corrections are all the same shape.
-    allvotecount = 0
     outbincount = 0
     corrcount = 0
     unknowncount = 0
 
     # Loop over all galaxies in the GZ catalog with redshifts
 
-    for idx, (el, sp, xx, yy, zz, ww) in enumerate(zip(p_el_raw, p_sp_raw, p_xx_raw, p_yy_raw, p_zz_raw, p_ww_raw)):
+    for idx, (z_temp,m_temp,s_temp) in enumerate(zip(redshift,mr,r50_kpc)):
 
-        z2 = redshift[idx]
-        m2 = mr[idx]
-        s2 = r50_kpc[idx]
+        f = p_raw[:,idx]
+        p_temp = np.zeros_like(f)
+        zbin = np.abs(z_temp >= edges_redshift).argmin() - 1
+        mbin = np.abs(m_temp >= edges_mag).argmin() - 1
+        sbin = np.abs(s_temp >= edges_size).argmin() - 1
 
-        zbin = np.abs(z2 >= edges_redshift).argmin() - 1
-        mbin = np.abs(m2 >= edges_mag).argmin() - 1
-        sbin = np.abs(s2 >= edges_size).argmin() - 1
+        if (zbin < cshape[0]) and (mbin < cshape[1]) and (sbin < cshape[2]):
+            applycorr = np.squeeze(allcorrmasked[:,:,zbin,mbin,sbin])
+            applycorr[applycorr == unknown_ratio] = 0.
 
-        if (zbin < corrshape[0]) and (mbin < corrshape[1]) and (sbin < corrshape[2]):
-            applycorr_12 = 0. if corr_12[zbin,mbin,sbin] == unknown_ratio else corr_12[zbin,mbin,sbin]
-            applycorr_13 = 0. if corr_13[zbin,mbin,sbin] == unknown_ratio else corr_13[zbin,mbin,sbin]
-            applycorr_14 = 0. if corr_14[zbin,mbin,sbin] == unknown_ratio else corr_14[zbin,mbin,sbin]
-            applycorr_15 = 0. if corr_15[zbin,mbin,sbin] == unknown_ratio else corr_15[zbin,mbin,sbin]
-            applycorr_16 = 0. if corr_16[zbin,mbin,sbin] == unknown_ratio else corr_16[zbin,mbin,sbin]
-            applycorr_21 = 0. if corr_21[zbin,mbin,sbin] == unknown_ratio else corr_21[zbin,mbin,sbin]
-            applycorr_23 = 0. if corr_23[zbin,mbin,sbin] == unknown_ratio else corr_23[zbin,mbin,sbin]
-            applycorr_24 = 0. if corr_24[zbin,mbin,sbin] == unknown_ratio else corr_24[zbin,mbin,sbin]
-            applycorr_25 = 0. if corr_25[zbin,mbin,sbin] == unknown_ratio else corr_25[zbin,mbin,sbin]
-            applycorr_26 = 0. if corr_26[zbin,mbin,sbin] == unknown_ratio else corr_26[zbin,mbin,sbin]
-            applycorr_32 = 0. if corr_32[zbin,mbin,sbin] == unknown_ratio else corr_32[zbin,mbin,sbin]
-            applycorr_31 = 0. if corr_31[zbin,mbin,sbin] == unknown_ratio else corr_31[zbin,mbin,sbin]
-            applycorr_34 = 0. if corr_34[zbin,mbin,sbin] == unknown_ratio else corr_34[zbin,mbin,sbin]
-            applycorr_35 = 0. if corr_35[zbin,mbin,sbin] == unknown_ratio else corr_35[zbin,mbin,sbin]
-            applycorr_36 = 0. if corr_36[zbin,mbin,sbin] == unknown_ratio else corr_36[zbin,mbin,sbin]
-            applycorr_42 = 0. if corr_42[zbin,mbin,sbin] == unknown_ratio else corr_42[zbin,mbin,sbin]
-            applycorr_43 = 0. if corr_43[zbin,mbin,sbin] == unknown_ratio else corr_43[zbin,mbin,sbin]
-            applycorr_41 = 0. if corr_41[zbin,mbin,sbin] == unknown_ratio else corr_41[zbin,mbin,sbin]
-            applycorr_45 = 0. if corr_45[zbin,mbin,sbin] == unknown_ratio else corr_45[zbin,mbin,sbin]
-            applycorr_46 = 0. if corr_46[zbin,mbin,sbin] == unknown_ratio else corr_46[zbin,mbin,sbin]
-            applycorr_52 = 0. if corr_52[zbin,mbin,sbin] == unknown_ratio else corr_52[zbin,mbin,sbin]
-            applycorr_53 = 0. if corr_53[zbin,mbin,sbin] == unknown_ratio else corr_53[zbin,mbin,sbin]
-            applycorr_54 = 0. if corr_54[zbin,mbin,sbin] == unknown_ratio else corr_54[zbin,mbin,sbin]
-            applycorr_51 = 0. if corr_51[zbin,mbin,sbin] == unknown_ratio else corr_51[zbin,mbin,sbin]
-            applycorr_56 = 0. if corr_56[zbin,mbin,sbin] == unknown_ratio else corr_56[zbin,mbin,sbin]
-            applycorr_62 = 0. if corr_62[zbin,mbin,sbin] == unknown_ratio else corr_62[zbin,mbin,sbin]
-            applycorr_63 = 0. if corr_63[zbin,mbin,sbin] == unknown_ratio else corr_63[zbin,mbin,sbin]
-            applycorr_64 = 0. if corr_64[zbin,mbin,sbin] == unknown_ratio else corr_64[zbin,mbin,sbin]
-            applycorr_65 = 0. if corr_65[zbin,mbin,sbin] == unknown_ratio else corr_65[zbin,mbin,sbin]
-            applycorr_61 = 0. if corr_61[zbin,mbin,sbin] == unknown_ratio else corr_61[zbin,mbin,sbin]
-
-            allcorrs = np.array((applycorr_12,
-                                 applycorr_13,
-                                 applycorr_14,
-                                 applycorr_15,
-                                 applycorr_16,
-                                 applycorr_21,
-                                 applycorr_23,
-                                 applycorr_24,
-                                 applycorr_25,
-                                 applycorr_26,
-                                 applycorr_32,
-                                 applycorr_31,
-                                 applycorr_34,
-                                 applycorr_35,
-                                 applycorr_36,
-                                 applycorr_42,
-                                 applycorr_43,
-                                 applycorr_41,
-                                 applycorr_45,
-                                 applycorr_46,
-                                 applycorr_52,
-                                 applycorr_53,
-                                 applycorr_54,
-                                 applycorr_51,
-                                 applycorr_56,
-                                 applycorr_62,
-                                 applycorr_63,
-                                 applycorr_64,
-                                 applycorr_65,
-                                 applycorr_61
-                                )
-                               )
-
-            if np.sum(allcorrs) == 0.:
+            if np.sum(applycorr) == 0.:
                 unknowncount +=1
-                p_el_new = el
-                p_sp_new = sp
-                p_xx_new = xx
-                p_yy_new = yy
-                p_zz_new = zz
-                p_ww_new = ww
-                corrarr[idx] = unknown_ratio
-                corrbinarr[:,idx] = unknown_ratio
+                p_temp = f
+                '''
+                corrarr[:,idx] = unknown_ratio
+                corrbinarr[:,:,idx] = unknown_ratio
+                '''
             else:
                 corrcount += 1
-                p_el_new = p_n6_adj(el,sp,xx,yy,zz,ww,
-                                    applycorr_12,applycorr_13,applycorr_14,applycorr_15,applycorr_16,
-                                    task_dict['ratio_type']) if el > 0. else el
-                p_sp_new = p_n6_adj(sp,el,xx,yy,zz,ww,
-                                    applycorr_21,applycorr_23,applycorr_24,applycorr_25,applycorr_26,
-                                    task_dict['ratio_type']) if sp > 0. else sp
-                p_xx_new = p_n6_adj(xx,el,sp,yy,zz,ww,
-                                    applycorr_31,applycorr_32,applycorr_34,applycorr_35,applycorr_36,
-                                    task_dict['ratio_type']) if xx > 0. else xx
-                p_yy_new = p_n6_adj(yy,el,sp,xx,zz,ww,
-                                    applycorr_41,applycorr_42,applycorr_43,applycorr_45,applycorr_46,
-                                    task_dict['ratio_type']) if yy > 0. else yy
-                p_zz_new = p_n6_adj(zz,el,sp,xx,yy,ww,
-                                    applycorr_51,applycorr_52,applycorr_53,applycorr_54,applycorr_56,
-                                    task_dict['ratio_type']) if zz > 0. else zz
-                p_ww_new = p_n6_adj(ww,el,sp,xx,yy,zz,
-                                    applycorr_61,applycorr_62,applycorr_63,applycorr_64,applycorr_65,
-                                    task_dict['ratio_type']) if ww > 0. else ww
-                corrbinarr[:,idx] = zbin,mbin,sbin
-                corrarr[idx] = applycorr_12
+                for fidx, votefrac in enumerate(f):
+                    # Need to iterate over the parameter being adjusted
+                    votefracs = np.array(list(chain.from_iterable(([votefrac], f[:fidx], f[fidx+1:]))))
+                    p_temp[fidx] = p_adj_new(votefracs,applycorr[fidx,:]) if votefracs[0] > 0. else votefracs[0]
+                    #corrarr[fidx,:,idx] = applycorr[fidx,:]
+                    #corrbinarr[:,fidx,:,idx] = np.resize(np.array((zbin,mbin,sbin)),(3,3))
 
-            p_el_adj_arr2[idx] = p_el_new
-            p_sp_adj_arr2[idx] = p_sp_new
-            p_xx_adj_arr2[idx] = p_xx_new
-            p_yy_adj_arr2[idx] = p_yy_new
-            p_zz_adj_arr2[idx] = p_zz_new
-            p_ww_adj_arr2[idx] = p_ww_new
+            p_adj[:,idx] = p_temp
           
         else: # if galaxy does not appear in the correction area
             outbincount += 1
-            p_el_adj_arr2[idx] = el
-            p_sp_adj_arr2[idx] = sp
-            p_xx_adj_arr2[idx] = xx
-            p_yy_adj_arr2[idx] = yy
-            p_zz_adj_arr2[idx] = zz
-            p_ww_adj_arr2[idx] = ww
-            corrbinarr[:,idx] = unknown_ratio
-            corrarr[idx] = unknown_ratio
+            p_adj[:,idx] = f
+            '''
+            corrarr[:,idx] = unknown_ratio
+            corrbinarr[:,:,idx] = unknown_ratio
+            '''
 
 
     timeend2 = time.time()
     print ' '
-    #print '%7i galaxies had 100 percent of the vote for %s or %s' % (allvotecount,var_str[vartop],var_str[varbot])
+    print '%7i galaxies had no corrections for any bin' % unknowncount
     print '%7i galaxies had correction bins larger than volume' % outbincount
     print '%7i galaxies corrected' % corrcount
     print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
@@ -1668,635 +1446,13 @@ def adjust_probabilities_n6(task_dict, plot=False, stripe82=False):
 
     p.close()
 
-    pickle.dump(p_el_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][0], s82_str),'wb')) 
-    pickle.dump(p_sp_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][1], s82_str),'wb')) 
-    pickle.dump(p_xx_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][2], s82_str),'wb')) 
-    pickle.dump(p_yy_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][3], s82_str),'wb')) 
-    pickle.dump(p_zz_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][4], s82_str),'wb')) 
-    pickle.dump(p_ww_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][5], s82_str),'wb')) 
-    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (var_def, s82_str),'wb')) 
-    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (var_def, s82_str),'wb')) 
+    p_both = np.array((p_raw,p_adj))
 
-    return p_el_adj_arr2, p_sp_adj_arr2, p_xx_adj_arr2, p_yy_adj_arr2, p_zz_adj_arr2, p_ww_adj_arr2
+    pickle.dump(p_both, open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'], s82_str),'wb')) 
+    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (task_dict['var_def'], s82_str),'wb')) 
+    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (task_dict['var_def'], s82_str),'wb')) 
 
-def adjust_probabilities_n5(task_dict, plot=False, stripe82=False):
-
-    # Load in the raw probabilities from the GZ2 catalog
-
-    if stripe82:
-        p = pyfits.open(gz2_stripe82_data_file)
-        s82_str = 'stripe82_'
-    else:
-        p = pyfits.open(gz2_full_data_file)
-        s82_str = ''
-
-    gzdata = p[1].data
-    p.close()
-
-    var_def = task_dict['var_def']
-    var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
-
-    # Load in the bin sizes from the fits
-
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path+'%s_%s_binned_%s.fits' % (var_def,var_str[0],bintype))
-
-        edges_redshift = p_var1['REDSHIFT_BIN_EDGES'].data['edges']
-        edges_mag = p_var1['MR_BIN_EDGES'].data['edges']
-        edges_size = p_var1['R50_KPC_BIN_EDGES'].data['edges']
-
-        p_var1.close()
-
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
-
-    """
-    Take each galaxy, find which bin it corresponds to, adjust probability via Bamford+09 method
-    """
-
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-
-    zstep = edges_redshift[1] - edges_redshift[0]
-    magstep = edges_mag[1] - edges_mag[0]
-    sizestep = edges_size[1] - edges_size[0]
-
-    # Loop over combinations of tasks
-
-    corr_12, corrmasked_12, ratiomasked_12 = determine_baseline_correction(task_dict, 0, 1)
-    corr_13, corrmasked_13, ratiomasked_13 = determine_baseline_correction(task_dict, 0, 2)
-    corr_14, corrmasked_14, ratiomasked_14 = determine_baseline_correction(task_dict, 0, 3)
-    corr_15, corrmasked_15, ratiomasked_15 = determine_baseline_correction(task_dict, 0, 4)
-    corr_21, corrmasked_21, ratiomasked_21 = determine_baseline_correction(task_dict, 1, 0)
-    corr_23, corrmasked_23, ratiomasked_23 = determine_baseline_correction(task_dict, 1, 2)
-    corr_24, corrmasked_24, ratiomasked_24 = determine_baseline_correction(task_dict, 1, 3)
-    corr_25, corrmasked_25, ratiomasked_25 = determine_baseline_correction(task_dict, 1, 4)
-    corr_32, corrmasked_32, ratiomasked_32 = determine_baseline_correction(task_dict, 2, 1)
-    corr_31, corrmasked_31, ratiomasked_31 = determine_baseline_correction(task_dict, 2, 0)
-    corr_34, corrmasked_34, ratiomasked_34 = determine_baseline_correction(task_dict, 2, 3)
-    corr_35, corrmasked_35, ratiomasked_35 = determine_baseline_correction(task_dict, 2, 4)
-    corr_42, corrmasked_42, ratiomasked_42 = determine_baseline_correction(task_dict, 3, 1)
-    corr_43, corrmasked_43, ratiomasked_43 = determine_baseline_correction(task_dict, 3, 2)
-    corr_41, corrmasked_41, ratiomasked_41 = determine_baseline_correction(task_dict, 3, 0)
-    corr_45, corrmasked_45, ratiomasked_45 = determine_baseline_correction(task_dict, 3, 4)
-    corr_52, corrmasked_52, ratiomasked_52 = determine_baseline_correction(task_dict, 4, 1)
-    corr_53, corrmasked_53, ratiomasked_53 = determine_baseline_correction(task_dict, 4, 2)
-    corr_54, corrmasked_54, ratiomasked_54 = determine_baseline_correction(task_dict, 4, 3)
-    corr_51, corrmasked_51, ratiomasked_51 = determine_baseline_correction(task_dict, 4, 0)
-
-    p_el_raw = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw = gzdata_withz[task_dict['task_names_wf'][2]]      # Designate the third variable (for now) as 'xx'
-    p_yy_raw = gzdata_withz[task_dict['task_names_wf'][3]]      
-    p_zz_raw = gzdata_withz[task_dict['task_names_wf'][4]]     
-    p_task_counts = gzdata_withz[task_dict['task_name_count']]
-
-    # Start adjusting
-
-    timestart2 = time.time()
-
-    p_el_adj_arr2 = np.zeros_like(p_el_raw)
-    p_sp_adj_arr2 = np.zeros_like(p_sp_raw)
-    p_xx_adj_arr2 = np.zeros_like(p_xx_raw)
-    p_yy_adj_arr2 = np.zeros_like(p_yy_raw)
-    p_zz_adj_arr2 = np.zeros_like(p_zz_raw)
-    corrarr = np.zeros_like(p_sp_raw)
-    corrbinarr = np.zeros((3,len(p_el_raw)))                    # Three bins give the (z,M,r) coordinates of the matching bin
-
-    corrshape = corr_12.shape                                   # Should probably assert that corrections are all the same shape.
-    allvotecount = 0
-    outbincount = 0
-    corrcount = 0
-    unknowncount = 0
-
-    # Loop over all galaxies in the GZ catalog with redshifts
-
-    for idx, (el, sp, xx, yy, zz) in enumerate(zip(p_el_raw, p_sp_raw, p_xx_raw, p_yy_raw, p_zz_raw)):
-
-        z2 = redshift[idx]
-        m2 = mr[idx]
-        s2 = r50_kpc[idx]
-
-        zbin = np.abs(z2 >= edges_redshift).argmin() - 1
-        mbin = np.abs(m2 >= edges_mag).argmin() - 1
-        sbin = np.abs(s2 >= edges_size).argmin() - 1
-
-        if (zbin < corrshape[0]) and (mbin < corrshape[1]) and (sbin < corrshape[2]):
-            applycorr_12 = 0. if corr_12[zbin,mbin,sbin] == unknown_ratio else corr_12[zbin,mbin,sbin]
-            applycorr_13 = 0. if corr_13[zbin,mbin,sbin] == unknown_ratio else corr_13[zbin,mbin,sbin]
-            applycorr_14 = 0. if corr_14[zbin,mbin,sbin] == unknown_ratio else corr_14[zbin,mbin,sbin]
-            applycorr_15 = 0. if corr_15[zbin,mbin,sbin] == unknown_ratio else corr_15[zbin,mbin,sbin]
-            applycorr_21 = 0. if corr_21[zbin,mbin,sbin] == unknown_ratio else corr_21[zbin,mbin,sbin]
-            applycorr_23 = 0. if corr_23[zbin,mbin,sbin] == unknown_ratio else corr_23[zbin,mbin,sbin]
-            applycorr_24 = 0. if corr_24[zbin,mbin,sbin] == unknown_ratio else corr_24[zbin,mbin,sbin]
-            applycorr_25 = 0. if corr_25[zbin,mbin,sbin] == unknown_ratio else corr_25[zbin,mbin,sbin]
-            applycorr_32 = 0. if corr_32[zbin,mbin,sbin] == unknown_ratio else corr_32[zbin,mbin,sbin]
-            applycorr_31 = 0. if corr_31[zbin,mbin,sbin] == unknown_ratio else corr_31[zbin,mbin,sbin]
-            applycorr_34 = 0. if corr_34[zbin,mbin,sbin] == unknown_ratio else corr_34[zbin,mbin,sbin]
-            applycorr_35 = 0. if corr_35[zbin,mbin,sbin] == unknown_ratio else corr_35[zbin,mbin,sbin]
-            applycorr_42 = 0. if corr_42[zbin,mbin,sbin] == unknown_ratio else corr_42[zbin,mbin,sbin]
-            applycorr_43 = 0. if corr_43[zbin,mbin,sbin] == unknown_ratio else corr_43[zbin,mbin,sbin]
-            applycorr_41 = 0. if corr_41[zbin,mbin,sbin] == unknown_ratio else corr_41[zbin,mbin,sbin]
-            applycorr_45 = 0. if corr_45[zbin,mbin,sbin] == unknown_ratio else corr_45[zbin,mbin,sbin]
-            applycorr_52 = 0. if corr_52[zbin,mbin,sbin] == unknown_ratio else corr_52[zbin,mbin,sbin]
-            applycorr_53 = 0. if corr_53[zbin,mbin,sbin] == unknown_ratio else corr_53[zbin,mbin,sbin]
-            applycorr_54 = 0. if corr_54[zbin,mbin,sbin] == unknown_ratio else corr_54[zbin,mbin,sbin]
-            applycorr_51 = 0. if corr_51[zbin,mbin,sbin] == unknown_ratio else corr_51[zbin,mbin,sbin]
-
-            allcorrs = np.array((applycorr_12,
-                                 applycorr_13,
-                                 applycorr_14,
-                                 applycorr_15,
-                                 applycorr_21,
-                                 applycorr_23,
-                                 applycorr_24,
-                                 applycorr_25,
-                                 applycorr_32,
-                                 applycorr_31,
-                                 applycorr_34,
-                                 applycorr_35,
-                                 applycorr_52,
-                                 applycorr_53,
-                                 applycorr_54,
-                                 applycorr_51
-                                )
-                               )
-
-            if np.sum(allcorrs) == 0.:
-                unknowncount +=1
-                p_el_new = el
-                p_sp_new = sp
-                p_xx_new = xx
-                p_yy_new = yy
-                p_zz_new = zz
-                corrarr[idx] = unknown_ratio
-                corrbinarr[:,idx] = unknown_ratio
-            else:
-                corrcount += 1
-                p_el_new = p_n5_adj(el,sp,xx,yy,zz,
-                                    applycorr_12,applycorr_13,applycorr_14,applycorr_15,
-                                    task_dict['ratio_type']) if el > 0. else el
-                p_sp_new = p_n5_adj(sp,el,xx,yy,zz,
-                                    applycorr_21,applycorr_23,applycorr_24,applycorr_25,
-                                    task_dict['ratio_type']) if sp > 0. else sp
-                p_xx_new = p_n5_adj(xx,el,sp,yy,zz,
-                                    applycorr_31,applycorr_32,applycorr_34,applycorr_35,
-                                    task_dict['ratio_type']) if xx > 0. else xx
-                p_yy_new = p_n5_adj(yy,el,sp,xx,zz,
-                                    applycorr_41,applycorr_42,applycorr_43,applycorr_45,
-                                    task_dict['ratio_type']) if yy > 0. else yy
-                p_zz_new = p_n5_adj(zz,el,sp,xx,yy,
-                                    applycorr_51,applycorr_52,applycorr_53,applycorr_54,
-                                    task_dict['ratio_type']) if zz > 0. else zz
-                corrbinarr[:,idx] = zbin,mbin,sbin
-                corrarr[idx] = applycorr_12
-
-            p_el_adj_arr2[idx] = p_el_new
-            p_sp_adj_arr2[idx] = p_sp_new
-            p_xx_adj_arr2[idx] = p_xx_new
-            p_yy_adj_arr2[idx] = p_yy_new
-            p_zz_adj_arr2[idx] = p_zz_new
-          
-        else: # if galaxy does not appear in the correction area
-            outbincount += 1
-            p_el_adj_arr2[idx] = el
-            p_sp_adj_arr2[idx] = sp
-            p_xx_adj_arr2[idx] = xx
-            p_yy_adj_arr2[idx] = yy
-            p_zz_adj_arr2[idx] = zz
-            corrbinarr[:,idx] = unknown_ratio
-            corrarr[idx] = unknown_ratio
-
-
-    timeend2 = time.time()
-    print ' '
-    #print '%7i galaxies had 100 percent of the vote for %s or %s' % (allvotecount,var_str[vartop],var_str[varbot])
-    print '%7i galaxies had correction bins larger than volume' % outbincount
-    print '%7i galaxies corrected' % corrcount
-    print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
-    print ' '
-
-    p.close()
-
-    pickle.dump(p_el_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][0], s82_str),'wb')) 
-    pickle.dump(p_sp_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][1], s82_str),'wb')) 
-    pickle.dump(p_xx_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][2], s82_str),'wb')) 
-    pickle.dump(p_yy_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][3], s82_str),'wb')) 
-    pickle.dump(p_zz_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][4], s82_str),'wb')) 
-    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (var_def, s82_str),'wb')) 
-    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (var_def, s82_str),'wb')) 
-
-    return p_el_adj_arr2, p_sp_adj_arr2, p_xx_adj_arr2, p_yy_adj_arr2, p_zz_adj_arr2
-
-def adjust_probabilities_n4(task_dict, plot=False, stripe82=False):
-
-    # Load in the raw probabilities from the GZ2 catalog
-
-    if stripe82:
-        p = pyfits.open(gz2_stripe82_data_file)
-        s82_str = 'stripe82_'
-    else:
-        p = pyfits.open(gz2_full_data_file)
-        s82_str = ''
-
-    gzdata = p[1].data
-    p.close()
-
-    var_def = task_dict['var_def']
-    var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
-
-    # Load in the bin sizes from the fits
-
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path+'%s_%s_binned_%s.fits' % (var_def,var_str[0],bintype))
-
-        edges_redshift = p_var1['REDSHIFT_BIN_EDGES'].data['edges']
-        edges_mag = p_var1['MR_BIN_EDGES'].data['edges']
-        edges_size = p_var1['R50_KPC_BIN_EDGES'].data['edges']
-
-        p_var1.close()
-
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
-
-    """
-    Take each galaxy, find which bin it corresponds to, adjust probability via Bamford+09 method
-    """
-
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-
-    zstep = edges_redshift[1] - edges_redshift[0]
-    magstep = edges_mag[1] - edges_mag[0]
-    sizestep = edges_size[1] - edges_size[0]
-
-    # Loop over combinations of tasks
-
-    corr_12, corrmasked_12, ratiomasked_12 = determine_baseline_correction(task_dict, 0, 1)
-    corr_13, corrmasked_13, ratiomasked_13 = determine_baseline_correction(task_dict, 0, 2)
-    corr_14, corrmasked_14, ratiomasked_14 = determine_baseline_correction(task_dict, 0, 3)
-    corr_21, corrmasked_21, ratiomasked_21 = determine_baseline_correction(task_dict, 1, 0)
-    corr_23, corrmasked_23, ratiomasked_23 = determine_baseline_correction(task_dict, 1, 2)
-    corr_24, corrmasked_24, ratiomasked_24 = determine_baseline_correction(task_dict, 1, 3)
-    corr_32, corrmasked_32, ratiomasked_32 = determine_baseline_correction(task_dict, 2, 1)
-    corr_31, corrmasked_31, ratiomasked_31 = determine_baseline_correction(task_dict, 2, 0)
-    corr_34, corrmasked_34, ratiomasked_34 = determine_baseline_correction(task_dict, 2, 3)
-    corr_42, corrmasked_42, ratiomasked_42 = determine_baseline_correction(task_dict, 3, 1)
-    corr_43, corrmasked_43, ratiomasked_43 = determine_baseline_correction(task_dict, 3, 2)
-    corr_41, corrmasked_41, ratiomasked_41 = determine_baseline_correction(task_dict, 3, 0)
-
-    p_el_raw = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw = gzdata_withz[task_dict['task_names_wf'][2]]      # Designate the third variable (for now) as 'xx'
-    p_yy_raw = gzdata_withz[task_dict['task_names_wf'][3]]      # Designate the third variable (for now) as 'xx'
-    p_task_counts = gzdata_withz[task_dict['task_name_count']]
-
-    # Start adjusting
-
-    timestart2 = time.time()
-
-    p_el_adj_arr2 = np.zeros_like(p_el_raw)
-    p_sp_adj_arr2 = np.zeros_like(p_sp_raw)
-    p_xx_adj_arr2 = np.zeros_like(p_xx_raw)
-    p_yy_adj_arr2 = np.zeros_like(p_yy_raw)
-    corrarr = np.zeros_like(p_sp_raw)
-    corrbinarr = np.zeros((3,len(p_el_raw)))                    # Three bins give the (z,M,r) coordinates of the matching bin
-
-    corrshape = corr_12.shape                                   # Should probably assert that corrections are all the same shape.
-    allvotecount = 0
-    outbincount = 0
-    corrcount = 0
-    unknowncount = 0
-
-    # Loop over all galaxies in the GZ catalog with redshifts
-
-    for idx, (el, sp, xx, yy) in enumerate(zip(p_el_raw, p_sp_raw, p_xx_raw, p_yy_raw)):
-
-        z2 = redshift[idx]
-        m2 = mr[idx]
-        s2 = r50_kpc[idx]
-
-        zbin = np.abs(z2 >= edges_redshift).argmin() - 1
-        mbin = np.abs(m2 >= edges_mag).argmin() - 1
-        sbin = np.abs(s2 >= edges_size).argmin() - 1
-
-        if (zbin < corrshape[0]) and (mbin < corrshape[1]) and (sbin < corrshape[2]):
-            applycorr_12 = 0. if corr_12[zbin,mbin,sbin] == unknown_ratio else corr_12[zbin,mbin,sbin]
-            applycorr_13 = 0. if corr_13[zbin,mbin,sbin] == unknown_ratio else corr_13[zbin,mbin,sbin]
-            applycorr_14 = 0. if corr_14[zbin,mbin,sbin] == unknown_ratio else corr_14[zbin,mbin,sbin]
-            applycorr_21 = 0. if corr_21[zbin,mbin,sbin] == unknown_ratio else corr_21[zbin,mbin,sbin]
-            applycorr_23 = 0. if corr_23[zbin,mbin,sbin] == unknown_ratio else corr_23[zbin,mbin,sbin]
-            applycorr_24 = 0. if corr_24[zbin,mbin,sbin] == unknown_ratio else corr_24[zbin,mbin,sbin]
-            applycorr_32 = 0. if corr_32[zbin,mbin,sbin] == unknown_ratio else corr_32[zbin,mbin,sbin]
-            applycorr_31 = 0. if corr_31[zbin,mbin,sbin] == unknown_ratio else corr_31[zbin,mbin,sbin]
-            applycorr_34 = 0. if corr_34[zbin,mbin,sbin] == unknown_ratio else corr_34[zbin,mbin,sbin]
-            applycorr_42 = 0. if corr_42[zbin,mbin,sbin] == unknown_ratio else corr_42[zbin,mbin,sbin]
-            applycorr_43 = 0. if corr_43[zbin,mbin,sbin] == unknown_ratio else corr_43[zbin,mbin,sbin]
-            applycorr_41 = 0. if corr_41[zbin,mbin,sbin] == unknown_ratio else corr_41[zbin,mbin,sbin]
-
-            allcorrs = np.array((applycorr_12,
-                                 applycorr_13,
-                                 applycorr_14,
-                                 applycorr_21,
-                                 applycorr_23,
-                                 applycorr_24,
-                                 applycorr_32,
-                                 applycorr_31,
-                                 applycorr_34,
-                                 applycorr_42,
-                                 applycorr_43,
-                                 applycorr_41,
-                                )
-                               )
-
-            if np.sum(allcorrs) == 0.:
-                unknowncount +=1
-                p_el_new = el
-                p_sp_new = sp
-                p_xx_new = xx
-                p_yy_new = yy
-                corrarr[idx] = unknown_ratio
-                corrbinarr[:,idx] = unknown_ratio
-            else:
-                corrcount += 1
-                p_el_new = p_n4_adj(el,sp,xx,yy,
-                                    applycorr_12,applycorr_13,applycorr_14,
-                                    task_dict['ratio_type']) if el > 0. else el
-                p_sp_new = p_n4_adj(sp,el,xx,yy,
-                                    applycorr_21,applycorr_23,applycorr_24,
-                                    task_dict['ratio_type']) if sp > 0. else sp
-                p_xx_new = p_n4_adj(xx,el,sp,yy,
-                                    applycorr_31,applycorr_32,applycorr_34,
-                                    task_dict['ratio_type']) if xx > 0. else xx
-                p_yy_new = p_n4_adj(yy,el,sp,xx,
-                                    applycorr_41,applycorr_42,applycorr_43,
-                                    task_dict['ratio_type']) if yy > 0. else yy
-                corrbinarr[:,idx] = zbin,mbin,sbin
-                corrarr[idx] = applycorr_12
-
-            p_el_adj_arr2[idx] = p_el_new
-            p_sp_adj_arr2[idx] = p_sp_new
-            p_xx_adj_arr2[idx] = p_xx_new
-            p_yy_adj_arr2[idx] = p_yy_new
-          
-        else: # if galaxy does not appear in the correction area
-            outbincount += 1
-            p_el_adj_arr2[idx] = el
-            p_sp_adj_arr2[idx] = sp
-            p_xx_adj_arr2[idx] = xx
-            p_yy_adj_arr2[idx] = yy
-            corrbinarr[:,idx] = unknown_ratio
-            corrarr[idx] = unknown_ratio
-
-
-    timeend2 = time.time()
-    print ' '
-    #print '%7i galaxies had 100 percent of the vote for %s or %s' % (allvotecount,var_str[vartop],var_str[varbot])
-    print '%7i galaxies had correction bins larger than volume' % outbincount
-    print '%7i galaxies corrected' % corrcount
-    print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
-    print ' '
-
-    p.close()
-
-    pickle.dump(p_el_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][0], s82_str),'wb')) 
-    pickle.dump(p_sp_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][1], s82_str),'wb')) 
-    pickle.dump(p_xx_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][2], s82_str),'wb')) 
-    pickle.dump(p_yy_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][3], s82_str),'wb')) 
-    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (var_def, s82_str),'wb')) 
-    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (var_def, s82_str),'wb')) 
-
-    return p_el_adj_arr2, p_sp_adj_arr2, p_xx_adj_arr2, p_yy_adj_arr2
-
-def adjust_probabilities_n3(task_dict, plot=False, stripe82=False):
-
-    # Load in the raw probabilities from the GZ2 catalog
-
-    if stripe82:
-        p = pyfits.open(gz2_stripe82_data_file)
-        s82_str = 'stripe82_'
-    else:
-        p = pyfits.open(gz2_full_data_file)
-        s82_str = ''
-
-    gzdata = p[1].data
-    p.close()
-
-    var_def = task_dict['var_def']
-    var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
-
-    # Load in the bin sizes from the fits
-
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path+'%s_%s_binned_%s.fits' % (var_def,var_str[0],bintype))
-
-        edges_redshift = p_var1['REDSHIFT_BIN_EDGES'].data['edges']
-        edges_mag = p_var1['MR_BIN_EDGES'].data['edges']
-        edges_size = p_var1['R50_KPC_BIN_EDGES'].data['edges']
-
-        p_var1.close()
-
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
-
-    """
-    Take each galaxy, find which bin it corresponds to, adjust probability via Bamford+09 method
-    """
-
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-
-    zstep = edges_redshift[1] - edges_redshift[0]
-    magstep = edges_mag[1] - edges_mag[0]
-    sizestep = edges_size[1] - edges_size[0]
-
-    # Need six different corrections: K 12, 23, 13, 21, 32, 31
-
-    varsarr = ((1,2),(2,3),(1,3),(2,1),(3,2),(3,1))
-
-    # Loop over combinations of tasks
-
-    corr_12, corrmasked_12, ratiomasked_12 = determine_baseline_correction(task_dict, 0, 1)
-    corr_13, corrmasked_13, ratiomasked_13 = determine_baseline_correction(task_dict, 0, 2)
-    corr_21, corrmasked_21, ratiomasked_21 = determine_baseline_correction(task_dict, 1, 0)
-    corr_23, corrmasked_23, ratiomasked_23 = determine_baseline_correction(task_dict, 1, 2)
-    corr_31, corrmasked_31, ratiomasked_31 = determine_baseline_correction(task_dict, 2, 0)
-    corr_32, corrmasked_32, ratiomasked_32 = determine_baseline_correction(task_dict, 2, 1)
-
-    p_el_raw = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw = gzdata_withz[task_dict['task_names_wf'][2]]      # Designate the third variable (for now) as 'xx'
-    p_task_counts = gzdata_withz[task_dict['task_name_count']]
-
-    # Start adjusting
-
-    timestart2 = time.time()
-
-    p_el_adj_arr2 = np.zeros_like(p_el_raw)
-    p_sp_adj_arr2 = np.zeros_like(p_sp_raw)
-    p_xx_adj_arr2 = np.zeros_like(p_xx_raw)
-    corrarr = np.zeros_like(p_sp_raw)
-    corrbinarr = np.zeros((3,len(p_el_raw)))                    # Three bins give the (z,M,r) coordinates of the matching bin
-
-    corrshape = corr_12.shape                                   # Should probably assert that corrections are all the same shape.
-    allvotecount = 0
-    outbincount = 0
-    corrcount = 0
-    unknowncount = 0
-
-    # Loop over all galaxies in the GZ catalog with redshifts
-
-    for idx, (el, sp, xx) in enumerate(zip(p_el_raw, p_sp_raw, p_xx_raw)):
-
-        z2 = redshift[idx]
-        m2 = mr[idx]
-        s2 = r50_kpc[idx]
-
-        zbin = np.abs(z2 >= edges_redshift).argmin() - 1
-        mbin = np.abs(m2 >= edges_mag).argmin() - 1
-        sbin = np.abs(s2 >= edges_size).argmin() - 1
-
-        if (zbin < corrshape[0]) and (mbin < corrshape[1]) and (sbin < corrshape[2]):
-            applycorr_12 = 0. if corr_12[zbin,mbin,sbin] == unknown_ratio else corr_12[zbin,mbin,sbin]
-            applycorr_13 = 0. if corr_13[zbin,mbin,sbin] == unknown_ratio else corr_13[zbin,mbin,sbin]
-            applycorr_21 = 0. if corr_21[zbin,mbin,sbin] == unknown_ratio else corr_21[zbin,mbin,sbin]
-            applycorr_23 = 0. if corr_23[zbin,mbin,sbin] == unknown_ratio else corr_23[zbin,mbin,sbin]
-            applycorr_31 = 0. if corr_31[zbin,mbin,sbin] == unknown_ratio else corr_31[zbin,mbin,sbin]
-            applycorr_32 = 0. if corr_32[zbin,mbin,sbin] == unknown_ratio else corr_32[zbin,mbin,sbin]
-            allcorrs = np.array((applycorr_12,
-                                 applycorr_13,
-                                 applycorr_21,
-                                 applycorr_23,
-                                 applycorr_31,
-                                 applycorr_32
-                                )
-                               )
-
-            if np.sum(allcorrs) == 0.:
-                unknowncount +=1
-                p_el_new = el
-                p_sp_new = sp
-                p_xx_new = xx
-                corrarr[idx] = unknown_ratio
-                corrbinarr[:,idx] = unknown_ratio
-            else:
-                corrcount += 1
-                p_el_new = p_n3_adj(el,sp,xx,applycorr_12,applycorr_13,task_dict['ratio_type']) if el > 0. else el
-                p_sp_new = p_n3_adj(sp,el,xx,applycorr_21,applycorr_23,task_dict['ratio_type']) if sp > 0. else sp
-                p_xx_new = p_n3_adj(xx,el,sp,applycorr_31,applycorr_32,task_dict['ratio_type']) if xx > 0. else xx
-                corrbinarr[:,idx] = zbin,mbin,sbin
-                corrarr[idx] = applycorr_12
-
-            p_el_adj_arr2[idx] = p_el_new
-            p_sp_adj_arr2[idx] = p_sp_new
-            p_xx_adj_arr2[idx] = p_xx_new
-          
-        else: # if galaxy does not appear in the correction area
-            outbincount += 1
-            p_el_adj_arr2[idx] = el
-            p_sp_adj_arr2[idx] = sp
-            p_xx_adj_arr2[idx] = xx
-            corrbinarr[:,idx] = unknown_ratio
-            corrarr[idx] = unknown_ratio
-
-
-    timeend2 = time.time()
-    print ' '
-    #print '%7i galaxies had 100 percent of the vote for %s or %s' % (allvotecount,var_str[vartop],var_str[varbot])
-    print '%7i galaxies had correction bins larger than volume' % outbincount
-    print '%7i galaxies corrected' % corrcount
-    print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
-    print ' '
-
-    if plot:
-        
-        # Downsample the galaxies to reduce plotting time
-
-        nsamp = 1000
-        goodind = np.arange(len(corrarr))[np.arange(len(corrarr))[corrarr > unknown_ratio]]
-        randind = goodind[np.random.random_integers(0,len(goodind),nsamp)]
-        corrhi = 1.0
-        corrlo = -0.5
-        rand_correction = (corrhi-corrlo) * np.random.random(nsamp) + corrlo
-        constant_correction = np.zeros(nsamp) + 0.5
-
-        # Set plot parameters
-
-        fig = plt.figure(8)
-        fig.clf()
-
-        ax_el = fig.add_subplot(221)
-        ax_el.scatter(p_el_raw[randind],p_el_adj_arr2[randind], marker='.')
-        ax_el.set_xlabel(r'$p_{%s}$ raw' % var_str[0])
-        ax_el.set_ylabel(r'$p_{%s}$ adjusted' % var_str[0])
-
-        ax_sp = fig.add_subplot(222)
-        ax_sp.scatter(p_sp_raw[randind],p_sp_adj_arr2[randind], marker='.')
-        ax_sp.set_xlabel(r'$p_{%s}$ raw' % var_str[varbot])
-        ax_sp.set_ylabel(r'$p_{%s}$ adjusted' % var_str[varbot])
-
-        ax_el_sim = fig.add_subplot(223)
-        ax_el_sim.scatter(p_el_raw[randind],p_el_adj(p_el_raw[randind],p_sp_raw[randind],rand_correction,task_dict['ratio_type']), 
-                          marker='.',color='g')
-        ax_el_sim.scatter(p_el_raw[randind],p_el_adj(p_el_raw[randind],p_sp_raw[randind],constant_correction,task_dict['ratio_type']), 
-                          marker='.',color='r')
-        ax_el_sim.set_xlabel(r'$p_{%s}$ raw' % var_str[0])
-        ax_el_sim.set_ylabel(r'$p_{%s}$ adjusted' % var_str[0])
-
-        plt.legend(('Random correction', 'Constant '+r'$C = 0.5$'), 'upper left', shadow=True, fancybox=True)
-
-        ax_sp_sim = fig.add_subplot(224)
-        ax_sp_sim.scatter(p_sp_raw[randind],p_sp_adj(p_el_raw[randind],p_sp_raw[randind],rand_correction,task_dict['ratio_type']), 
-                          marker='.',color='g')
-        ax_sp_sim.scatter(p_sp_raw[randind],p_sp_adj(p_el_raw[randind],p_sp_raw[randind],constant_correction,task_dict['ratio_type']), 
-                          marker='.',color='r')
-        ax_sp_sim.set_xlabel(r'$p_{%s}$ raw' % var_str[varbot])
-        ax_sp_sim.set_ylabel(r'$p_{%s}$ adjusted' % var_str[varbot])
-
-        plt.legend(('Random correction', 'Constant '+r'$C = 0.5$'), 'upper left', shadow=True, fancybox=True)
-
-    p.close()
-
-    pickle.dump(p_el_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][0], s82_str),'wb')) 
-    pickle.dump(p_sp_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][1], s82_str),'wb')) 
-    pickle.dump(p_xx_adj_arr2, open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,task_dict['var_str'][2], s82_str),'wb')) 
-    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (var_def, s82_str),'wb')) 
-    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (var_def, s82_str),'wb')) 
-
-    return p_el_adj_arr2, p_sp_adj_arr2, p_xx_adj_arr2
+    return p_raw,p_adj
 
 def adjust_probabilities(task_dict, plot=False, stripe82=False):
 
@@ -2541,7 +1697,7 @@ def plot_galaxy_counts(task_dict,min_classifications=20,magstep=0.25,sizestep=0.
 
     return fig
 
-def plot_type_fractions_n6(task_dict, zlo = 0.01, zhi=0.085, stripe82=False):
+def plot_type_fractions_new(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False):
 
     # Load data 
 
@@ -2550,913 +1706,132 @@ def plot_type_fractions_n6(task_dict, zlo = 0.01, zhi=0.085, stripe82=False):
         p = pyfits.open(gz2_stripe82_data_file)
     else:
         s82_str = ''
-        p = pyfits.open(gz2_full_data_file)
+        p = pyfits.open(fits_path+'%s_data_for_idl.fits' % task_dict['var_def'])
 
     gzdata = p[1].data
     p.close()
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
 
     centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-    p_el_raw_values = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw_values = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw_values = gzdata_withz[task_dict['task_names_wf'][2]]
-    p_yy_raw_values = gzdata_withz[task_dict['task_names_wf'][3]]
-    p_zz_raw_values = gzdata_withz[task_dict['task_names_wf'][4]]
-    p_ww_raw_values = gzdata_withz[task_dict['task_names_wf'][5]]
-    task_counts = gzdata_withz[task_dict['task_name_count']]
+    redshift = gzdata['REDSHIFT']
+    mr = gzdata['PETROMAG_MR']
+    r50_kpc = gzdata['PETROR50_R_KPC']
+    task_counts = gzdata[task_dict['task_name_count']]
 
-    zwidth = 0.02
     zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
 
-    n = len(task_dict['var_str'])
-    var_def = task_dict['var_def']
-    var1_str,var2_str,var3_str,var4_str,var5_str,var6_str = task_dict['var_str']
+    ntask = len(task_dict['var_str'])
 
-    p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var1_str,s82_str),'rb')) 
-    p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var2_str,s82_str),'rb')) 
-    p_xx_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var3_str,s82_str),'rb')) 
-    p_yy_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var4_str,s82_str),'rb')) 
-    p_zz_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var5_str,s82_str),'rb')) 
-    p_ww_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var6_str,s82_str),'rb')) 
-    corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (var_def,s82_str),'rb')) 
-
-    # Only plot galaxies that had a correction available
-
-    corrgood = corrarr > unknown_ratio
-    elgood = np.isfinite(p_el_adj_values)
-    spgood = np.isfinite(p_sp_adj_values)
-    xxgood = np.isfinite(p_xx_adj_values)
-    yygood = np.isfinite(p_yy_adj_values)
-    zzgood = np.isfinite(p_zz_adj_values)
-    wwgood = np.isfinite(p_ww_adj_values)
-    goodinds = corrgood & elgood & spgood & xxgood & yygood & zzgood & wwgood
-    p_el_adj_values = p_el_adj_values[goodinds]
-    p_sp_adj_values = p_sp_adj_values[goodinds]
-    p_xx_adj_values = p_xx_adj_values[goodinds]
-    p_yy_adj_values = p_yy_adj_values[goodinds]
-    p_zz_adj_values = p_zz_adj_values[goodinds]
-    p_ww_adj_values = p_ww_adj_values[goodinds]
-    task_counts_adj = task_counts[goodinds]
+    p_both = pickle.load(open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'],s82_str),'rb')) 
+    p_raw = np.squeeze(p_both[0,:,:])
+    p_adj = np.squeeze(p_both[1,:,:])
 
     # Empty arrays for the binned type fractions
 
-    p_el_raw_typefrac = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac = np.zeros_like(zplotbins)
-    p_el_adj_typefrac = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac = np.zeros_like(zplotbins)
-    p_el_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_el_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_yy_raw_typefrac = np.zeros_like(zplotbins)
-    p_yy_adj_typefrac = np.zeros_like(zplotbins)
-    p_yy_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_yy_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_zz_raw_typefrac = np.zeros_like(zplotbins)
-    p_zz_adj_typefrac = np.zeros_like(zplotbins)
-    p_zz_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_zz_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_ww_raw_typefrac = np.zeros_like(zplotbins)
-    p_ww_adj_typefrac = np.zeros_like(zplotbins)
-    p_ww_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_ww_adj_typefrac_maglim = np.zeros_like(zplotbins)
+    p_raw_typefrac        = np.zeros((ntask,len(zplotbins)))
+    p_adj_typefrac        = np.zeros((ntask,len(zplotbins)))
+    p_raw_typefrac_maglim = np.zeros((ntask,len(zplotbins)))
+    p_adj_typefrac_maglim = np.zeros((ntask,len(zplotbins)))
+    p_raw_typefrac_err        = np.zeros((ntask,len(zplotbins)))
+    p_adj_typefrac_err        = np.zeros((ntask,len(zplotbins)))
+    p_raw_typefrac_err_maglim = np.zeros((ntask,len(zplotbins)))
+    p_adj_typefrac_err_maglim = np.zeros((ntask,len(zplotbins)))
 
     """
-    Method 1: take the mean of the raw likelihoods for each galaxy per redshift bin
-    Method 2: take the mean of each likelihood weighted by the total number of votes
-
-    Results are within 5% of each other (fraction of < 0.01) at all redshifts.
+    Take the mean of the raw likelihoods for each galaxy per redshift bin
     """
 
-    # Create a second, magnitude-limited sample
+    # Create the magnitude-limited sample
     
     maglimval = appmag_lim - cosmology.dmod_flat(zhi)
-    
-    mr_raw = mr
-    redshift_raw = redshift
-    maglim_raw = mr_raw < maglimval
-    task_counts_maglim_raw = task_counts[maglim_raw]
-    p_el_raw_values_maglim = p_el_raw_values[maglim_raw]
-    p_sp_raw_values_maglim = p_sp_raw_values[maglim_raw]
-    p_xx_raw_values_maglim = p_xx_raw_values[maglim_raw]
-    p_yy_raw_values_maglim = p_yy_raw_values[maglim_raw]
-    p_zz_raw_values_maglim = p_zz_raw_values[maglim_raw]
-    p_ww_raw_values_maglim = p_ww_raw_values[maglim_raw]
-
-    mr_adj = mr[goodinds]
-    redshift_adj = redshift[goodinds]
-    maglim_adj = mr_adj < maglimval
-    task_counts_maglim_adj = task_counts_adj[maglim_adj]
-    p_el_adj_values_maglim = p_el_adj_values[maglim_adj]
-    p_sp_adj_values_maglim = p_sp_adj_values[maglim_adj]
-    p_xx_adj_values_maglim = p_xx_adj_values[maglim_adj]
-    p_yy_adj_values_maglim = p_yy_adj_values[maglim_adj]
-    p_zz_adj_values_maglim = p_zz_adj_values[maglim_adj]
-    p_ww_adj_values_maglim = p_ww_adj_values[maglim_adj]
-
-    # Loop over redshift bin and find the type fractions at each slice
-
-    for idx,zbin in enumerate(zplotbins):
-        gals_in_bin_raw = (redshift_raw >= zbin) & (redshift_raw < (zbin+zwidth))
-        weights_raw = task_counts[gals_in_bin_raw]
-        p_el_raw_typefrac[idx] = np.mean(p_el_raw_values[gals_in_bin_raw])
-        p_sp_raw_typefrac[idx] = np.mean(p_sp_raw_values[gals_in_bin_raw])
-        p_xx_raw_typefrac[idx] = np.mean(p_xx_raw_values[gals_in_bin_raw])
-        p_yy_raw_typefrac[idx] = np.mean(p_yy_raw_values[gals_in_bin_raw])
-        p_zz_raw_typefrac[idx] = np.mean(p_zz_raw_values[gals_in_bin_raw])
-        p_ww_raw_typefrac[idx] = np.mean(p_ww_raw_values[gals_in_bin_raw])
-        p_el_raw_typefrac_err[idx] = tsem(p_el_raw_values[gals_in_bin_raw])
-        p_sp_raw_typefrac_err[idx] = tsem(p_sp_raw_values[gals_in_bin_raw])
-        p_xx_raw_typefrac_err[idx] = tsem(p_xx_raw_values[gals_in_bin_raw])
-        p_yy_raw_typefrac_err[idx] = tsem(p_yy_raw_values[gals_in_bin_raw])
-        p_zz_raw_typefrac_err[idx] = tsem(p_zz_raw_values[gals_in_bin_raw])
-        p_ww_raw_typefrac_err[idx] = tsem(p_ww_raw_values[gals_in_bin_raw])
-
-        gals_in_bin_adj = (redshift_adj >= zbin) & (redshift_adj < (zbin+zwidth))
-        weights_adj = task_counts_adj[gals_in_bin_adj]
-        p_el_adj_typefrac[idx] = np.mean(p_el_adj_values[gals_in_bin_adj])
-        p_sp_adj_typefrac[idx] = np.mean(p_sp_adj_values[gals_in_bin_adj])
-        p_xx_adj_typefrac[idx] = np.mean(p_xx_adj_values[gals_in_bin_adj])
-        p_yy_adj_typefrac[idx] = np.mean(p_yy_adj_values[gals_in_bin_adj])
-        p_zz_adj_typefrac[idx] = np.mean(p_zz_adj_values[gals_in_bin_adj])
-        p_ww_adj_typefrac[idx] = np.mean(p_ww_adj_values[gals_in_bin_adj])
-        p_el_adj_typefrac_err[idx] = tsem(p_el_adj_values[gals_in_bin_adj])
-        p_sp_adj_typefrac_err[idx] = tsem(p_sp_adj_values[gals_in_bin_adj])
-        p_xx_adj_typefrac_err[idx] = tsem(p_xx_adj_values[gals_in_bin_adj])
-        p_yy_adj_typefrac_err[idx] = tsem(p_yy_adj_values[gals_in_bin_adj])
-        p_zz_adj_typefrac_err[idx] = tsem(p_zz_adj_values[gals_in_bin_adj])
-        p_ww_adj_typefrac_err[idx] = tsem(p_ww_adj_values[gals_in_bin_adj])
-
-        gals_in_bin_maglim_raw = (redshift_raw[maglim_raw] >= zbin) & (redshift_raw[maglim_raw] < (zbin+zwidth))
-        weights_maglim_raw = task_counts_maglim_raw[gals_in_bin_maglim_raw]
-        p_el_raw_typefrac_maglim[idx] = np.sum(p_el_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_sp_raw_typefrac_maglim[idx] = np.sum(p_sp_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_xx_raw_typefrac_maglim[idx] = np.sum(p_xx_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_yy_raw_typefrac_maglim[idx] = np.sum(p_yy_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_zz_raw_typefrac_maglim[idx] = np.sum(p_zz_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_ww_raw_typefrac_maglim[idx] = np.sum(p_ww_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-
-        gals_in_bin_maglim_adj = (redshift_adj[maglim_adj] >= zbin) & (redshift_adj[maglim_adj] < (zbin+zwidth))
-        weights_maglim_adj = task_counts_maglim_adj[gals_in_bin_maglim_adj]
-        p_el_adj_typefrac_maglim[idx] = np.sum(p_el_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_sp_adj_typefrac_maglim[idx] = np.sum(p_sp_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_xx_adj_typefrac_maglim[idx] = np.sum(p_xx_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_yy_adj_typefrac_maglim[idx] = np.sum(p_yy_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_zz_adj_typefrac_maglim[idx] = np.sum(p_zz_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_ww_adj_typefrac_maglim[idx] = np.sum(p_ww_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-
-    pickle.dump(p_el_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-
-    pickle.dump(p_xx_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_yy_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_zz_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var5_str,s82_str),'wb')) 
-    pickle.dump(p_zz_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var5_str,s82_str),'wb')) 
-    pickle.dump(p_zz_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var5_str,s82_str),'wb')) 
-    pickle.dump(p_zz_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var5_str,s82_str),'wb')) 
-
-    pickle.dump(p_ww_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var6_str,s82_str),'wb')) 
-    pickle.dump(p_ww_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var6_str,s82_str),'wb')) 
-    pickle.dump(p_ww_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var6_str,s82_str),'wb')) 
-    pickle.dump(p_ww_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var6_str,s82_str),'wb')) 
-
-    # Plot results
-
-    fig = plt.figure(12, (12,7))
-    fig.clf()
-    ax1 = fig.add_subplot(121)
-    font = FontProperties()
-
-    ax1.plot(zplotbins, p_el_raw_typefrac, color='r', linestyle='-' ,linewidth=2)
-    ax1.plot(zplotbins, p_sp_raw_typefrac, color='b', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_xx_raw_typefrac, color='m', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_yy_raw_typefrac, color='g', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_zz_raw_typefrac, color='c', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_ww_raw_typefrac, color='y', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_el_adj_typefrac, color='r', linestyle='-' ,linewidth=4)
-    ax1.plot(zplotbins, p_sp_adj_typefrac, color='b', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_xx_adj_typefrac, color='m', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_yy_adj_typefrac, color='g', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_zz_adj_typefrac, color='c', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_ww_adj_typefrac, color='y', linestyle='--',linewidth=4)
-    ax1.errorbar(zplotbins, p_el_raw_typefrac, yerr = p_el_raw_typefrac_err, color='r', linestyle='-' ,linewidth=2)
-    ax1.errorbar(zplotbins, p_sp_raw_typefrac, yerr = p_sp_raw_typefrac_err, color='b', linestyle='--',linewidth=2)
-    ax1.errorbar(zplotbins, p_xx_raw_typefrac, yerr = p_xx_raw_typefrac_err, color='m', linestyle='--',linewidth=2)
-    ax1.errorbar(zplotbins, p_yy_raw_typefrac, yerr = p_yy_raw_typefrac_err, color='g', linestyle='--',linewidth=2)
-    ax1.errorbar(zplotbins, p_zz_raw_typefrac, yerr = p_zz_raw_typefrac_err, color='c', linestyle='--',linewidth=2)
-    ax1.errorbar(zplotbins, p_ww_raw_typefrac, yerr = p_ww_raw_typefrac_err, color='y', linestyle='--',linewidth=2)
-    ax1.errorbar(zplotbins, p_el_adj_typefrac, yerr = p_el_adj_typefrac_err, color='r', linestyle='-' ,linewidth=4)
-    ax1.errorbar(zplotbins, p_sp_adj_typefrac, yerr = p_sp_adj_typefrac_err, color='b', linestyle='--',linewidth=4)
-    ax1.errorbar(zplotbins, p_xx_adj_typefrac, yerr = p_xx_adj_typefrac_err, color='m', linestyle='--',linewidth=4)
-    ax1.errorbar(zplotbins, p_yy_adj_typefrac, yerr = p_yy_adj_typefrac_err, color='g', linestyle='--',linewidth=4)
-    ax1.errorbar(zplotbins, p_zz_adj_typefrac, yerr = p_zz_adj_typefrac_err, color='c', linestyle='--',linewidth=4)
-    ax1.errorbar(zplotbins, p_ww_adj_typefrac, yerr = p_ww_adj_typefrac_err, color='y', linestyle='--',linewidth=4)
-
-    font.set_size(10)
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'raw %s' % var4_str, 'raw %s' % var5_str, 'raw %s' % var6_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str, 'debiased %s' % var4_str, 'debiased %s' % var5_str, 'debiased %s' % var6_str), 'upper left', shadow=True, fancybox=True, prop=font)
-
-    ax1.set_xlim(-0.01,0.25)
-    ax1.set_ylim(-0.01,1.2)
-    ax1.set_xlabel('redshift')
-    ax1.set_ylabel('fraction')
-    ax1.set_title('All GZ2 galaxies with redshifts, %s' % var_def)
-    ax1.text(0.15,1.0,str(len(p_el_raw_values))+' galaxies')
-
-    ax2 = fig.add_subplot(122)
-
-    ax2.plot(zplotbins, p_el_raw_typefrac_maglim, color='r', linestyle='-' ,linewidth=2)
-    ax2.plot(zplotbins, p_sp_raw_typefrac_maglim, color='b', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_xx_raw_typefrac_maglim, color='m', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_yy_raw_typefrac_maglim, color='g', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_zz_raw_typefrac_maglim, color='c', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_ww_raw_typefrac_maglim, color='y', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_el_adj_typefrac_maglim, color='r', linestyle='-' ,linewidth=4)
-    ax2.plot(zplotbins, p_sp_adj_typefrac_maglim, color='b', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_xx_adj_typefrac_maglim, color='m', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_yy_adj_typefrac_maglim, color='g', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_zz_adj_typefrac_maglim, color='c', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_ww_adj_typefrac_maglim, color='y', linestyle='--',linewidth=4)
-
-    ax2.axvline(zlo, color='k', linestyle='--')
-    ax2.axvline(zhi, color='k', linestyle='--')
-
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'raw %s' % var4_str, 'raw %s' % var5_str, 'raw %s' % var6_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str, 'debiased %s' % var4_str, 'debiased %s' % var5_str, 'debiased %s' % var6_str), 'upper left', shadow=True, fancybox=True, prop=font)
-
-    ax2.set_xlim(-0.01,0.25)
-    ax2.set_ylim(-0.01,1.2)
-    ax2.set_xlabel('redshift')
-    ax2.set_ylabel('fraction')
-    ax2.set_title(r'$M_r < %4.2f$' % maglimval)
-    ax2.text(0.15,1.0,(str(len(p_el_adj_values))+' galaxies'))
-
-    fig.savefig(plots_path+'%s_%stype_fractions_n5.png' % (task_dict['var_def'],s82_str), dpi=200)
-
-    return None
-
-def plot_type_fractions_n5(task_dict, zlo = 0.01, zhi=0.085, stripe82=False):
-
-    # Load data 
-
-    if stripe82:
-        s82_str = 'stripe82_'
-        p = pyfits.open(gz2_stripe82_data_file)
-    else:
-        s82_str = ''
-        p = pyfits.open(gz2_full_data_file)
-
-    gzdata = p[1].data
-    p.close()
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-    p_el_raw_values = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw_values = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw_values = gzdata_withz[task_dict['task_names_wf'][2]]
-    p_yy_raw_values = gzdata_withz[task_dict['task_names_wf'][3]]
-    p_zz_raw_values = gzdata_withz[task_dict['task_names_wf'][4]]
-    task_counts = gzdata_withz[task_dict['task_name_count']]
-
-    zwidth = 0.02
-    zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
-
-    n = len(task_dict['var_str'])
-    var_def = task_dict['var_def']
-    var1_str,var2_str,var3_str,var4_str,var5_str = task_dict['var_str']
-
-    p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var1_str,s82_str),'rb')) 
-    p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var2_str,s82_str),'rb')) 
-    p_xx_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var3_str,s82_str),'rb')) 
-    p_yy_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var4_str,s82_str),'rb')) 
-    p_zz_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var5_str,s82_str),'rb')) 
-    corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (var_def,s82_str),'rb')) 
-
-    # Only plot galaxies that had a correction available
-
-    corrgood = corrarr > unknown_ratio
-    elgood = np.isfinite(p_el_adj_values)
-    spgood = np.isfinite(p_sp_adj_values)
-    xxgood = np.isfinite(p_xx_adj_values)
-    yygood = np.isfinite(p_yy_adj_values)
-    zzgood = np.isfinite(p_zz_adj_values)
-    goodinds = corrgood & elgood & spgood & xxgood & yygood & zzgood
-    p_el_adj_values = p_el_adj_values[goodinds]
-    p_sp_adj_values = p_sp_adj_values[goodinds]
-    p_xx_adj_values = p_xx_adj_values[goodinds]
-    p_yy_adj_values = p_yy_adj_values[goodinds]
-    p_zz_adj_values = p_zz_adj_values[goodinds]
-    task_counts_adj = task_counts[goodinds]
-
-    # Empty arrays for the binned type fractions
-
-    p_el_raw_typefrac = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac = np.zeros_like(zplotbins)
-    p_el_adj_typefrac = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac = np.zeros_like(zplotbins)
-    p_el_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_el_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_yy_raw_typefrac = np.zeros_like(zplotbins)
-    p_yy_adj_typefrac = np.zeros_like(zplotbins)
-    p_yy_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_yy_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_zz_raw_typefrac = np.zeros_like(zplotbins)
-    p_zz_adj_typefrac = np.zeros_like(zplotbins)
-    p_zz_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_zz_adj_typefrac_maglim = np.zeros_like(zplotbins)
-
-    """
-    Method 1: take the mean of the raw likelihoods for each galaxy per redshift bin
-    Method 2: take the mean of each likelihood weighted by the total number of votes
-
-    Results are within 5% of each other (fraction of < 0.01) at all redshifts.
-    """
-
-    # Create a second, magnitude-limited sample
-    
-    maglimval = appmag_lim - cosmology.dmod_flat(zhi)
-    
-    mr_raw = mr
-    redshift_raw = redshift
-    maglim_raw = mr_raw < maglimval
-    task_counts_maglim_raw = task_counts[maglim_raw]
-    p_el_raw_values_maglim = p_el_raw_values[maglim_raw]
-    p_sp_raw_values_maglim = p_sp_raw_values[maglim_raw]
-    p_xx_raw_values_maglim = p_xx_raw_values[maglim_raw]
-    p_yy_raw_values_maglim = p_yy_raw_values[maglim_raw]
-    p_zz_raw_values_maglim = p_zz_raw_values[maglim_raw]
-
-    mr_adj = mr[goodinds]
-    redshift_adj = redshift[goodinds]
-    maglim_adj = mr_adj < maglimval
-    task_counts_maglim_adj = task_counts_adj[maglim_adj]
-    p_el_adj_values_maglim = p_el_adj_values[maglim_adj]
-    p_sp_adj_values_maglim = p_sp_adj_values[maglim_adj]
-    p_xx_adj_values_maglim = p_xx_adj_values[maglim_adj]
-    p_yy_adj_values_maglim = p_yy_adj_values[maglim_adj]
-    p_zz_adj_values_maglim = p_zz_adj_values[maglim_adj]
-
-    # Loop over redshift bin and find the type fractions at each slice
-
-    for idx,zbin in enumerate(zplotbins):
-        gals_in_bin_raw = (redshift_raw >= zbin) & (redshift_raw < (zbin+zwidth))
-        weights_raw = task_counts[gals_in_bin_raw]
-        p_el_raw_typefrac[idx] = np.mean(p_el_raw_values[gals_in_bin_raw])
-        p_sp_raw_typefrac[idx] = np.mean(p_sp_raw_values[gals_in_bin_raw])
-        p_xx_raw_typefrac[idx] = np.mean(p_xx_raw_values[gals_in_bin_raw])
-        p_yy_raw_typefrac[idx] = np.mean(p_yy_raw_values[gals_in_bin_raw])
-        p_zz_raw_typefrac[idx] = np.mean(p_zz_raw_values[gals_in_bin_raw])
-
-        gals_in_bin_adj = (redshift_adj >= zbin) & (redshift_adj < (zbin+zwidth))
-        weights_adj = task_counts_adj[gals_in_bin_adj]
-        p_el_adj_typefrac[idx] = np.mean(p_el_adj_values[gals_in_bin_adj])
-        p_sp_adj_typefrac[idx] = np.mean(p_sp_adj_values[gals_in_bin_adj])
-        p_xx_adj_typefrac[idx] = np.mean(p_xx_adj_values[gals_in_bin_adj])
-        p_yy_adj_typefrac[idx] = np.mean(p_yy_adj_values[gals_in_bin_adj])
-        p_zz_adj_typefrac[idx] = np.mean(p_zz_adj_values[gals_in_bin_adj])
-
-        gals_in_bin_maglim_raw = (redshift_raw[maglim_raw] >= zbin) & (redshift_raw[maglim_raw] < (zbin+zwidth))
-        weights_maglim_raw = task_counts_maglim_raw[gals_in_bin_maglim_raw]
-        p_el_raw_typefrac_maglim[idx] = np.sum(p_el_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_sp_raw_typefrac_maglim[idx] = np.sum(p_sp_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_xx_raw_typefrac_maglim[idx] = np.sum(p_xx_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_yy_raw_typefrac_maglim[idx] = np.sum(p_yy_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_zz_raw_typefrac_maglim[idx] = np.sum(p_zz_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-
-        gals_in_bin_maglim_adj = (redshift_adj[maglim_adj] >= zbin) & (redshift_adj[maglim_adj] < (zbin+zwidth))
-        weights_maglim_adj = task_counts_maglim_adj[gals_in_bin_maglim_adj]
-        p_el_adj_typefrac_maglim[idx] = np.sum(p_el_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_sp_adj_typefrac_maglim[idx] = np.sum(p_sp_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_xx_adj_typefrac_maglim[idx] = np.sum(p_xx_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_yy_adj_typefrac_maglim[idx] = np.sum(p_yy_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_zz_adj_typefrac_maglim[idx] = np.sum(p_zz_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-
-    pickle.dump(p_el_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-
-    pickle.dump(p_xx_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_yy_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_zz_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var5_str,s82_str),'wb')) 
-    pickle.dump(p_zz_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var5_str,s82_str),'wb')) 
-    pickle.dump(p_zz_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var5_str,s82_str),'wb')) 
-    pickle.dump(p_zz_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var5_str,s82_str),'wb')) 
-
-    # Plot results
-
-    fig = plt.figure(12, (12,7))
-    fig.clf()
-    ax1 = fig.add_subplot(121)
-    font = FontProperties()
-
-    ax1.plot(zplotbins, p_el_raw_typefrac, color='r', linestyle='-' ,linewidth=2)
-    ax1.plot(zplotbins, p_sp_raw_typefrac, color='b', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_xx_raw_typefrac, color='m', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_yy_raw_typefrac, color='g', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_zz_raw_typefrac, color='c', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_el_adj_typefrac, color='r', linestyle='-' ,linewidth=4)
-    ax1.plot(zplotbins, p_sp_adj_typefrac, color='b', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_xx_adj_typefrac, color='m', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_yy_adj_typefrac, color='g', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_zz_adj_typefrac, color='c', linestyle='--',linewidth=4)
-
-    font.set_size(10)
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'raw %s' % var4_str, 'raw %s' % var5_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str, 'debiased %s' % var4_str, 'debiased %s' % var5_str), 'upper left', shadow=True, fancybox=True, prop=font)
-
-    ax1.set_xlim(-0.01,0.25)
-    ax1.set_ylim(-0.01,1.2)
-    ax1.set_xlabel('redshift')
-    ax1.set_ylabel('fraction')
-    ax1.set_title('All GZ2 galaxies with redshifts, %s' % var_def)
-    ax1.text(0.15,1.0,str(len(p_el_raw_values))+' galaxies')
-
-    ax2 = fig.add_subplot(122)
-
-    ax2.plot(zplotbins, p_el_raw_typefrac_maglim, color='r', linestyle='-' ,linewidth=2)
-    ax2.plot(zplotbins, p_sp_raw_typefrac_maglim, color='b', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_xx_raw_typefrac_maglim, color='m', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_yy_raw_typefrac_maglim, color='g', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_zz_raw_typefrac_maglim, color='c', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_el_adj_typefrac_maglim, color='r', linestyle='-' ,linewidth=4)
-    ax2.plot(zplotbins, p_sp_adj_typefrac_maglim, color='b', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_xx_adj_typefrac_maglim, color='m', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_yy_adj_typefrac_maglim, color='g', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_zz_adj_typefrac_maglim, color='c', linestyle='--',linewidth=4)
-
-    ax2.axvline(zlo, color='k', linestyle='--')
-    ax2.axvline(zhi, color='k', linestyle='--')
-
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'raw %s' % var4_str, 'raw %s' % var5_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str, 'debiased %s' % var4_str, 'debiased %s' % var5_str), 'upper left', shadow=True, fancybox=True, prop=font)
-
-    ax2.set_xlim(-0.01,0.25)
-    ax2.set_ylim(-0.01,1.2)
-    ax2.set_xlabel('redshift')
-    ax2.set_ylabel('fraction')
-    ax2.set_title(r'$M_r < %4.2f$' % maglimval)
-    ax2.text(0.15,1.0,(str(len(p_el_adj_values))+' galaxies'))
-
-    fig.savefig(plots_path+'%s_%stype_fractions_n5.png' % (task_dict['var_def'],s82_str), dpi=200)
-
-    return None
-
-def plot_type_fractions_n4(task_dict, zlo = 0.01, zhi=0.085, stripe82=False):
-
-    # Load data 
-
-    if stripe82:
-        s82_str = 'stripe82_'
-        p = pyfits.open(gz2_stripe82_data_file)
-    else:
-        s82_str = ''
-        p = pyfits.open(gz2_full_data_file)
-
-    gzdata = p[1].data
-    p.close()
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-    p_el_raw_values = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw_values = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw_values = gzdata_withz[task_dict['task_names_wf'][2]]
-    p_yy_raw_values = gzdata_withz[task_dict['task_names_wf'][3]]
-    task_counts = gzdata_withz[task_dict['task_name_count']]
-
-    zwidth = 0.02
-    zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
-
-    n = len(task_dict['var_str'])
-    var_def = task_dict['var_def']
-    var1_str,var2_str,var3_str,var4_str = task_dict['var_str']
-
-    p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var1_str,s82_str),'rb')) 
-    p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var2_str,s82_str),'rb')) 
-    p_xx_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var3_str,s82_str),'rb')) 
-    p_yy_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var4_str,s82_str),'rb')) 
-    corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (var_def,s82_str),'rb')) 
-
-    # Only plot galaxies that had a correction available
-
-    corrgood = corrarr > unknown_ratio
-    elgood = np.isfinite(p_el_adj_values)
-    spgood = np.isfinite(p_sp_adj_values)
-    xxgood = np.isfinite(p_xx_adj_values)
-    yygood = np.isfinite(p_yy_adj_values)
-    goodinds = corrgood & elgood & spgood & xxgood & yygood
-    p_el_adj_values = p_el_adj_values[goodinds]
-    p_sp_adj_values = p_sp_adj_values[goodinds]
-    p_xx_adj_values = p_xx_adj_values[goodinds]
-    p_yy_adj_values = p_yy_adj_values[goodinds]
-    task_counts_adj = task_counts[goodinds]
-
-    # Empty arrays for the binned type fractions
-
-    p_el_raw_typefrac = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac = np.zeros_like(zplotbins)
-    p_el_adj_typefrac = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac = np.zeros_like(zplotbins)
-    p_el_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_el_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_yy_raw_typefrac = np.zeros_like(zplotbins)
-    p_yy_adj_typefrac = np.zeros_like(zplotbins)
-    p_yy_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_yy_adj_typefrac_maglim = np.zeros_like(zplotbins)
-
-    """
-    Method 1: take the mean of the raw likelihoods for each galaxy per redshift bin
-    Method 2: take the mean of each likelihood weighted by the total number of votes
-
-    Results are within 5% of each other (fraction of < 0.01) at all redshifts.
-    """
-
-    # Create a second, magnitude-limited sample
-    
-    maglimval = appmag_lim - cosmology.dmod_flat(zhi)
-    
-    mr_raw = mr
-    redshift_raw = redshift
-    maglim_raw = mr_raw < maglimval
-    task_counts_maglim_raw = task_counts[maglim_raw]
-    p_el_raw_values_maglim = p_el_raw_values[maglim_raw]
-    p_sp_raw_values_maglim = p_sp_raw_values[maglim_raw]
-    p_xx_raw_values_maglim = p_xx_raw_values[maglim_raw]
-    p_yy_raw_values_maglim = p_yy_raw_values[maglim_raw]
-
-    mr_adj = mr[goodinds]
-    redshift_adj = redshift[goodinds]
-    maglim_adj = mr_adj < maglimval
-    task_counts_maglim_adj = task_counts_adj[maglim_adj]
-    p_el_adj_values_maglim = p_el_adj_values[maglim_adj]
-    p_sp_adj_values_maglim = p_sp_adj_values[maglim_adj]
-    p_xx_adj_values_maglim = p_xx_adj_values[maglim_adj]
-    p_yy_adj_values_maglim = p_yy_adj_values[maglim_adj]
-
-    # Loop over redshift bin and find the type fractions at each slice
-
-    for idx,zbin in enumerate(zplotbins):
-        gals_in_bin_raw = (redshift_raw >= zbin) & (redshift_raw < (zbin+zwidth))
-        weights_raw = task_counts[gals_in_bin_raw]
-        p_el_raw_typefrac[idx] = np.mean(p_el_raw_values[gals_in_bin_raw])
-        p_sp_raw_typefrac[idx] = np.mean(p_sp_raw_values[gals_in_bin_raw])
-        p_xx_raw_typefrac[idx] = np.mean(p_xx_raw_values[gals_in_bin_raw])
-        p_yy_raw_typefrac[idx] = np.mean(p_yy_raw_values[gals_in_bin_raw])
-
-        gals_in_bin_adj = (redshift_adj >= zbin) & (redshift_adj < (zbin+zwidth))
-        weights_adj = task_counts_adj[gals_in_bin_adj]
-        p_el_adj_typefrac[idx] = np.mean(p_el_adj_values[gals_in_bin_adj])
-        p_sp_adj_typefrac[idx] = np.mean(p_sp_adj_values[gals_in_bin_adj])
-        p_xx_adj_typefrac[idx] = np.mean(p_xx_adj_values[gals_in_bin_adj])
-        p_yy_adj_typefrac[idx] = np.mean(p_yy_adj_values[gals_in_bin_adj])
-
-        gals_in_bin_maglim_raw = (redshift_raw[maglim_raw] >= zbin) & (redshift_raw[maglim_raw] < (zbin+zwidth))
-        weights_maglim_raw = task_counts_maglim_raw[gals_in_bin_maglim_raw]
-        p_el_raw_typefrac_maglim[idx] = np.sum(p_el_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_sp_raw_typefrac_maglim[idx] = np.sum(p_sp_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_xx_raw_typefrac_maglim[idx] = np.sum(p_xx_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_yy_raw_typefrac_maglim[idx] = np.sum(p_yy_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-
-        gals_in_bin_maglim_adj = (redshift_adj[maglim_adj] >= zbin) & (redshift_adj[maglim_adj] < (zbin+zwidth))
-        weights_maglim_adj = task_counts_maglim_adj[gals_in_bin_maglim_adj]
-        p_el_adj_typefrac_maglim[idx] = np.sum(p_el_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_sp_adj_typefrac_maglim[idx] = np.sum(p_sp_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_xx_adj_typefrac_maglim[idx] = np.sum(p_xx_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-        p_yy_adj_typefrac_maglim[idx] = np.sum(p_yy_adj_values_maglim[gals_in_bin_maglim_adj] * weights_maglim_adj) / np.sum(weights_maglim_adj)
-
-    pickle.dump(p_el_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-
-    pickle.dump(p_xx_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_yy_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var4_str,s82_str),'wb')) 
-    pickle.dump(p_yy_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var4_str,s82_str),'wb')) 
-
-    # Plot results
-
-    fig = plt.figure(12, (12,7))
-    fig.clf()
-    ax1 = fig.add_subplot(121)
-    font = FontProperties()
-
-    ax1.plot(zplotbins, p_el_raw_typefrac, color='r', linestyle='-' ,linewidth=2)
-    ax1.plot(zplotbins, p_sp_raw_typefrac, color='b', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_xx_raw_typefrac, color='m', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_yy_raw_typefrac, color='g', linestyle='--',linewidth=2)
-    ax1.plot(zplotbins, p_el_adj_typefrac, color='r', linestyle='-' ,linewidth=4)
-    ax1.plot(zplotbins, p_sp_adj_typefrac, color='b', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_xx_adj_typefrac, color='m', linestyle='--',linewidth=4)
-    ax1.plot(zplotbins, p_yy_adj_typefrac, color='g', linestyle='--',linewidth=4)
-
-    font.set_size(10)
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'raw %s' % var4_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str, 'debiased %s' % var4_str), 'upper left', shadow=True, fancybox=True, prop=font)
-
-    ax1.set_xlim(-0.01,0.25)
-    ax1.set_ylim(-0.01,1.2)
-    ax1.set_xlabel('redshift')
-    ax1.set_ylabel('fraction')
-    ax1.set_title('All GZ2 galaxies with redshifts, %s' % var_def)
-    ax1.text(0.15,1.0,str(len(p_el_raw_values))+' galaxies')
-
-    ax2 = fig.add_subplot(122)
-
-    ax2.plot(zplotbins, p_el_raw_typefrac_maglim, color='r', linestyle='-' ,linewidth=2)
-    ax2.plot(zplotbins, p_sp_raw_typefrac_maglim, color='b', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_xx_raw_typefrac_maglim, color='m', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_yy_raw_typefrac_maglim, color='g', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_el_adj_typefrac_maglim, color='r', linestyle='-' ,linewidth=4)
-    ax2.plot(zplotbins, p_sp_adj_typefrac_maglim, color='b', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_xx_adj_typefrac_maglim, color='m', linestyle='--',linewidth=4)
-    ax2.plot(zplotbins, p_yy_adj_typefrac_maglim, color='g', linestyle='--',linewidth=4)
-
-    ax2.axvline(zlo, color='k', linestyle='--')
-    ax2.axvline(zhi, color='k', linestyle='--')
-
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'raw %s' % var4_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str, 'debiased %s' % var4_str), 'upper left', shadow=True, fancybox=True, prop=font)
-
-    ax2.set_xlim(-0.01,0.25)
-    ax2.set_ylim(-0.01,1.2)
-    ax2.set_xlabel('redshift')
-    ax2.set_ylabel('fraction')
-    ax2.set_title(r'$M_r < %4.2f$' % maglimval)
-    ax2.text(0.15,1.0,(str(len(p_el_adj_values))+' galaxies'))
-
-    fig.savefig(plots_path+'%s_%stype_fractions_n4.png' % (task_dict['var_def'],s82_str), dpi=200)
-
-    return None
-
-def plot_type_fractions_n3(task_dict, zlo = 0.01, zhi=0.085, stripe82=False):
-
-    # Load data 
-
-    if stripe82:
-        s82_str = 'stripe82_'
-        p = pyfits.open(gz2_stripe82_data_file)
-    else:
-        s82_str = ''
-        p = pyfits.open(gz2_full_data_file)
-
-    gzdata = p[1].data
-    p.close()
-    gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
-
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-    redshift = gzdata_withz['REDSHIFT']
-    mr = gzdata_withz['PETROMAG_MR']
-    r50_kpc = gzdata_withz['PETROR50_R_KPC']
-    p_el_raw_values = gzdata_withz[task_dict['task_names_wf'][0]]
-    p_sp_raw_values = gzdata_withz[task_dict['task_names_wf'][1]]
-    p_xx_raw_values = gzdata_withz[task_dict['task_names_wf'][2]]
-    task_counts = gzdata_withz[task_dict['task_name_count']]
-
-    zwidth = 0.02
-    zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
-
-    n = len(task_dict['var_str'])
-    var_def = task_dict['var_def']
-    var1_str,var2_str,var3_str = task_dict['var_str']
-
-    p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var1_str,s82_str),'rb')) 
-    p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var2_str,s82_str),'rb')) 
-    p_xx_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var3_str,s82_str),'rb')) 
-    corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (var_def,s82_str),'rb')) 
-
-    # Only plot galaxies that had a correction available
-
-    corrgood = corrarr > unknown_ratio
-    elgood = np.isfinite(p_el_adj_values)
-    spgood = np.isfinite(p_sp_adj_values)
-    xxgood = np.isfinite(p_xx_adj_values)
-    task_lim = task_counts > task_dict['min_classifications']
-
-    goodinds = corrgood & elgood & spgood & xxgood & task_lim
-
-    redshift = redshift[goodinds]
-    r50_kpc = r50_kpc[goodinds]
-    mr = mr[goodinds]
-
-    p_el_raw_values = p_el_raw_values[goodinds]
-    p_sp_raw_values = p_sp_raw_values[goodinds]
-    p_xx_raw_values = p_xx_raw_values[goodinds]
-
-    p_el_adj_values = p_el_adj_values[goodinds]
-    p_sp_adj_values = p_sp_adj_values[goodinds]
-    p_xx_adj_values = p_xx_adj_values[goodinds]
-
-    corrarr = corrarr[goodinds]
-
-    task_counts = task_counts[goodinds]
-
-    # Empty arrays for the binned type fractions
-
-    p_el_raw_typefrac = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac = np.zeros_like(zplotbins)
-    p_el_adj_typefrac = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac = np.zeros_like(zplotbins)
-    p_el_raw_typefrac_err = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac_err = np.zeros_like(zplotbins)
-    p_el_adj_typefrac_err = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac_err = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac_err = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac_err = np.zeros_like(zplotbins)
-    p_el_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_el_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac_maglim = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac_maglim = np.zeros_like(zplotbins)
-    p_el_raw_typefrac_maglim_err = np.zeros_like(zplotbins)
-    p_sp_raw_typefrac_maglim_err = np.zeros_like(zplotbins)
-    p_el_adj_typefrac_maglim_err = np.zeros_like(zplotbins)
-    p_sp_adj_typefrac_maglim_err = np.zeros_like(zplotbins)
-    p_xx_raw_typefrac_maglim_err = np.zeros_like(zplotbins)
-    p_xx_adj_typefrac_maglim_err = np.zeros_like(zplotbins)
-
-    """
-    Method 1: take the mean of the raw likelihoods for each galaxy per redshift bin
-    Method 2: take the mean of each likelihood weighted by the total number of votes
-
-    Results are within 5% of each other (fraction of < 0.01) at all redshifts.
-    """
-
-    # Create a second, magnitude-limited sample
-    
-    maglimval = appmag_lim - cosmology.dmod_flat(zhi)
-    
     maglim = mr < maglimval
     task_counts_maglim = task_counts[maglim]
-    p_el_raw_values_maglim = p_el_raw_values[maglim]
-    p_sp_raw_values_maglim = p_sp_raw_values[maglim]
-    p_xx_raw_values_maglim = p_xx_raw_values[maglim]
 
-    p_el_adj_values_maglim = p_el_adj_values[maglim]
-    p_sp_adj_values_maglim = p_sp_adj_values[maglim]
-    p_xx_adj_values_maglim = p_xx_adj_values[maglim]
+    p_raw_maglim = p_raw[:,maglim]
+    p_adj_maglim = p_adj[:,maglim]
 
     # Loop over redshift bin and find the type fractions at each slice
 
     for idx,zbin in enumerate(zplotbins):
-        gals_in_bin_raw = (redshift_raw >= zbin) & (redshift_raw < (zbin+zwidth))
-        weights_raw = task_counts[gals_in_bin_raw]
-        p_el_raw_typefrac[idx] = np.mean(p_el_raw_values[gals_in_bin_raw])
-        p_sp_raw_typefrac[idx] = np.mean(p_sp_raw_values[gals_in_bin_raw])
-        p_xx_raw_typefrac[idx] = np.mean(p_xx_raw_values[gals_in_bin_raw])
-        p_el_raw_typefrac_err[idx] = tsem(p_el_raw_values[gals_in_bin_raw])
-        p_sp_raw_typefrac_err[idx] = tsem(p_sp_raw_values[gals_in_bin_raw])
-        p_xx_raw_typefrac_err[idx] = tsem(p_xx_raw_values[gals_in_bin_raw])
 
-        gals_in_bin_adj = (redshift_adj >= zbin) & (redshift_adj < (zbin+zwidth))
-        weights_adj = task_counts[gals_in_bin_adj]
-        p_el_adj_typefrac[idx] = np.mean(p_el_adj_values[gals_in_bin_adj])
-        p_sp_adj_typefrac[idx] = np.mean(p_sp_adj_values[gals_in_bin_adj])
-        p_xx_adj_typefrac[idx] = np.mean(p_xx_adj_values[gals_in_bin_adj])
-        p_el_adj_typefrac_err[idx] = tsem(p_el_adj_values[gals_in_bin_adj])
-        p_sp_adj_typefrac_err[idx] = tsem(p_sp_adj_values[gals_in_bin_adj])
-        p_xx_adj_typefrac_err[idx] = tsem(p_xx_adj_values[gals_in_bin_adj])
+        gals_in_bin = (redshift >= zbin) & (redshift < (zbin+zwidth))
 
-        gals_in_bin_maglim_raw = (redshift_raw[maglim_raw] >= zbin) & (redshift_raw[maglim_raw] < (zbin+zwidth))
-        weights_maglim_raw = task_counts_maglim[gals_in_bin_maglim_raw]
-        """
-        p_el_raw_typefrac_maglim[idx] = np.sum(p_el_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_sp_raw_typefrac_maglim[idx] = np.sum(p_sp_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        p_xx_raw_typefrac_maglim[idx] = np.sum(p_xx_raw_values_maglim[gals_in_bin_maglim_raw] * weights_maglim_raw) / np.sum(weights_maglim_raw)
-        """
-        p_el_raw_typefrac_maglim[idx] = np.mean(p_el_raw_values_maglim[gals_in_bin_maglim_raw])
-        p_sp_raw_typefrac_maglim[idx] = np.mean(p_sp_raw_values_maglim[gals_in_bin_maglim_raw])
-        p_xx_raw_typefrac_maglim[idx] = np.mean(p_xx_raw_values_maglim[gals_in_bin_maglim_raw])
-        p_el_raw_typefrac_maglim_err[idx] = tsem(p_el_raw_values_maglim[gals_in_bin_maglim_raw])
-        p_sp_raw_typefrac_maglim_err[idx] = tsem(p_sp_raw_values_maglim[gals_in_bin_maglim_raw])
-        p_xx_raw_typefrac_maglim_err[idx] = tsem(p_xx_raw_values_maglim[gals_in_bin_maglim_raw])
+        p_raw_typefrac[:,idx] = np.mean(p_raw[:,gals_in_bin],axis=1)
+        p_adj_typefrac[:,idx] = np.mean(p_adj[:,gals_in_bin],axis=1)
+        p_raw_typefrac_err[:,idx] = np.std(p_raw[:,gals_in_bin],axis=1)
+        p_adj_typefrac_err[:,idx] = np.std(p_adj[:,gals_in_bin],axis=1)
 
-        gals_in_bin_maglim_adj = (redshift_adj[maglim_adj] >= zbin) & (redshift_adj[maglim_adj] < (zbin+zwidth))
-        weights_maglim_adj = task_counts_maglim[gals_in_bin_maglim_adj]
+        gals_in_bin_maglim = (redshift[maglim] >= zbin) & (redshift[maglim] < (zbin+zwidth))
 
-        p_el_adj_typefrac_maglim[idx] =  np.mean(p_el_adj_values_maglim[gals_in_bin_maglim_adj])
-        p_sp_adj_typefrac_maglim[idx] =  np.mean(p_sp_adj_values_maglim[gals_in_bin_maglim_adj])
-        p_xx_adj_typefrac_maglim[idx] =  np.mean(p_xx_adj_values_maglim[gals_in_bin_maglim_adj])
-        p_el_adj_typefrac_maglim_err[idx] = tsem(p_el_adj_values_maglim[gals_in_bin_maglim_adj])
-        p_sp_adj_typefrac_maglim_err[idx] = tsem(p_sp_adj_values_maglim[gals_in_bin_maglim_adj])
-        p_xx_adj_typefrac_maglim_err[idx] = tsem(p_xx_adj_values_maglim[gals_in_bin_maglim_adj])
+        p_raw_typefrac_maglim[:,idx] = np.mean(p_raw_maglim[:,gals_in_bin_maglim],axis=1)
+        p_adj_typefrac_maglim[:,idx] = np.mean(p_adj_maglim[:,gals_in_bin_maglim],axis=1)
+        p_raw_typefrac_err_maglim[:,idx] = np.std(p_raw_maglim[:,gals_in_bin_maglim],axis=1)
+        p_adj_typefrac_err_maglim[:,idx] = np.std(p_adj_maglim[:,gals_in_bin_maglim],axis=1)
 
-    pickle.dump(p_el_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-    pickle.dump(p_el_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'wb')) 
-    pickle.dump(p_sp_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'wb')) 
-
-    pickle.dump(p_xx_raw_typefrac,        open(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac,        open(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_raw_typefrac_maglim, open(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
-    pickle.dump(p_xx_adj_typefrac_maglim, open(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var3_str,s82_str),'wb')) 
+    pickle.dump(p_raw_typefrac,        open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],s82_str),'wb')) 
+    pickle.dump(p_adj_typefrac,        open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],s82_str),'wb')) 
+    pickle.dump(p_raw_typefrac_maglim, open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'wb')) 
+    pickle.dump(p_adj_typefrac_maglim, open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'wb')) 
 
     # Plot results
 
     fig = plt.figure(12, (12,7))
     fig.clf()
+    colorarr = ['r','b','m','g','c','y'][::-1]
+    legend_raw_str = []
+    legend_adj_str = []
+
     ax1 = fig.add_subplot(121)
+
     font = FontProperties()
+    font.set_size(12)
 
-    ax1.errorbar(zplotbins, p_el_raw_typefrac, yerr=p_el_raw_typefrac_err, color='r', linestyle='-' ,linewidth=2, capsize=0, elinewidth=1)
-    ax1.errorbar(zplotbins, p_sp_raw_typefrac, yerr=p_sp_raw_typefrac_err, color='b', linestyle='--',linewidth=2, capsize=0, elinewidth=1)
-    ax1.errorbar(zplotbins, p_xx_raw_typefrac, yerr=p_xx_raw_typefrac_err, color='m', linestyle='--',linewidth=2, capsize=0, elinewidth=1)
-    ax1.errorbar(zplotbins, p_el_adj_typefrac, yerr=p_el_adj_typefrac_err, color='r', linestyle='-' ,linewidth=4, capsize=0, elinewidth=2)
-    ax1.errorbar(zplotbins, p_sp_adj_typefrac, yerr=p_sp_adj_typefrac_err, color='b', linestyle='--',linewidth=4, capsize=0, elinewidth=2)
-    ax1.errorbar(zplotbins, p_xx_adj_typefrac, yerr=p_xx_adj_typefrac_err, color='m', linestyle='--',linewidth=4, capsize=0, elinewidth=2)
+    for idx,task_str in enumerate(task_dict['var_str']):
+        linecolor = colorarr.pop()
+        ax1.plot(zplotbins, p_raw_typefrac[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
+        ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle='-' ,linewidth=4)
+        #ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
+        #   color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+        #ax1.errorbar(zplotbins, p_adj_typefrac[idx,:], yerr = p_adj_typefrac_err[idx,:], 
+        #   color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
-    font.set_size(10)
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str), 'upper left', shadow=True, fancybox=True, prop=font)
+        legend_raw_str.append('raw %s' % task_str)
+        legend_adj_str.append('adj %s' % task_str)
+
+    plt.legend(legend_raw_str + legend_adj_str, 'upper left', shadow=True, fancybox=True, prop=font)
 
     ax1.set_xlim(-0.01,0.25)
     ax1.set_ylim(-0.01,1.2)
     ax1.set_xlabel('redshift')
-    ax1.set_ylabel('mean vote fraction')
-    ax1.set_title('All GZ2 galaxies with redshifts, %s' % var_def)
-    ax1.text(0.15,1.0,str(len(p_el_raw_values))+' galaxies')
+    ax1.set_ylabel('fraction')
+    ax1.set_title('All GZ2 galaxies with redshifts, %s' % task_dict['var_def'])
+    ax1.text(0.15,1.0,'%i galaxies' % p_raw.shape[1])
 
     ax2 = fig.add_subplot(122)
 
-    ax2.errorbar(zplotbins, p_el_raw_typefrac_maglim, yerr=p_el_raw_typefrac_maglim_err, color='r', linestyle='-' ,linewidth=2, capsize=0, elinewidth=1)
-    ax2.errorbar(zplotbins, p_sp_raw_typefrac_maglim, yerr=p_sp_raw_typefrac_maglim_err, color='b', linestyle='--',linewidth=2, capsize=0, elinewidth=1)
-    ax2.errorbar(zplotbins, p_xx_raw_typefrac_maglim, yerr=p_xx_raw_typefrac_maglim_err, color='m', linestyle='--',linewidth=2, capsize=0, elinewidth=1)
-    ax2.errorbar(zplotbins, p_el_adj_typefrac_maglim, yerr=p_el_adj_typefrac_maglim_err, color='r', linestyle='-' ,linewidth=4, capsize=0, elinewidth=2)
-    ax2.errorbar(zplotbins, p_sp_adj_typefrac_maglim, yerr=p_sp_adj_typefrac_maglim_err, color='b', linestyle='--',linewidth=4, capsize=0, elinewidth=2)
-    ax2.errorbar(zplotbins, p_xx_adj_typefrac_maglim, yerr=p_xx_adj_typefrac_maglim_err, color='m', linestyle='--',linewidth=4, capsize=0, elinewidth=2)
+    colorarr = ['r','b','m','g','c','y'][::-1]
+    for idx,task_str in enumerate(task_dict['var_str']):
+        linecolor = colorarr.pop()
+        ax2.plot(zplotbins, p_raw_typefrac_maglim[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
+        ax2.plot(zplotbins, p_adj_typefrac_maglim[idx,:], color=linecolor, linestyle='-' ,linewidth=4)
+        #ax2.errorbar(zplotbins, p_raw_typefrac_maglim[idx,:], yerr = p_raw_typefrac_err_maglim[idx,:], 
+        #   color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+        #ax2.errorbar(zplotbins, p_adj_typefrac_maglim[idx,:], yerr = p_adj_typefrac_err_maglim[idx,:], 
+        #   color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
-    ax2.axvline(zlo, color='k', linestyle='--')
+    #ax2.axvline(zlo, color='k', linestyle='--')
     ax2.axvline(zhi, color='k', linestyle='--')
 
-    plt.legend(('raw %s' % var1_str, 'raw %s' % var2_str, 'raw %s' % var3_str, 'debiased %s' % var1_str, 'debiased %s' % var2_str, 'debiased %s' % var3_str), 'upper left', shadow=True, fancybox=True, prop=font)
+    plt.legend(legend_raw_str + legend_adj_str, 'upper left', shadow=True, fancybox=True, prop=font)
 
     ax2.set_xlim(-0.01,0.25)
     ax2.set_ylim(-0.01,1.2)
     ax2.set_xlabel('redshift')
-    ax2.set_ylabel('mean vote fraction')
+    ax2.set_ylabel('fraction')
     ax2.set_title(r'$M_r < %4.2f$' % maglimval)
-    ax2.text(0.15,1.0,(str(len(p_el_adj_values))+' galaxies'))
+    ax2.text(0.15,1.0,'%i galaxies' % p_raw_maglim.shape[1])
 
-    fig.savefig(plots_path+'%s_%stype_fractions_n3.png' % (task_dict['var_def'],s82_str), dpi=200)
+    fig.savefig(plots_path+'%s_%stype_fractions_new.png' % (task_dict['var_def'],s82_str), dpi=200)
 
     return None
 
