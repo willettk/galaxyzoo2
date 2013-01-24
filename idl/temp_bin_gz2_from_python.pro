@@ -7,8 +7,8 @@ magstep =  0.250
 sizemin =  0.000 
 sizemax = 15.000 
 sizestep =  0.500 
-task_names_wf = "t01_smooth_or_features_a01_smooth_weighted_fraction, t01_smooth_or_features_a02_features_or_disk_weighted_fraction, t01_smooth_or_features_a03_star_or_artifact_weighted_fraction" 
-var_def = "task01" 
+task_names_wf = "t08_odd_feature_a19_ring_weighted_fraction, t08_odd_feature_a20_lens_or_arc_weighted_fraction, t08_odd_feature_a21_disturbed_weighted_fraction, t08_odd_feature_a22_irregular_weighted_fraction, t08_odd_feature_a23_other_weighted_fraction, t08_odd_feature_a24_merger_weighted_fraction, t08_odd_feature_a38_dust_lane_weighted_fraction" 
+var_def = "task08" 
 
 ;+
 ; NAME:

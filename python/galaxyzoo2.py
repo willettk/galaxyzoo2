@@ -902,6 +902,8 @@ def get_task_dict(task):
         task_dict['wp_type'] = 'weighted'
         task_dict['reverse'] = True
         task_dict['ratio_type'] = 'log'
+        task_dict['min_classifications'] = 5
+        task_dict['min_galperbin'] = 10
 
     if task is 'bulge_shape':
         task_dict['task_name_count'] = 't09_bulge_shape_total_weight'
@@ -916,17 +918,18 @@ def get_task_dict(task):
 
     if task is 'odd_feature':
         task_dict['task_name_count'] = 't08_odd_feature_total_weight'
-        task_dict['task_names_wf'] = ('t08_bulge_shape_a19_ring_weighted_fraction',
-                                      't08_bulge_shape_a20_lens_or_arc_weighted_fraction',
-                                      't08_bulge_shape_a21_disturbed_weighted_fraction',
-                                      't08_bulge_shape_a22_irregular_weighted_fraction',
-                                      't08_bulge_shape_a23_other_weighted_fraction',
-                                      't08_bulge_shape_a24_merger_weighted_fraction',
-                                      't08_bulge_shape_a38_dust_lane_weighted_fraction')
+        task_dict['task_names_wf'] = ('t08_odd_feature_a19_ring_weighted_fraction',
+                                      't08_odd_feature_a20_lens_or_arc_weighted_fraction',
+                                      't08_odd_feature_a21_disturbed_weighted_fraction',
+                                      't08_odd_feature_a22_irregular_weighted_fraction',
+                                      't08_odd_feature_a23_other_weighted_fraction',
+                                      't08_odd_feature_a24_merger_weighted_fraction',
+                                      't08_odd_feature_a38_dust_lane_weighted_fraction')
         task_dict['var_str'] = ('ring','lens','disturbed','irregular','other','merger','dustlane')
         task_dict['var_def'] = 'task08'
         task_dict['min_prob'] = 0.5
-        task_dict['min_classifications'] = 10
+        task_dict['min_classifications'] = 5
+        task_dict['min_galperbin'] = 10
 
     return task_dict
 
@@ -934,9 +937,7 @@ def run_task(task_dict,
              nboot = 1, 
              fitbins = 1000,
              plot = True, 
-             unset_vrange = True,
-             vartop=0,
-             varbot=1
+             unset_vrange = True
              ):
     
     tstart = time.time()
@@ -947,47 +948,32 @@ def run_task(task_dict,
     assert type(task_dict) is dict, \
         "First argument in run_task must be a dictionary -- use galaxyzoo2.get_task_dict()"
 
-    # Execute all the fitting tasks and generate plots
+    # Execute all the tasks to bin data, find baseline morphology, fit the baseline, 
+    # and adjust the raw vote fractions
 
-    """
-    if task_dict['bintype'] is 'counts':
-        create_binned_data(task_dict,plot)
-    """
-    if task_dict['bintype'] is 'rawlikelihood':
-        #create_binned_data_rawlikelihood(task_dict,plot)
-        bin_data_idl(task_dict)
+    bin_data_idl(task_dict)
 
-    determine_ratio_baseline(task_dict,vartop,varbot)
-    determine_ratio_baseline_sigma(task_dict,plot,vartop,varbot)
-    fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot)
-    determine_baseline_correction(task_dict,vartop,varbot)
+    ntask = len(task_dict['task_names_wf'])
+    for idx1, vartop in enumerate(np.arange(ntask)):
+        setdiff = np.concatenate((np.arange(vartop),np.arange(ntask - (vartop+1)) + (vartop+1) ))
+        for idx2, varbot in enumerate(setdiff):
 
+            determine_ratio_baseline(task_dict,vartop,varbot)
+            determine_ratio_baseline_sigma(task_dict,plot,vartop,varbot)
+            fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot)
+            determine_baseline_correction(task_dict,vartop,varbot)
+
+            if plot:
+                plot_ratio_baseline(task_dict,unset_vrange,vartop=vartop,varbot=varbot)
+                plot_ratio_baseline_fit(task_dict,fitbins,unset_vrange,vartop=vartop,varbot=varbot)
+                plot_ratio_baseline_redshift(task_dict,vartop,varbot)
+                plot_baseline_correction(task_dict,vartop=vartop,varbot=varbot)
+
+
+    adjust_probabilities_new(task_dict)
     if plot:
-        plot_ratio_baseline(task_dict,unset_vrange,vartop=vartop,varbot=varbot)
-        plot_ratio_baseline_fit(task_dict,fitbins,unset_vrange,vartop=vartop,varbot=varbot)
-        plot_ratio_baseline_redshift(task_dict,vartop,varbot)
-        plot_baseline_correction(task_dict,vartop=vartop,varbot=varbot)
         plot_galaxy_counts(task_dict)
-
-    if len(task_dict['task_names_wf']) == 2:
-        adjust_probabilities(task_dict)
-        plot_type_fractions(task_dict)
-
-    if len(task_dict['task_names_wf']) == 3:
-        adjust_probabilities_n3(task_dict)
-        plot_type_fractions_n3(task_dict)
-
-    if len(task_dict['task_names_wf']) == 4:
-        adjust_probabilities_n4(task_dict)
-        plot_type_fractions_n4(task_dict)
-
-    if len(task_dict['task_names_wf']) == 5:
-        adjust_probabilities_n5(task_dict)
-        plot_type_fractions_n5(task_dict)
-
-    if len(task_dict['task_names_wf']) == 6:
-        adjust_probabilities_n6(task_dict)
-        plot_type_fractions_n6(task_dict)
+        plot_type_fractions_new(task_dict)
 
     warnings.resetwarnings()
 
@@ -996,7 +982,7 @@ def run_task(task_dict,
 
     return None
 
-def run_all_tasks(bintype='rawlikelihood'):
+def run_all_tasks():
 
     """
     Old method (skipping the Pythonic binning):
@@ -1011,16 +997,11 @@ def run_all_tasks(bintype='rawlikelihood'):
 
     tasklist = ['smooth','edgeon','bar','spiral','odd',
                 'bulge','rounded','arms_winding','arms_number',
-                'bulge_shape']
+                'bulge_shape','odd_feature']
 
     for task in tasklist:
         td = get_task_dict(task)
-        td['bintype']=bintype
         run_task(td)
-
-    plot_all_baselines()
-    plot_all_type_fractions()
-    posterplot_debiasing()
 
     tend = time.time()
     print 'Time elapsed for run_all_tasks: %i seconds' % (tend - tstart)
@@ -1316,8 +1297,13 @@ def p_sp_adj(p_el,p_sp,correction,ratio_type):
 
 def p_adj_new(f, corr):
 
-    assert len(f) - 1 == len(corr), \
-        'There must be exactly one more element in the vote fraction (%i) than in the correction (%i) array' % (len(f),len(corr))
+    if corr.ndim > 0:
+        assert len(f) - 1 == len(corr), \
+            'There must be exactly one more element in the vote fraction \
+            (%i) than in the correction (%i) array' % (len(f),len(corr))
+    else:
+        assert len(f) == 2, \
+            'There must be only two vote fractions supplied for a binary correction'
 
     K = 10.**corr
     termlist = K * (f[1:].astype(float)/ f[0].astype(float))
@@ -1330,10 +1316,12 @@ def p_adj_new(f, corr):
 
 def adjust_probabilities_new(task_dict, plot=False, stripe82=False):
 
+    timestart2 = time.time()
+
     # Load in the raw probabilities from the GZ2 catalog
 
     if stripe82:
-        p = pyfits.open(gz2_stripe82_data_file)
+        p = pyfits.open(fits_path+'%s_data_for_idl_stripe82.fits' % task_dict['var_def'])
         s82_str = 'stripe82_'
     else:
         p = pyfits.open(fits_path+'%s_data_for_idl.fits' % task_dict['var_def'])
@@ -1385,8 +1373,6 @@ def adjust_probabilities_new(task_dict, plot=False, stripe82=False):
 
     # Start adjusting
 
-    timestart2 = time.time()
-
     p_adj = np.zeros((ntask,ngals),dtype=float)
     corrarr = np.zeros((ntask-1,ntask-1,ngals),dtype=float) + unknown_ratio
     corrbinarr = np.zeros((3,ntask-1,ntask-1,ngals),dtype=int) + unknown_ratio
@@ -1421,7 +1407,8 @@ def adjust_probabilities_new(task_dict, plot=False, stripe82=False):
                 for fidx, votefrac in enumerate(f):
                     # Need to iterate over the parameter being adjusted
                     votefracs = np.array(list(chain.from_iterable(([votefrac], f[:fidx], f[fidx+1:]))))
-                    p_temp[fidx] = p_adj_new(votefracs,applycorr[fidx,:]) if votefracs[0] > 0. else votefracs[0]
+                    ac = applycorr[fidx,:] if applycorr.ndim > 1 else np.array(applycorr[fidx])
+                    p_temp[fidx] = p_adj_new(votefracs,ac) if votefracs[0] > 0. else votefracs[0]
                     #corrarr[fidx,:,idx] = applycorr[fidx,:]
                     #corrbinarr[:,fidx,:,idx] = np.resize(np.array((zbin,mbin,sbin)),(3,3))
 
@@ -1435,6 +1422,11 @@ def adjust_probabilities_new(task_dict, plot=False, stripe82=False):
             corrbinarr[:,:,idx] = unknown_ratio
             '''
 
+    p_both = np.array((p_raw,p_adj))
+
+    pickle.dump(p_both, open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'], s82_str),'wb')) 
+    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (task_dict['var_def'], s82_str),'wb')) 
+    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (task_dict['var_def'], s82_str),'wb')) 
 
     timeend2 = time.time()
     print ' '
@@ -1443,14 +1435,6 @@ def adjust_probabilities_new(task_dict, plot=False, stripe82=False):
     print '%7i galaxies corrected' % corrcount
     print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
     print ' '
-
-    p.close()
-
-    p_both = np.array((p_raw,p_adj))
-
-    pickle.dump(p_both, open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'], s82_str),'wb')) 
-    pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (task_dict['var_def'], s82_str),'wb')) 
-    pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (task_dict['var_def'], s82_str),'wb')) 
 
     return p_raw,p_adj
 
@@ -1777,7 +1761,6 @@ def plot_type_fractions_new(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, strip
 
     fig = plt.figure(12, (12,7))
     fig.clf()
-    colorarr = ['r','b','m','g','c','y'][::-1]
     legend_raw_str = []
     legend_adj_str = []
 
@@ -1786,19 +1769,25 @@ def plot_type_fractions_new(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, strip
     font = FontProperties()
     font.set_size(12)
 
+    colorarr = ['r','b','m','g','c','y','k'][::-1]
     for idx,task_str in enumerate(task_dict['var_str']):
         linecolor = colorarr.pop()
         ax1.plot(zplotbins, p_raw_typefrac[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
-        ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle='-' ,linewidth=4)
+        legend_raw_str.append('raw %s' % task_str)
+
+    colorarr = ['r','b','m','g','c','y','k'][::-1]
+    for idx,task_str in enumerate(task_dict['var_str']):
+        linecolor = colorarr.pop()
+        ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
+        legend_adj_str.append('adj %s' % task_str)
+
         #ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
         #   color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
         #ax1.errorbar(zplotbins, p_adj_typefrac[idx,:], yerr = p_adj_typefrac_err[idx,:], 
         #   color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
-        legend_raw_str.append('raw %s' % task_str)
-        legend_adj_str.append('adj %s' % task_str)
 
-    plt.legend(legend_raw_str + legend_adj_str, 'upper left', shadow=True, fancybox=True, prop=font)
+    plt.legend(legend_raw_str, 'upper left', shadow=True, fancybox=True, prop=font)
 
     ax1.set_xlim(-0.01,0.25)
     ax1.set_ylim(-0.01,1.2)
@@ -1809,11 +1798,16 @@ def plot_type_fractions_new(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, strip
 
     ax2 = fig.add_subplot(122)
 
-    colorarr = ['r','b','m','g','c','y'][::-1]
+    colorarr = ['r','b','m','g','c','y','k'][::-1]
     for idx,task_str in enumerate(task_dict['var_str']):
         linecolor = colorarr.pop()
         ax2.plot(zplotbins, p_raw_typefrac_maglim[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
-        ax2.plot(zplotbins, p_adj_typefrac_maglim[idx,:], color=linecolor, linestyle='-' ,linewidth=4)
+
+    colorarr = ['r','b','m','g','c','y','k'][::-1]
+    for idx,task_str in enumerate(task_dict['var_str']):
+        linecolor = colorarr.pop()
+        ax2.plot(zplotbins, p_adj_typefrac_maglim[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
+
         #ax2.errorbar(zplotbins, p_raw_typefrac_maglim[idx,:], yerr = p_raw_typefrac_err_maglim[idx,:], 
         #   color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
         #ax2.errorbar(zplotbins, p_adj_typefrac_maglim[idx,:], yerr = p_adj_typefrac_err_maglim[idx,:], 
@@ -1822,7 +1816,8 @@ def plot_type_fractions_new(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, strip
     #ax2.axvline(zlo, color='k', linestyle='--')
     ax2.axvline(zhi, color='k', linestyle='--')
 
-    plt.legend(legend_raw_str + legend_adj_str, 'upper left', shadow=True, fancybox=True, prop=font)
+    #plt.legend(legend_raw_str + legend_adj_str, 'upper left', shadow=True, fancybox=True, prop=font)
+    plt.legend(legend_raw_str, 'upper left', shadow=True, fancybox=True, prop=font)
 
     ax2.set_xlim(-0.01,0.25)
     ax2.set_ylim(-0.01,1.2)
