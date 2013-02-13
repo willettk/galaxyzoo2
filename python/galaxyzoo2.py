@@ -41,6 +41,7 @@ dropbox_figs_path = gz_path+'gz2dropbox/figures/'
 gz2table_data_file = fits_path_main+'gz2table.fits'
 gz2_both_data_file = fits_path_main+'gz2main_table_sample.fits'
 gz2_stripe82_data_file = fits_path_main+'gz2_stripe82_normal.fits'
+gz2_maglim_data_file = fits_path_main+'gz2_original_extra_s82norm_r17_table_sample.fits'
 gz2_full_data_file = fits_path_main+'gz2_original_extra_s82norm_table_sample.fits'
 
 min_ratio = -2.0
@@ -64,7 +65,7 @@ def bin_data_idl(task_dict,
                            ):
 
     tstart = time.time()
-    p = pyfits.open(gz2_full_data_file)
+    p = pyfits.open(gz2_maglim_data_file)
     gzdata = p[1].data
     p.close()
 
@@ -89,6 +90,8 @@ def bin_data_idl(task_dict,
     taskcount_mask = gzdata_hasredshift[task_dict['task_name_count']] < task_dict['min_classifications']
     magnitude_mask = mr > (absmag_lim - absmag_padding)
     size_mask = r90_kpc < (3.0 * ang_scale)
+    s82_maglim_mask = (gzdata_hasredshift['PETROMAG_R'] - gzdata_hasredshift['EXTINCTION_R']) > appmag_lim
+
     """
     Removed the surface brightness requirement - no selection algorithms for the GZ2 sample should depend
     on this, and I'm worried that the signs in the equation below are not correct. 
@@ -110,12 +113,13 @@ def bin_data_idl(task_dict,
     else:
         taskprob_mask = np.zeros(len(gzdata_hasredshift),bool)
 
-    totalmask = magnitude_mask | size_mask | taskcount_mask | taskprob_mask
+    totalmask = magnitude_mask | size_mask | taskcount_mask | taskprob_mask | s82_maglim_mask
 
-    totalmask = magnitude_mask | size_mask | taskcount_mask | taskprob_mask
+    totalmask = magnitude_mask | size_mask | taskcount_mask | taskprob_mask | s82_maglim_mask
 
     print ' '
-    print '%7i galaxies removed from sample due to magnitude cutoff'%(np.sum(magnitude_mask.astype(int)))
+    print '%7i galaxies removed from sample due to absolute magnitude cutoff'%(np.sum(magnitude_mask.astype(int)))
+    print '%7i galaxies removed from sample due to apparent magnitude cutoff'%(np.sum(s82_maglim_mask.astype(int)))
     print '%7i galaxies removed from sample due to angular size cutoff'%(np.sum(size_mask.astype(int)))
     print '%7i galaxies removed from sample due to minimum number (%i) of classifications'%(np.sum(taskcount_mask.astype(int)),task_dict['min_classifications'])
     #print '%7i galaxies removed from sample due to surface brightness cutoff'%(np.sum(surfacebrightness_mask.astype(int)))
@@ -168,10 +172,10 @@ def bin_data_idl(task_dict,
 
     idlfilecheck = True
     while idlfilecheck:
-        idlfilecheck = not os.path.isfile(fits_path_task+'idlfilecreated')
+        idlfilecheck = not os.path.isfile(gz_path+'idlfilecreated')
         time.sleep(0.5)
 
-    os.remove(fits_path_task+'idlfilecreated')
+    os.remove(gz_path+'idlfilecreated')
 
     # End of timer
 
@@ -1705,35 +1709,33 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
 def plot_all_baselines():
 
-    fig = plt.figure(13, (12,7))
+    fig = plt.figure(13)
     fig.clf()
 
-    taskstrings=('smooth','edgeon','bar','spiral','odd')
-    titlenames = ('Smooth or features','Edge-on','Bar', 'Spiral structure','Anything odd?')
+    taskstrings=('smooth','edgeon','bar','spiral')
+    titlenames = ('Smooth or features','Edge-on','Bar', 'Spiral structure')
     smooth = get_task_dict('smooth')
     edgeon = get_task_dict('edgeon')
     bar = get_task_dict('bar')
     spiral = get_task_dict('spiral')
-    odd = get_task_dict('odd')
 
-    tasklist = (smooth,edgeon,bar,spiral,odd)
+    tasklist = (smooth,edgeon,bar,spiral)
 
     for idx,task_dict in enumerate(tasklist):
 
         var_def = task_dict['var_def']
-        var1_str,var2_str = task_dict['var_str']
         bintype = task_dict['bintype']
 
         centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-        ratio_baseline_masked = pickle.load(open(pkl_path+'%s_local_ratio_baseline_masked.pkl' % var_def,'rb'))
+        ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r01_local_ratio_baseline_masked.pkl' % var_def,'rb'))
 
         if task_dict['ratio_type'] is 'linear':
             label_prefix = ''
         else:
             label_prefix = 'log_{10}'
 
-        ax = fig.add_subplot(2,3,idx+1,aspect=1)
+        ax = fig.add_subplot(2,2,idx+1,aspect=1)
 
         cmap = cm.jet
         cmap.set_bad('k')
@@ -1746,14 +1748,14 @@ def plot_all_baselines():
                        origin='lower'
                        )
         ax.set_title(titlenames[idx])
-        if idx in (3,4):
+        if idx in (2,3):
             ax.set_xlabel(r'$M_R [mag]$',fontsize=16)
-        if idx in (0,3):
+        if idx in (0,2):
             ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
         ax.set_aspect('auto')
         rc(('xtick','ytick'), labelsize=12)
         cb = plt.colorbar(im,orientation='vertical')
-        cb.set_label(r'$%s(N_{%s}/N_{%s})$' % (label_prefix,var1_str,var2_str),fontsize=16)
+        cb.set_label(r'$%s(N_{%s}/N_{%s})$' % (label_prefix,task_dict['var_str'][0],task_dict['var_str'][1]),fontsize=16)
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(np.mean(centers_redshift))- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(np.mean(centers_redshift)))**2))
         absmag_lim = appmag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
@@ -1764,29 +1766,37 @@ def plot_all_baselines():
         ax.plot(SBlim_mag, SBlim_size,'w--')
         ax.axhline(size_1arcsec, color='w', linestyle='dashed')
 
+
+    #fig.tight_layout()
     fig.savefig(dropbox_figs_path+'gz2_baselines.eps', dpi=200)
 
     return None
 
 def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False):
 
-    fig = plt.figure(14, (12,7))
+    fig = plt.figure(14)
     fig.clf()
 
-    taskstrings=('smooth','edgeon','bar','spiral','odd')
-    titlenames = ('Smooth or features','Edge-on','Bar', 'Spiral structure','Anything odd?')
+    taskstrings=('smooth','edgeon','bar','spiral')
+    titlenames = ('Smooth or features','Edge-on','Bar', 'Spiral structure')
     smooth = get_task_dict('smooth')
     edgeon = get_task_dict('edgeon')
     bar = get_task_dict('bar')
     spiral = get_task_dict('spiral')
-    odd = get_task_dict('odd')
 
-    tasklist = (smooth,edgeon,bar,spiral,odd)
+    tasklist = (smooth,edgeon,bar,spiral)
+
+    s82_str = 'stripe82_' if stripe82 else ''
 
     for idx,task_dict in enumerate(tasklist):
 
         var_def = task_dict['var_def']
-        var1_str,var2_str = task_dict['var_str']
+        ntask = len(task_dict['var_str'])
+
+        p_raw_typefrac = pickle.load(open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],s82_str),'rb')) 
+        p_adj_typefrac = pickle.load(open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],s82_str),'rb')) 
+        p_raw_typefrac_maglim = pickle.load(open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'rb')) 
+        p_adj_typefrac_maglim = pickle.load(open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'rb')) 
 
         centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
@@ -1794,56 +1804,40 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False):
         zplotbins = np.arange(max(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
         maglimval = appmag_lim - cosmology.dmod_flat(zhi)
 
-        s82_str = ''
-        if stripe82:
-            s82_str = 'stripe82_'
-
-        p_el_raw_typefrac        = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var1_str,s82_str),'rb')) 
-        p_sp_raw_typefrac        = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac.pkl' % (var_def,var2_str,s82_str),'rb')) 
-        p_el_adj_typefrac        = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var1_str,s82_str),'rb')) 
-        p_sp_adj_typefrac        = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac.pkl' % (var_def,var2_str,s82_str),'rb')) 
-        p_el_raw_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'rb')) 
-        p_sp_raw_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'rb')) 
-        p_el_adj_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'rb')) 
-        p_sp_adj_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'rb')) 
-
-        ax2 = fig.add_subplot(2,3,idx+1)
+        ax1 = fig.add_subplot(2,2,idx+1,aspect=1)
         font = FontProperties()
+        legend_raw_str = []
+        legend_adj_str = []
 
-        ax2.plot(zplotbins, p_el_raw_typefrac_maglim, color='r', linestyle='-' ,linewidth=2)
-        ax2.plot(zplotbins, p_sp_raw_typefrac_maglim, color='b', linestyle='--',linewidth=2)
-        ax2.plot(zplotbins, p_el_adj_typefrac_maglim, color='r', linestyle='-' ,linewidth=4)
-        ax2.plot(zplotbins, p_sp_adj_typefrac_maglim, color='b', linestyle='--',linewidth=4)
+        colorarr = ['r','b','m','g','c','y','k'][::-1]
+        for td_idx,task_str in enumerate(task_dict['var_str']):
+            linecolor = colorarr.pop()
+            ax1.plot(zplotbins, p_raw_typefrac_maglim[td_idx,:], color=linecolor, linestyle='-' ,linewidth=2)
+            legend_raw_str.append('raw %s' % task_str)
 
-        ax2.axvline(zlo, color='k', linestyle='--')
-        ax2.axvline(zhi, color='k', linestyle='--')
+        colorarr = ['r','b','m','g','c','y','k'][::-1]
+        for td_idx,task_str in enumerate(task_dict['var_str']):
+            linecolor = colorarr.pop()
+            ax1.plot(zplotbins, p_adj_typefrac_maglim[td_idx,:], color=linecolor, linestyle='--' ,linewidth=4)
+            legend_adj_str.append('adj %s' % task_str)
 
-        plt.legend((var1_str,var2_str), 'center right', shadow=True, fancybox=True, prop=font)
+        ax1.axvline(zlo, color='k', linestyle='--')
+        ax1.axvline(zhi, color='k', linestyle='--')
 
-        ax2.set_xlim(-0.01,0.25)
-        ax2.set_ylim(-0.01,1.01)
-        if idx in (3,4):
-            ax2.set_xlabel('redshift')
-        if idx in (0,3):
-            ax2.set_ylabel('fraction')
-        ax2.set_title(titlenames[idx])
+#        plt.legend(legend_raw_str, 'upper right', shadow=True, fancybox=True, prop=font)
 
-    # Fill the sixth and empty plot with the legend
+        ax1.set_xlim(-0.01,0.19)
+        ax1.set_ylim(-0.01,1.01)
+        if idx in (2,3):
+            ax1.set_xlabel('redshift')
+        if idx in (0,2):
+            ax1.set_ylabel('fraction')
+        ax1.set_aspect('auto')
+        ax1.set_title(titlenames[idx])
+        rc('xtick', labelsize=10)
+        rc('ytick', labelsize=10)
 
-    ax2 = fig.add_subplot(2,3,6)
-    font = FontProperties()
-
-    ax2.plot(zplotbins, p_el_raw_typefrac_maglim-100, color='r', linestyle='-' ,linewidth=2)
-    ax2.plot(zplotbins, p_sp_raw_typefrac_maglim-100, color='b', linestyle='--',linewidth=2)
-    ax2.plot(zplotbins, p_el_adj_typefrac_maglim-100, color='r', linestyle='-' ,linewidth=4)
-    ax2.plot(zplotbins, p_sp_adj_typefrac_maglim-100, color='b', linestyle='--',linewidth=4)
-
-    plt.legend(('raw '+r'$r_{high}$','raw '+r'$r_{low}$','debiased '+r'$r_{high}$','debiased '+r'$r_{low}$'), 'center', shadow=True, fancybox=True, prop=font)
-
-    ax2.set_xlim(-0.01,0.25)
-    ax2.set_ylim(-0.01,1.01)
-    ax2.set_title(r'$M_r < %4.2f$' % maglimval)
-
+    fig.tight_layout()
     fig.savefig(dropbox_figs_path+'gz2_%stype_fractions.eps' % s82_str, dpi=200)
 
     return None
@@ -1981,7 +1975,7 @@ def poster_table():
 
     tasklist = (smooth,edgeon,bar,spiral,odd)
 
-    p = pyfits.open(gz2_full_data_file)
+    p = pyfits.open(gz2_maglim_data_file)
     gzdata = p[1].data
     p.close()
     gzdata_withz = gzdata[np.isfinite(gzdata['redshift'])]
@@ -2142,7 +2136,7 @@ def save_adjusted_probabilities(photoz=False):
 
         file_str = 'photoz_'
     else:
-        p = pyfits.open(gz2_full_data_file)
+        p = pyfits.open(gz2_maglim_data_file)
         gzdata_all = p[1].data
         p.close()
 
@@ -2515,7 +2509,7 @@ def make_table1(photoz=False):
 
         file_str = 'photoz_'
     else:
-        p = pyfits.open(gz2_full_data_file)
+        p = pyfits.open(gz2_maglim_data_file)
         gzdata_all = p[1].data
         p.close()
         
