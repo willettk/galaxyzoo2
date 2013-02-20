@@ -1,0 +1,981 @@
+_HiStOrY_V2_
+import\040pylab
+x\040=\040numpy.arange(0.0,\0402*pi)
+y\040=\040numpy.cos(x)
+pylab.plot(x,\040y)
+pylab.show()
+pylab.int\040=\040True
+pylab.plot(x,\040y)
+pylab.show()
+pylab.int(True)
+pyplot.ion()
+pylab.ion()
+pylab.plot(x,\040y)
+x\040=\040numpy.arange(0.0,\0402*pi,\0400.001)
+y\040=\040numpy.cos(x)
+pylab.plot(x,\040y)
+pylab.close('all')
+pylab.plot(x,\040y)
+import\040pylab
+x\040=\040numpy.arange(0.0,\0402*pi,\0400.001)
+y\040=\040numpy.cos(x)
+pylab.plot(x,\040y)
+pylab.ion()
+pylab.plot(x,\040y)
+pylab.show()
+pylab.gca()
+help(pylab.figure)
+clear
+3+4
+7*9
+#\040coment
+a\040=\0405
+a\040=\040"hello"
+a\040=\0405
+a\040=\0405\040*\0401.0
+a\040=\0405\040/\0402.0
+a
+n
+print('Hello')
+'Hello"\040'there'
+'Hello"\040+\040'there'
+"Hello"\040\040'there'
+"Hello"\040'there'
+a\040=\040"yes"
+a\040"no"
+a\040+\040"no"
+a\040+\040"\040"\040+\040"no"
+print(a\040+\040"\040"\040+\040"no")
+10\040/\0403
+10\040//\0403
+10\040//\0403.
+10\040/\0403.
+10\040/\0403
+10\040//\0403
+10\040//\0403.
+10\040/\0403
+10\040//\0403
+-1**2
+(-1)**2
+print(3.14+4.2)
+print\040'hello'
+print('hello')
+print\040'hello'
+a\040=\040[3,\0402.1,\040'ok']
+a
+a[0]
+a[1]
+a[-1]
+a[-2]
+a\040=\040[3,\0402.1,\040'ok',\040'python',\040'is',\040'great']
+a[3:6]
+a[3:]
+a[:3]
+a[::]
+a[:]
+a[::2]
+a[::1]
+a[::2]
+a[::3]
+len(a)
+a\040=\040('lonely')
+a
+a\040=\040('lonely',)
+a
+a\040=\040()
+a
+a\040=\040[3,\0402.1,\040'ok',\040'python',\040'is',\040'great']
+a
+a[3]\040=\040'notts'
+a
+a\040=\0401
+b\040=\0402
+c\040=\0403
+a,\040b,\040c\040=\0401,\0402,\0403
+a
+b
+c
+a,\040b\040=\040b,\040a
+a
+b
+a\040=\040[3,\0402.1,\040'ok',\040'python',\040'is',\040'great']
+a
+'python'\040in\040a
+'thon'\040in\040a
+range(5)
+a
+enumerate(a)
+e\040=\040enumerate(a)
+e.next()
+for\040x\040in\040a:
+i\040=\0400
+for\040x\040in\040a:
+\040\040i+=1
+a
+a.sort()
+a
+a.append('thisisnew')
+a
+a.sort()
+a.count()
+a
+a.count('ok')
+a\040=\0401
+a.imag()
+a.imag
+a.real
+a\040=\040[3,\0402.1,\040'ok',\040'python',\040'is',\040'great']
+s\040=\040'-'
+s.join(a)
+a
+s.join(a[2:])
+3\040in\040a
+cos
+acos
+cosh
+sqrt
+import\040math
+math.cos
+math.cos(2)
+help(math)
+help(cos)
+a\040=\0402.3
+help(a_
+help(a)
+1406.65-40.84
+_/7970
+810-160-75
+1/0.1716
+1/5.141
+49.78/282.
+180=105+25
+180+105+25
+86.91/495.
+70.65/400.
+50.69/287
+360+115+56+64
+131.14/743.
+1/5.6753
+52.86/300.
+52.95/300.
+3178.33*12
+_/2.
+import numpy
+numpy.arange(10, 20)
+arr = numpy.arange(10, 20)
+arr%3
+arr%3 == 0
+x = numpy.arange(0,100)
+y = numpy.sqrt(x)
+z  = y .astype(numpy.int)
+x
+y
+z
+r = numpy.rec.array((x, y, z), names=('x', 'y', 'z'))
+r.x
+r.y
+r.z
+r.field('x')
+import pylab
+from numpy import sin, cos, pi
+x = numpy.arange(0, 2*pi, pi/100)
+y  = sin(x)* cos(2*x)
+x
+y
+pylab.plot(x, y)
+pylab.ion()
+pylab.plot(x, y)
+pylab.show()
+pylab.plot(x, sin(x), '--r')
+pylab.plot(x, cos(2*x), linestyle='dotted', color='green')
+thresh = y > 0.75
+pylab.plot(x[thresh], y[thresh], 'r', linewidth=5)
+pyplot.axis([0, 2*pi, -1.1, 1.1])
+pylab.axis([0, 2*pi, -1.1, 1.1])
+* <a href="http://stevenbamford.com/python/2012/mpags_python_session1_s.pdf">mpags_python_session1.pdf</a>
+pyplot.ylabel(r'$\sin(x)\cos(2x)$')
+pylab.ylabel(r'$\sin(x)\cos(2x)$')
+fig = pyplot.figure(1)
+fig = pylab.figure(1)
+ax = fig.axes[0]
+ax.xaxis.labelpad(10)
+ax.xaxis.labelpad =10
+ax.yaxis.labelpad =10
+ax.yaxis.labelpad =1
+pylab.draw()
+>>> ax.xaxis.set_ticks((0, pi/2, pi, 3*pi/2, 2*pi))
+ax.xaxis.set_ticks((0, pi/2, pi, 3*pi/2, 2*pi))
+pylab.draw()
+ax.xaxis.set_ticklabels(('0', r'$\frac{1}{2}\pi$', r'$\pi$',
+                             r'$\frac{3}{2}\pi$', r'$2\pi$'))
+ax.xaxis.set_ticklabels(('0', r'$\frac{1}{2}\pi$', r'$\pi$',
+pylab.draw()
+help(ax.xaxis.set_ticks_position)
+help(ax.xaxis.set_label_position)
+help(ax.xaxis.set_label_p
+import aplpy
+import Imaging
+import imaging
+import PIL
+PIL
+import Image
+Image
+import aplpy
+import numpy
+gc = aplpt.FITSFigure
+import ppgplot
+numpy.arange(100,200)
+a = numpy.arange(100,200)
+select = [5, -5, 10]
+a[select]
+a
+a%3
+a%3 == 0
+a[a%3 == 0]
+x = numpy.arange(10)
+a
+x
+y = numpy.sqrt(x)
+y
+even = x%2 == 0
+even
+x
+x[even]
+y[even]
+even
+even.nonzero()
+y
+y.mean()
+a = numpy.arange(9).reshape((3,3))
+a
+a.mean()
+even
+even.all()
+even.any()
+even.sum()
+a = numpy.arange(10)
+a
+sqrt(a)
+sqrt(9)
+sqrt(a)
+numpy.sqrt(a)
+from numpy import sqrt
+sqrt(a)
+sqrt(5)
+x = numpy.arange(0, 2*pi, pi/100.)
+x
+y  = sin(x)*cos(2*x)
+y  = numpy.sin(x)*numpy.cos(2*x)
+y
+pyplot.plot(x, y)
+pylab.plot(x, y)
+import pylab
+pylab.ion()
+pylab.plot(x, y)
+pylab.plot(x, sin(x))
+pylab.plot(x, numpy.sin(x))
+pylab.plot(x, numpy.sin(x), ':g')
+pylab.plot(x, numpy.cos(x), ':g')
+pylab.plot(x[::10], numpy.sin(x[::10]), 'o')
+pylab.plot(x[::10], numpy.sin(x[::10]), 'og')
+pylab.plot(x[::10], numpy.sin(x[::10]), '*g')
+pylab.plot(x[::10]+0.5, numpy.sin(x[::10]), '*g')
+  
+fig = pylab.figure(1)
+fig
+ax = fig.axes[0]
+pylab.plot(x[::10]+0.5, numpy.sin(x[::10]), '*g')
+ pylab.close('all')
+pylab.close('all')
+x = numpy.arange(-3, 3.001, 0.01)
+y = 1.0/numpy.sqrt(2*pi) * numpy.exp(-x**2 / 2.0)
+x
+y
+numpy.sum(y) * 0.01
+z = numpy.rec.array((x, y), names=('x', 'y'))
+z
+x
+x = numpy.arange(-3, 3.0, 0.01)
+x
+x = numpy.arange(-3, 3.0001, 0.01)
+x
+y = 1.0/sqrt(2*pi) * numpy.exp(-x**2 / 2.0)
+y.sum() * 0.01
+z = numpy.rec.array((x, y), names=('x', 'y'))
+g = numpy.random.normal(100)
+g
+g = numpy.random.normal(size=100)
+g
+plot(x, y)
+pylab.plot(x, y)
+pylab.hist(g)
+pylab.hist(g)/g.sum()
+g.sum()
+g
+pylab.hist(g)/len(g)
+len(g)
+pylab.hist(g/len(g))
+pylab.hist(g)
+pylab.close('all')
+g = numpy.random.normal(size=100)
+pylab.plot(x, y)
+pylab.hist(g)
+pylab.plot(x, y*100)
+pylab.plot(x, y)
+pylab.hist(g, -5, 5)
+pylab.hist(g, -5, 5
+help(pylab.hist)
+pylab.hist(g, 10, range(-5, 5))
+pylab.hist(g, 10, range=(-5, 5))
+pylab.close()
+pylab.hist(g, 10, range=(-5, 5))
+pylab.plot(x, y*100)
+g2 = numpy.random.normal(size=100)
+pylab.hist(g, 10, range=(-5, 5), histtype='step')
+pylab.hist(g2, 10, range=(-5, 5), histtype='step')
+pylab.hist(g2, 10, range=(-5, 5), histtype='stepfilled', alpha=0.5)
+135/170.
+130/170.
+130/171.
+130/17.
+130/170.
+135/170.
+136/170.
+822.83*12/0.0474
+import mortgage
+0.3/100 * 100000 * 5
+130/170.
+129/170.
+128/170.
+127/170.
+124/170.
+123/170.
+0.4/100 * 100000 * 5
+130/165.
+130/160.
+130/155.
+130/170.
+0.74/100 * 100000
+_/12.
+130/165.
+130/170.
+130/155.
+130/160.
+130/165
+130/165.
+130/170.
+128/170.
+127/170.
+130/165.
+130/162.
+130/163.
+demo
+demo()
+quit
+enthought
+1.65*1.2
+5/4.2
+4.2/5.
+import cosmology
+cosmology.ang_scale_flat(0.1)
+cosmology.ang_scale_flat(0.1)*0.34
+cosmology.ang_scale_flat(0.15)*0.34
+cosmology.ang_scale_flat(0.2)*0.34
+cosmology.ang_scale_flat(0.2, 0.7)*0.34
+cosmology.ang_scale_flat(0.2, 70.0)*0.34
+cosmology.ang_scale_flat(0.2, 100.0)*0.34
+cosmology.ang_scale_flat(0.2, 70.0)
+_/cosmology.ang_scale_flat(0.2, 100.0)
+cosmology.ang_scale_flat(0.1, 70.0)
+_/cosmology.ang_scale_flat(0.1, 100.0)
+cosmology.ang_scale_flat(0.01, 70.0)
+_/cosmology.ang_scale_flat(0.01, 100.0)
+import cosmology
+cosmology.ang_scale_flat(0.2)/cosmology.ang_scale_flat(0.1)
+6/5.
+cosmology.ang_scale_flat(0.2)/cosmology.ang_scale_flat(0.15)
+cosmology.ang_scale_flat(0.2)
+cosmology.ang_scale_flat(0.2)/0.339
+cosmology.ang_scale_flat(0.2)*0.339
+cosmology.ang_scale_flat(0.1)*0.339
+1/1.25
+4.5/4.
+6./5.
+6./5./2.
+5.8/5.1
+4/3.39
+10 *0.4
+10 *0.339
+import ppgplot_spb
+print "hello"
+for l in file('pos'):
+  ls = (int(x) for x in l.split())
+  print 816-ls[1]
+  print 448-ls[2]
+for l in file('pos'):
+  ls = [int(x) for x in l.split()]
+  print 816-ls[1],
+  print 448-ls[2]
+out = file('sep', 'w')
+for l in file('pos'):
+  ls = [int(x) for x in l.split()]
+  x = 816-ls[1],
+  y = 448-ls[2]
+for l in file('pos'):
+  ls = [int(x) for x in l.split()]
+  x = 816-ls[1]
+  y = 448-ls[2]
+  out.write('%i %i\n'%(x, y))
+out.close()
+from sympy import *
+pi+e
+pi+exp
+pi+exp(1)
+pi+exp(2)
+pi+e
+import sympy
+sympy.exp
+pi + sympy.exp
+help(sympy.exp)
+sympy.exp(2)
+pi + sympy.exp(2)
+pi + sympy.exp(4)
+(pi + sympy.exp(4))**2
+(pi + exp(4))**2
+(exp(pi))**2
+_.evalf()
+sqrt(2)
+sqrt(4)
+sqrt(5)
+sqrt(7)
+sqrt(9)
+sqrt(8)
+help Rational
+help (Rational)
+a = Rational(1,2)
+a, a*2, a**2
+exp(pi)
+exp(pi).evalf()
+ls
+x = Symbol('x')
+x**3
+(x**3).evalf()
+a = (x**3)
+help(a)
+x = 3
+a
+x+3
+x = Symbol('x')
+x = Symbol('x', 3)
+x+3
+(x+3).evalf()
+help(series)
+series(1/cos(x), x, pi/2, 8)
+series(1/cos(x), x, pi/2, 4)
+series(1/cos(x), x, pi/2, 5)
+help (factor)
+solve([x + 5*y - 2, -3*x + 6*y - 15], [x, y])
+  y = Symbol('y')
+y = Symbol('y')
+solve([x + 5*y - 2, -3*x + 6*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 7*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 8*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 80*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 80*y - 14], [x, y])
+solve([x + 5*y - 2, -3*x**2 + 80*y - 14], [x, y])
+solve([x + 5*y - 2, -3*x + 8*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15, x = y], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15, x + y], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15, x + y], [x, y, x])
+solve([x + 5*y - 2, -3*x + 6*y - 15, x + y], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15, x + 2*y], [x, y])
+solve([x + 5*y - 2, -3*x + 6*y - 15], [x, y])
+solve([x - 2, -3*x + 6*y - 15], [x, y])
+solve([x + 2, -3*x + 6*y - 15], [x, y])
+solve([x + 2, -3*x**2 + 6*y - 15], [x, y])
+solve([x + 2, -3*x + 6*y - 15], [x, y])
+solve([x + y + 2, x + y -2], [x, y])
+s = solve([x + y + 2, x + y -2], [x, y])
+s
+print s
+from sympy import Matrix
+>>> Matrix([[1,0], [0,1]])
+Matrix([[1,0], [0,1]])
+m = Matrix([[1,0], [0,1]])
+m.eigenvals()
+m.eigenvects(()
+)
+m.eigenvects()
+m.eigenvals()
+m.eigenvects()
+help(m.eigenvects)
+help(m.eigenvals)
+m = Matrix([[1,1, -1], [1, -1, 1], [-1, 1, 1])
+m = Matrix([[1,1, -1], [1, -1, 1], [-1, 1, 1]])
+m
+m.eigenvals()
+m.eigenvects(()
+m.eigenvects(())
+m.eigenvects()
+v = m.eigenvects()
+v[0]
+v[0][2]
+v[1][2]
+v[2][2]
+m.diagonalize()
+help(m.diagonalize)
+P, D = m.diagonalize()
+D
+m.inv()
+m.det()
+P, D = m.diagonalize()
+D
+P
+P.inv() * m * P
+D, P.inv() * m * P
+D ==  P.inv() * m * P
+dsolve(f(x).diff(x, x) + f(x), f(x))
+f(x)
+y(x)
+f = Symbol('f')
+dsolve(f(x).diff(x, x) + f(x), f(x))
+x*f(x).diff(x) + f(x) - f(x)**2
+dsolve(x*f(x).diff(x) + f(x) - f(x)**2)
+dsolve(x*f(x).diff(x) + f(x) - f(x)**2, x)
+dsolve(x*f(x).diff(x) + f(x) - f(x)**2, f(x))
+dsolve(x*f(x).diff(x) + f(x) - f(x)**2, f(x), hint='Bernoulli')
+g = f(x).diff(x, x) + f(x)
+dsolve(g, f(x))
+d, h, angle = symbols(‘d, h, angle’) 
+d, h, angle = Symbols(‘d, h, angle’) 
+d, h, angle = symbols(‘d', 'h', 'angle’) 
+d, h, angle = Symbols(‘d', 'h', 'angle’) 
+symbols('d', 'h', 'angle')
+d, h, angle = symbols(‘d, h, angle’) 
+d, h, angle = symbols('d, h, angle') 
+from sympy.physics.gaussopt import *
+from sympy.physics import gaussopt
+help symp.physics
+help sympy.physics
+help (sympy.physics)
+help (sympy.physics.quantum)
+help (sympy.physics)
+help (sympy.physics.quantum)
+import sympy.physics.quantum
+help (sympy.physics.quantum)
+help (sympy.physics)
+help(sympify)
+sympify(2+4)
+sympify('2+4')
+sympify('2+pi')
+sympify(2+pi)
+sympify(2+pi**2)
+sympify(2+math.pi**2)
+import math
+sympify(2+math.pi**2)
+sympify('2+math.pi**2')
+sympify('2+pi**2')
+sympify('2+pi**2/4')
+sympify('(2+pi**2)/4')
+sympify('(2x+y)/4')
+sympify('(2x+y)')
+sympify('2x+y')
+sympify('2x')
+sympify('2*x')
+sympify('2*x + y / 4')
+sympify('(2*x + y) / 4')
+sympify('(2*x + y**2) / 4')
+expr = sympify('(2*x + y**2) / 4')
+expr.primitive(
+help(sympy.pretty_print)
+help(sympy.pretty)
+expr = sympify('(2*x + y**2) / 4')
+pprint(expr)
+x, y = symbols('x, y')
+x
+y
+x, y, z = symbols('x,y,z')
+z**4
+z**4+y/x
+latex(expr)
+latex(expand((x+y)**3))
+latex(cos((x**2)/2))
+print latex(cos((x**2)/2))
+print_latex(cos((x**2)/2))
+latex_print(cos((x**2)/2))
+platex(cos((x**2)/2))
+print_latex(cos((x**2)/2))
+print latex(cos((x**2)/2))
+cos((x**2)/2)
+cos(x**2/2)
+cos(x**2/2).evalf({x:4})
+cos(x**2/2).evalf(4)
+cos(x**2/2).evalf(1)
+cos(x**2/2).evalf(2)
+cos(x**2/2).evalf()
+evalf
+evalf.
+ls
+print latex(exp(x**2)/2))
+print latex(exp(x**2)/2)
+print latex(exp(x**2/2))
+from sympy.physics.quantum.state import Wavefunction
+help(sympy)
+sympy.__version__
+import sympy
+expr = sympy.sympify('a+b-c**2')
+expr
+a + b
+expr**2
+sympy.expand(expr**2)
+from sympy import *
+limit(sin(x)/x, x, 0)
+x = Symbol('x')
+limit(sin(x)/x, x, 0)
+sympy.__version__
+import Imaging
+import Image
+i = Image.new((100,100))
+help(Image.new)
+i = Image.new('I', (100,100))
+i
+n = numpy.array(i)
+n
+i =Image.open('img.jpg')
+n = numpy.array(i)
+n
+Image.new(n)
+newi = Image.fromarray(n)
+newi
+help(scipy)
+import tables
+help(tables.Expr)
+from tables import *
+>>> h5file = openFile("tutorial1.h5", mode = "w", title = "Test file")
+h5file = openFile("tutorial1.h5", mode = "w", title = "Test file")
+gcolumns = h5file.createGroup(h5file.root, "columns", "Pressure and Name")
+h5file.createArray(gcolumns, 'pressure', sqrt(numpy.arange(1000)))
+h5file.createArray(gcolumns, 'pressure', numpy.sqrt(numpy.arange(1000)))
+h5file.createArray(gcolumns, 'volume', numpy.arange(1000))
+print h5file
+table
+tables
+h5file.root.columns.volume * h5file.root.columns.pressure
+h5file.root.columns.volume.read() * h5file.root.columns.pressure.read()
+h5file.root.columns.volume.read() * h5file.root.columns.pressure.read()[:10]
+(h5file.root.columns.volume.read() * h5file.root.columns.pressure.read())[:10]
+h5file.root.columns.volume * h5file.root.columns.pressure
+Expr("pressure * volume")
+Expr("columns.pressure * columns.volume")
+Expr("h5file.root.columns.volume * h5file.root.columns.pressure")
+Expr("p*v", {"v":h5file.root.columns.volume, "p":h5file.root.columns.pressure})
+expr = Expr("p*v", {"v":h5file.root.columns.volume, "p":h5file.root.columns.pressure})
+expr.eval()
+help Expr
+help (Expr)
+class Particle(IsDescription):
+  x = Float64Col()
+table = h5file.createTable('/', 'x', Particle)
+row = table.row
+for i in xrange(1000):
+  row['x'] = i**(3/2.)
+  row.append()
+print table
+print table.x
+print table.root.x
+print table
+table.flush()
+print table
+print table.x
+print table['x']
+table.col("x")
+help(table.col)
+table.cols
+table.cols['x']
+table.cols.root.x
+table.cols.x
+x = table.cols.x
+expr = Expr("p*v*x", {"v":h5file.root.columns.volume, "p":h5file.root.columns.pressure})
+expr = Expr("p*v*x", {"v":h5file.root.columns.volume, "p":h5file.root.columns.pressure, "x":x})
+h5file = openFile("tutorial1.h5", mode = "w", title = "Test file")
+h5file.createArray(gcolumns, 'pressure', sqrt(numpy.arange(1000)))
+  ls = [int(x) for x in l.split()]
+for i in xrange(1000):
+help (xrange)
+  row.ppend()
+from tables import *; from numpy import *
+h5file = openFile("test.h5", mode = "w")
+x = h5file.createArray("/", "x", arange(1000))
+y = h5file.createArray("/", "y", sqrt(arange(1000)))
+class MyTable(IsDescription)
+class MyTable(IsDescription):
+    z = Float32Cold()
+class MyTable(IsDescription):
+    z = Float32Col()
+table = h5file.createTable("/", "mytable", MyTable)
+row = table.row
+for i in xrange(1000):
+cos(x**2/2).evalf()
+for i in xrange(1000):
+    row["z"] = i**(3.0/2.0)
+    row.append()
+table.flush()
+print h5file
+print h5file.mytable
+print h5file.root.mytable
+print table
+print table.cols
+print table.cols.z
+print table
+print table.cols
+print table.cols.x
+z = table.cols.z
+x*y*z
+xyz = Expr("x*y*z")
+xyz
+r = h5file.createArray("/", "r")
+help(h5file.createArray)
+help(h5file.createEArray)
+r = h5file.createArray("/", "r", zeros(1000))
+r
+xyz.setOutput(r)
+xyz.eval()
+r
+r.read()
+r.read(10)
+r.read(0,10)
+help(r.read)
+import timeit
+help(timeit)
+import profiler
+import profile
+help(profile)
+30*32767
+200.32767
+200/32767.
+30/32767.
+2**(1.5/1.5)
+2**(1.0/1.5)
+2**(1.5/1.5)
+2**(10/1.5)
+2**(100/1.5)
+2**(10/1.5)
+2**(11/1.5)
+2**(12/1.5)
+2**(13/1.5)
+2**(14/1.5)
+2**(15/1.5)
+2**(16/1.5)
+2**(17/1.5)
+2**(18/1.5)
+2**(19/1.5)
+2**(20/1.5)
+2**(25/1.5)
+2**(30/1.5)
+2**(30/1.5)/100e9
+2**(40/1.5)/100e9
+2**(50/1.5)/100e9
+2**(50/1.5)/100e9*8
+2**(51/1.5)/100e9*8
+2**(51/2.0)/100e9*8
+2**(81/2.0)/100e9*8
+2**(71/2.0)/100e9*8
+2**(70/2.0)/100e9*8
+2**(68/2.0)/100e9*8
+2**(67/2.0)/100e9*8
+2**(67/2.0)/100e9
+2**(67/2.0)/100e9*8*8
+2**(65/2.0)/100e9*8*8
+2**(63/2.0)/100e9*8*8
+2**(59/2.0)/100e9*8*8
+2**(60/2.0)/100e9*8*8
+2**(61/2.0)/100e9*8*8
+    z = Float32Col()
+from cPickle import pickle
+import  cPickle as pickle
+p, perr = pickle.load('ratio_baseline_fit.pickle')
+p, perr = pickle.load(file('ratio_baseline_fit.pickle'))
+p
+f = 10**(-0.4*13.5)
+a = pi*8**2
+a
+sb = f/a
+2.5*log10(sb)
+sb
+f
+a
+-2.5*log10(sb)
+1200/60
+20*60
+60/sqrt(60)
+77377.775/60/60
+19951.808/60/60
+32568.526/60/60
+4626.939 /60
+4626.939 /60 /60
+45*60
+sqrt(1600)
+sqrt(160)
+sqrt(700)
+700/sqrt(700)
+0.01 * 1000 * 12
+import MZP
+MZP.fix_flip()
+reload(MZP)
+MZP.fix_flip()
+171/135
+171/135.
+135/171.
+130/171.
+130/201.
+170/200.
+140/200.
+140/250.
+210/250.
+import Image
+im = Image.open('/Users/spb/Desktop/Evernote\ Snapshot\ 20121210\ 093601.jpg')
+im = Image.open('/Users/spb/Desktop/Evernote Snapshot 20121210 093601.jpg')
+im = Image.open('test.jpg')
+im = Image.open('~/Desktop/test.jpg')
+im = Image.open('Desktop/test.jpg')
+im.getdata
+im.putdata
+help(im.putdata)
+help(im.getdata)
+help(im.copy)
+import scipy
+import numoy
+import numpy
+import scipy.stat
+import scipy.stats
+scipy.stats.scoreatpercentile(
+help(scipy.stats.scoreatpercentile)
+scipy.stats.scoreatpercentile(
+ 
+help(scipy.stats.scoreatpercentile)
+t = numpy.uint8
+t.max(
+t.max()
+t.
+t
+t.dtype
+t.nbytes
+t.nbytes()
+t.nbytes
+print t.nbytes
+t
+t.T
+t.size
+t
+numpy.typecodes
+numpy.typename()
+help(numpy.typename)
+numpy.typename('f')
+numpy.typename('g')
+t
+type(t)
+t
+help(numpy.log)
+2**8
+lena = scipy.lena()
+lena = scipy.misc.lena()
+lena
+from cPickle import pickle
+from matplotlib import pyplot
+pyplot.imshow(lena)
+pyplot.ion()
+pylab.show()
+pyplot.show()
+pyplot.imshow(numpy.array((lena,lena,lena)))
+colena = numpy.array((lena, lena, lena)
+)
+colena.shape
+colena = colena.transpose()
+colena
+colena.shape
+pyplot.imshow(collena)
+pyplot.imshow(colena)
+pyplot.show()
+lenat = lena.transpose()
+pyplot.imshow(lenat)
+lena
+im = Image.new(collena)
+import Image
+im = Image.new(collena)
+im = Image.new(colena)
+help(Image.new)
+im = Image(colena)
+im = Image.Image(colena)
+im = Image.fromarray(colena)
+im = Image.fromarray(colena.to)
+colena
+colena.dtype
+im = Image.fromarray(colena.astype(numpy.uint8)
+pyplot.imshow(im)
+pyplot.imshow(lena)
+pyplot.imshow(im)
+pyplot.imshow(lenat)
+pyplot.imshow(lena)
+pyplot.imshow(im)
+pyplot.imshow(lena)
+help (numpy.transpose)
+pyplot.imshow(lena.traspose((0,1,3))
+pyplot.imshow(lena.transpose((0,1,3)))
+pyplot.imshow(lena.transpose((0,1)))
+pyplot.imshow(lena.transpose((1,0)))
+pyplot.imshow(lena.transpose())
+pyplot.imshow(lena.transpose()[::-1,:])
+pyplot.imshow(im)
+pyplot.imshow(lena.transpose()[::-1,:])
+colena = numpy.array((lena, lena, lena)
+)
+im = Image.fromarray(colena.astype(numpy.uint8)
+)
+im = Image.fromarray(colena.astype(numpy.uint8)
+)
+colena = colena.transpose()
+colena
+colena = numpy.array((lena, lena, lena)
+)
+colena.shape()
+colena.shape
+colena = colena.transpose((3, 0, 1))
+colena = colena.transpose((2, 0, 1))
+colena.shape
+colena = numpy.array((lena, lena, lena)
+)
+colena = colena.transpose((0, 1, 2))
+colena.shape
+colena = numpy.array((lena, lena, lena)
+)
+colenat = colena.transpose((0, 1, 2))
+colena == colenat
+(colena == colenat).all()
+colenat = colena.transpose((1, 2, 0))
+colenat.shape
+im = Image.fromarray(colena.astype(numpy.uint8)
+)
+im = Image.fromarray(colenat.astype(numpy.uint8)
+)
+pyplot.imshow(im)
+colena = numpy.array((lena, lena, lena)
+)
+pyplot.imshow(lena)
+pyplot.imshow(lena[::-1])
+pyplot.imshow(im)
+pylab.close('all')
+pyplot.close('all')
+float32
+numpy.float32
+5500/4.
+6750-4750
+5750/4.
+29500/60.
+29500/60./60.
+2742*12
+2662*12
+log(3)-log(2)
+log(3/2.)
