@@ -41,7 +41,7 @@
 ;-
 
 gz2dir = '/Users/willettk/Astronomy/Research/GalaxyZoo/'
-fitsdir = gz2dir+'fits/'
+fitsdir = gz2dir+'fits/tasks/'
 
 ; Read in the masked data created by Python module
 
@@ -106,6 +106,6 @@ mwrfits, a, fitsdir+var_def+'_idlbinned.fits',/silent
 
 ; Create temp file to indicate that process has finished
 
-spawn, 'touch '+fitsdir+'/idlfilecreated'
+spawn, 'touch '+gz2dir+'/idlfilecreated'
 
 end
