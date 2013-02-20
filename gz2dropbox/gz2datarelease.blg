@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99c (TeX Live 2009)
+The top-level auxiliary file: gz2datarelease.aux
+The style file: mn2e.bst
+Database file #1: mn-jour.bib
+Database file #2: kwrefs.bib
+You've used 34 entries,
+            2601 wiz_defined-function locations,
+            1569 strings with 21601 characters,
+and the built_in function-call counts, 21462 in all, are:
+= -- 1835
+> -- 2213
+< -- 12
++ -- 793
+- -- 792
+* -- 2266
+:= -- 4010
+add.period$ -- 0
+call.type$ -- 34
+change.case$ -- 400
+chr.to.int$ -- 33
+cite$ -- 34
+duplicate$ -- 384
+empty$ -- 574
+format.name$ -- 838
+if$ -- 3785
+int.to.chr$ -- 2
+int.to.str$ -- 0
+missing$ -- 37
+newline$ -- 109
+num.names$ -- 138
+pop$ -- 349
+preamble$ -- 1
+purify$ -- 433
+quote$ -- 0
+skip$ -- 621
+stack$ -- 0
+substring$ -- 695
+swap$ -- 42
+text.length$ -- 2
+text.prefix$ -- 263
+top$ -- 0
+type$ -- 297
+warning$ -- 0
+while$ -- 130
+width$ -- 0
+write$ -- 340
