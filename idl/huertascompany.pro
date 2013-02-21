@@ -467,11 +467,13 @@ endelse
 
 ncolors = 50
 cgloadct, 33, ncolors=ncolors, bottom=1
+levels = fillarr(0.07,0,3.5)
+;levels = fillarr(10,1,500)
 
-cgcontour, h1+1, x, y, /fill, levels=fillarr(10,1,500), c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='No bulge'
-cgcontour, h2+1, x, y, /fill, levels=fillarr(10,1,500), c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Just noticeable'
-cgcontour, h3+1, x, y, /fill, levels=fillarr(10,1,500), c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Obvious bulge'
-cgcontour, h4+1, x, y, /fill, levels=fillarr(10,1,500), c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Dominant bulge'
+cgcontour, alog10(h1+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='No bulge'
+cgcontour, alog10(h2+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Just noticeable'
+cgcontour, alog10(h3+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Obvious bulge'
+cgcontour, alog10(h4+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Dominant bulge'
 
 cgcolorbar,position=[0.45,0.52,0.60,0.54],title='log(N!Igal!N + 1)',ncolors=ncolors
 

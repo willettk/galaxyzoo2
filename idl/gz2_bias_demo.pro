@@ -34,8 +34,6 @@
 
 pro gz2_bias_demo, ps=ps, volumelimited=volumelimited, plotone = plotone
 
-device,retain=2
-
 timestart = systime(1)
 
 gz2dir = '~/Astronomy/Research/GalaxyZoo/'
@@ -124,6 +122,8 @@ normal = gz2[where(strtrim(gz2.sample,2) eq 'stripe82'         and (gz2.petromag
 ; Two plots: thresholded likelihoods (try f > 0.8), and raw vote summation for all answers as a function of redshift. Repeat as function of surface brightness, physical size, and apparent magnitude
 
 yrange = [0,1.2]
+
+delz=0.02
 
 delz=0.02
 zarr = fillarr(delz,0,zmax)
@@ -1581,8 +1581,6 @@ endelse
 	
 	!p.multi=[0,2,1]
 	cgplot,        zarr, a31_thresh, color='red', thick=thickline, xtitle=xlabel,ytitle='fraction', xr=xrange, /xstyle, yr=yrange, /ystyle, title='GZ2 Task 11', charsize = cs
-	cgplot, /over, zarr, a32_thresh, color='blue', thick=thickline
-	cgplot, /over, zarr, a33_thresh, color='green', thick=thickline
 	cgplot, /over, zarr, a34_thresh, color='purple', thick=thickline
 	cgplot, /over, zarr, a36_thresh, color='grey', thick=thickline
 	cgplot, /over, zarr, a37_thresh, color='brown', thick=thickline
@@ -1629,7 +1627,7 @@ endelse
 
 	al_legend,/top,/left,['Main','S82 normal','S82 coadd2'],color='black',linestyle=[0,2,0], thick=[thickline,thinline,thinline], linsize=0.4, charsize = legendcs
 
-	endif	; plotone
+	endif
 
 if keyword_set(ps) then ps_end
 
@@ -1641,6 +1639,6 @@ print,''
 print,'Time elapsed: '+string(timeend-timestart,format='(f5.1)')+' sec.'
 print,''
 
-;stop
+stop
 
 end
