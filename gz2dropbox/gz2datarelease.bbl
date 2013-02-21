@@ -79,6 +79,10 @@
   {Hayes}}{2013}]{dav13}
 {Davis} D.,  {Hayes} W.,  2013, ArXiv e-prints
 
+\bibitem[\protect\citeauthoryear{{de~Lapparent}, {Baillard} \&
+  {Bertin}}{{de~Lapparent} et~al.}{2011}]{del11a}
+{de~Lapparent} V.,  {Baillard} A.,    {Bertin} E.,  2011, \aap, 532, A75
+
 \bibitem[\protect\citeauthoryear{{de~Vaucouleurs}}{{de~Vaucouleurs}}{1959}]{de%
 v59}
 {de~Vaucouleurs} G.,  1959, Handbuch der Physik, 53, 275
@@ -105,6 +109,13 @@ Springer-Verlag
   R.~H.,  {Schneider} D.~P.,  {Strauss} M.~A.,    {York} D.~G.,  2007, \aj,
   134, 579
 
+\bibitem[\protect\citeauthoryear{{Hoyle}, {Masters}, {Nichol}, {Edmondson},
+  {Smith}, {Lintott}, {Scranton}, {Bamford}, {Schawinski} \& {Thomas}}{{Hoyle}
+  et~al.}{2011}]{hoy11}
+{Hoyle} B.,  {Masters} K.~L.,  {Nichol} R.~C.,  {Edmondson} E.~M.,  {Smith}
+  A.~M.,  {Lintott} C.,  {Scranton} R.,  {Bamford} S.,  {Schawinski} K.,
+  {Thomas} D.,  2011, \mnras, 415, 3627
+
 \bibitem[\protect\citeauthoryear{{Hubble}}{{Hubble}}{1936}]{hub36}
 {Hubble} E.~P.,  1936, {Realm of the Nebulae}.
 Yale University Press
@@ -113,6 +124,11 @@ Yale University Press
   {Mei} \& {S{\'a}nchez Almeida}}{{Huertas-Company} et~al.}{2011}]{hue11}
 {Huertas-Company} M.,  {Aguerri} J.~A.~L.,  {Bernardi} M.,  {Mei} S.,
   {S{\'a}nchez Almeida} J.,  2011, \aap, 525, A157+
+
+\bibitem[\protect\citeauthoryear{{Huertas-Company}, {Rouan}, {Tasca}, {Soucail}
+  \& {Le F{\`e}vre}}{{Huertas-Company} et~al.}{2008}]{hue08}
+{Huertas-Company} M.,  {Rouan} D.,  {Tasca} L.,  {Soucail} G.,    {Le
+  F{\`e}vre} O.,  2008, \aap, 478, 971
 
 \bibitem[\protect\citeauthoryear{{Kormendy} \& {Bender}}{{Kormendy} \&
   {Bender}}{2012}]{kor12}
@@ -168,6 +184,10 @@ Yale University Press
   {Abraham}}{2010b}]{nai10a}
 {Nair} P.~B.,  {Abraham} R.~G.,  2010b, \apjl, 714, L260
 
+\bibitem[\protect\citeauthoryear{{Nair}, {van den Bergh} \& {Abraham}}{{Nair}
+  et~al.}{2010}]{nai10b}
+{Nair} P.~B.,  {van den Bergh} S.,    {Abraham} R.~G.,  2010, \apj, 715, 606
+
 \bibitem[\protect\citeauthoryear{{Nieto-Santisteban}, {Szalay} \&
   {Gray}}{{Nieto-Santisteban} et~al.}{2004}]{nie04}
 {Nieto-Santisteban} M.~A.,  {Szalay} A.~S.,    {Gray} J.,  2004, in
@@ -196,6 +216,13 @@ p.~666
 {Schwamb} M.~E.,  {Lintott} C.~J.,  {Fischer} D.~A.,  {Giguere} M.~J.,  {Lynn}
   S.,  {Smith} A.~M.,  {Brewer} J.~M.,  {Parrish} M.,  {Schawinski} K.,
   {Simpson} R.~J.,  2012, \apj, 754, 129
+
+\bibitem[\protect\citeauthoryear{{Simmons}, {Lintott}, {Schawinski}, {Moran},
+  {Han}, {Kaviraj}, {Masters}, {Urry}, {Willett}, {Bamford} \&
+  {Nichol}}{{Simmons} et~al.}{2013}]{sim13}
+{Simmons} B.~D.,  {Lintott} C.,  {Schawinski} K.,  {Moran} E.~C.,  {Han} A.,
+  {Kaviraj} S.,  {Masters} K.~L.,  {Urry} C.~M.,  {Willett} K.~W.,  {Bamford}
+  S.~P.,    {Nichol} R.~C.,  2013, \mnras, 429, 2199
 
 \bibitem[\protect\citeauthoryear{{Simpson}, {Povich}, {Kendrew}, {Lintott},
   {Bressert}, {Arvidsson}, {Cyganowski}, {Maddison}, {Schawinski}, {Sherman},
