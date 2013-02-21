@@ -1157,7 +1157,7 @@ na_wspiral = (0. * na_gz_tight_wfraction + 0.5 * na_gz_medium_wfraction + 1.0 * 
 
  
 if keyword_set(ps) then begin
-	ps_start, filename=figdir+'wbulge_wspiral.ps',/color, /quiet
+	ps_start, filename=figdir+'wbulge_wspiral.eps',/color, /quiet, /encap, xs=7, ys=10
 	cs=1.2
 	th=3
 	thickline=5
