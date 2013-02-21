@@ -39,10 +39,12 @@ pkl_path = gz_path+'pickle/'
 plots_path = gz_path+'plots/'
 dropbox_figs_path = gz_path+'gz2dropbox/figures/'
 gz2table_data_file = fits_path_main+'gz2table.fits'
-gz2_both_data_file = fits_path_main+'gz2main_table_sample.fits'
-gz2_stripe82_data_file = fits_path_main+'gz2_stripe82_normal.fits'
+gz2_photoz_data_file = fits_path_main+'gz2_photoz_table_sample.fits'
+gz2_coadd2_data_file = fits_path_main+'gz2_coadd2_table_sample.fits'
 gz2_maglim_data_file = fits_path_main+'gz2_original_extra_s82norm_r17_table_sample.fits'
 gz2_full_data_file = fits_path_main+'gz2_original_extra_s82norm_table_sample.fits'
+gz2_both_data_file = fits_path_main+'gz2main_table_sample.fits'
+gz2_stripe82_data_file = fits_path_main+'gz2_stripe82_normal.fits'
 
 min_ratio = -2.0
 max_ratio = 2.0
@@ -1375,7 +1377,7 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
         p = pyfits.open(fits_path_task+'%s_data_for_idl_stripe82.fits' % task_dict['var_def'])
         file_str = 'stripe82_'
     if photoz:
-        p = pyfits.open(fits_path_main+'gz2_photoz_table_sample.fits')
+        p = pyfits.open(gz2_photoz_table_sample.fits)
         file_str = 'photoz_'
     else:
         p = pyfits.open(fits_path_task+'%s_data_for_idl.fits' % task_dict['var_def'])
@@ -1609,7 +1611,6 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     redshift = gzdata['REDSHIFT']
     mr = gzdata['PETROMAG_MR']
-    r50_kpc = gzdata['PETROR50_R_KPC']
     task_counts = gzdata[task_dict['task_name_count']]
 
     zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
@@ -2200,31 +2201,58 @@ def plot_confidence_measures(task_dict):
 
     return None 
 
-def save_adjusted_probabilities(photoz=False):
+def save_adjusted_probabilities(photoz=False,stripe82=False):
 
     # Load in the raw probabilities for all GZ2 galaxies with redshifts
 
-    if photoz:
-        p = pyfits.open(fits_path_main+'gz2_photoz_table_sample.fits')
-        gzdata = p[1].data
-        p.close()
+    file_str = ''
 
-        redshift = gzdata['photoz']
-        mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
-        r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
+    if stripe82:
 
-        file_str = 'photoz_'
-    else:
-        p = pyfits.open(gz2_maglim_data_file)
+        file_str += 's82_'
+
+        p = pyfits.open(gz2_coadd2_data_file)
         gzdata_all = p[1].data
         p.close()
 
-        gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
-        redshift = gzdata['REDSHIFT']
-        mr = gzdata['PETROMAG_MR']
-        r50_kpc = gzdata['PETROR50_R_KPC']
+        if photoz:
+            """
+            DOES NOT WORK - the PhotoZ table in the Stripe82 database is not populated.
+            Use photo-Z from the DR7 table that match the original objIDs.
+            Skipped for the moment.
+            """
+            gzdata = gzdata_all[np.logical_not(np.isfinite(gzdata_all['REDSHIFT']))]
+            redshift = gzdata['photoz']
+            mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
+            r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
 
-        file_str = ''
+            file_str += 'photoz_'
+        else:
+            gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
+            redshift = gzdata['REDSHIFT']
+            mr = gzdata['PETROMAG_MR']
+            r50_kpc = gzdata['PETROR50_R_KPC']
+
+    else:
+        if photoz:
+            p = pyfits.open(gz2_photoz_data_file)
+            gzdata = p[1].data
+            p.close()
+
+            redshift = gzdata['photoz']
+            mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
+            r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
+
+            file_str += 'photoz_'
+        else:
+            p = pyfits.open(gz2_maglim_data_file)
+            gzdata_all = p[1].data
+            p.close()
+
+            gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
+            redshift = gzdata['REDSHIFT']
+            mr = gzdata['PETROMAG_MR']
+            r50_kpc = gzdata['PETROR50_R_KPC']
 
     smooth = get_task_dict('smooth')
     edgeon = get_task_dict('edgeon')
@@ -2363,7 +2391,7 @@ def save_adjusted_probabilities(photoz=False):
 
         timeend2 = time.time()
         print ' '
-        print 'For %s:' % task_dict['var_def']
+        print 'For %s: %s' % (task_dict['var_def'],file_str)
         print ' '
         print '%7i galaxies had correction bins outside the binned volume' % outsidebinscount
         print '%7i galaxies had NaN corrections for all pairs of variables' % unknowncorrcount
@@ -2432,7 +2460,7 @@ def gz1_comparison():
     ax1.set_ylabel('fraction of total sample')
     ax1.set_xlim(-1.0,1.0)
     ax1.set_ylim(0,0.5)
-    ax1.set_title('GZ1 vs. GZ2: raw votes')
+    ax1.set_title('raw votes')
 
     plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True)
     
@@ -2449,7 +2477,7 @@ def gz1_comparison():
     ax2.set_ylabel('fraction of total sample')
     ax2.set_xlim(-1.0,1.0)
     ax2.set_ylim(0,0.5)
-    ax2.set_title('GZ1 vs. GZ2: debiased votes')
+    ax2.set_title('debiased votes')
     
     plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True)
 
@@ -2466,13 +2494,13 @@ def gz1_comparison():
     xcens = xedges[:-1] + (xedges[1]-xedges[0])/2.
     ycens = yedges[:-1] + (yedges[1]-yedges[0])/2.
     CS = plt.contourf(xcens,ycens,np.log10(H).T,15,cmap=plt.cm.rainbow)
-    cb = plt.colorbar(CS,orientation='vertical')
-    cb.set_label('log '+r'$N_{gal}$',fontsize=16)
-    ax1.set_xlabel(r'$f_{GZ1} - f_{GZ2}$')
-    ax1.set_ylabel(r'$f_{sp,GZ1}$')
+    #cb = plt.colorbar(CS,orientation='vertical')
+    #cb.set_label('log '+r'$N_{gal}$',fontsize=16)
+    ax1.set_xlabel(r'$f_{GZ1} - f_{GZ2}$',fontsize=20)
+    ax1.set_ylabel(r'$f_{sp,GZ1}$',fontsize=20)
     ax1.set_xlim(-1,1)
     ax1.set_ylim(0,1)
-    ax1.set_title('GZ1 vs. GZ2: raw votes')
+    ax1.set_title('raw votes')
 
     ax3 = fig.add_subplot(122)
     H, xedges, yedges = np.histogram2d(gz1_adj_sp - gz2_adj_sp, gz1_adj_sp, 
@@ -2482,13 +2510,13 @@ def gz1_comparison():
     CS = plt.contourf(xcens,ycens,np.log10(H).T,15,cmap=plt.cm.rainbow)
     cb = plt.colorbar(CS,orientation='vertical')
     cb.set_label('log '+r'$N_{gal}$',fontsize=16)
-    ax3.set_xlabel(r'$f_{GZ1} - f_{GZ2}$')
-    ax3.set_ylabel(r'$f_{sp,GZ1}$')
+    ax3.set_xlabel(r'$f_{GZ1} - f_{GZ2}$',fontsize=20)
+    ax3.set_ylabel(r'$f_{sp,GZ1}$',fontsize=20)
     ax3.set_ylim(0,1)
     ax3.set_xlim(-1,1)
-    ax3.set_title('GZ1 vs. GZ2: adj votes')
+    ax3.set_title('adj votes')
 
-    fig.savefig(dropbox_figs_path+'gz1_gz2_trumpet.png', dpi=200)
+    fig.savefig(dropbox_figs_path+'gz1_gz2_trumpet.eps', dpi=200)
 
     gz1_el_clean_flag = (data['ELLIPTICAL'] == 1)
     gz1_el_clean_prob = (gz1_adj_el >= 0.8)
@@ -2570,32 +2598,45 @@ def gz1_comparison():
     print '   %5i (%4.1f) have debiased p_mg > 0.25 in the GZ2 sample.' % (np.sum(prob_great_adj_mg),np.sum(prob_great_adj_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
     print ' '
 
-    return data
+    return None
 
-def make_tables(makefits=True,photoz=False,latex=False,imagelist=False):
+def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=False):
 
     """
-    Should duplicate information in gz2table, except that it includes debiased votes. 
-    One table or two?
-    Try an additional one for now, called gz2debiased
-    Can't match number of rows since some galaxies have no redshifts; 
+    Make tables for final data products; includes both FITS files (for site) and formatted LaTeX table samples (for paper)
     """
 
-    if photoz:
-        p = pyfits.open(fits_path_main+'gz2_photoz_table_sample.fits')
-        gzdata = p[1].data
-        p.close()
+    file_str = ''
 
-        file_str = 'photoz_'
-    else:
-        p = pyfits.open(gz2_maglim_data_file)
+    if stripe82:
+
+        p = pyfits.open(fits_path_main+'gz2_coadd2_table_sample.fits')
         gzdata_all = p[1].data
         p.close()
-        
+
         gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
-        file_str = ''
+
+        file_str += 's82_'
+
+    else:
+        if photoz:
+            p = pyfits.open(fits_path_main+'gz2_photoz_table_sample.fits')
+            gzdata = p[1].data
+            p.close()
+
+            file_str += 'photoz_'
+
+        else:
+            p = pyfits.open(gz2_maglim_data_file)
+            gzdata_all = p[1].data
+            p.close()
+            
+            gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
     
     allprobs = pickle.load(open(pkl_path+'save_%sadjusted_probabilities.pkl' % file_str,'rb')) 
+
+    assert len(gzdata) == allprobs.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
 
     raw_t01_a01 = allprobs[ 1,:]
     raw_t01_a02 = allprobs[ 2,:]
@@ -2685,6 +2726,19 @@ def make_tables(makefits=True,photoz=False,latex=False,imagelist=False):
     rounded = get_task_dict('rounded')
 
     # Set the flags for each tasks based on their individual paths and parameters
+
+    if stripe82:
+        smooth['min_classifications'] = 10
+        edgeon['min_classifications'] = 5
+        bar['min_classifications'] = 5
+        spiral['min_classifications'] = 5
+        odd['min_classifications'] = 10
+        odd_feature['min_classifications'] = 5
+        arms_winding['min_classifications'] = 5
+        arms_number['min_classifications'] = 5
+        bulge['min_classifications'] = 5
+        bulge_shape['min_classifications'] = 5
+        rounded['min_classifications'] = 5
 
     goodt01 = (gzdata['t01_smooth_or_features_total_weight'] >= smooth['min_classifications'])
     goodt02 = (gzdata['t02_edgeon_total_weight'] >= edgeon['min_classifications']) & (gzdata[edgeon['dependent_tasks']] >= 0.5)
@@ -3233,9 +3287,10 @@ def make_tables(makefits=True,photoz=False,latex=False,imagelist=False):
     if latex:
         print " "
         for idx,gzline in enumerate(gzdata[:10]):
-            print "%s & %8s & %7.3f & %7.3f & %3i & %3i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i \\\\" % \
-                  (gzline['objid'], gzline['sample'], 
-                  gzline['RA'],gzline['DEC'],
+            print "%s & %8s & %3i & %3i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i \\\\" % \
+                  (gzline['objid'], \
+                  gzline['sample'], 
+                  #gzline['RA'],gzline['DEC'],
                   gzline['t01_smooth_or_features_total_count'], gzline['total_count'],
                   gzline['t01_smooth_or_features_a01_smooth_count'],   gzline['t01_smooth_or_features_a01_smooth_weight'],
                   gzline['t01_smooth_or_features_a01_smooth_fraction'],gzline['t01_smooth_or_features_a01_smooth_weighted_fraction'],
