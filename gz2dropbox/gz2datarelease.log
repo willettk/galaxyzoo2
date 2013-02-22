@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=latex 2009.11.7)  21 FEB 2013 01:31
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=latex 2009.11.7)  22 FEB 2013 15:13
 entering extended mode
  file:line:error style messages enabled.
  %&-line parsing enabled.
@@ -343,6 +343,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 89--90
 []\OT1/cmr/m/n/9 While the mor-pho-log-i-cal dis-tinc-tion used in
  []
 
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 90.
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 90.
+(/usr/local/texlive/2009/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 90.
+ [1
+
+
+]
 Missing character: There is no Þ in font cmr9!
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -350,40 +364,31 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 95.
+(hyperref)                using `UNDEFINED' on input line 119.
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 95.
-(/usr/local/texlive/2009/texmf-dist/tex/latex/base/omscmr.fd
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 95.
- [1
-
-
-]
+[2]
 Overfull \hbox (21.82457pt too wide) in paragraph at lines 124--154
 [][] 
  []
 
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 159.
-
-[2]
 File: figures/Untitled.eps Graphic file (type eps)
- <figures/Untitled.eps>
+<figures/Untitled.eps>
 Overfull \hbox (42.69519pt too wide) in paragraph at lines 174--237
 [][] 
  []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 285.
+(hyperref)                using `UNDEFINED' on input line 289.
 
 [3]
 File: figures/user_consistency.eps Graphic file (type eps)
  <figures/user_consistency.eps>
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 333.
+
+[4]
 File: figures/gz2_type_fractions.eps Graphic file (type eps)
  <figures/gz2_type_fractions.eps>
 Overfull \hbox (1.8784pt too wide) in paragraph at lines 337--339
@@ -391,16 +396,12 @@ Overfull \hbox (1.8784pt too wide) in paragraph at lines 337--339
  []
 
 
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 343.
-
-[4]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 362.
+(hyperref)                using `UNDEFINED' on input line 391.
 
 [5]
 File: figures/gz2_baselines.eps Graphic file (type eps)
@@ -409,47 +410,43 @@ Overfull \hbox (1.87442pt too wide) in paragraph at lines 402--404
  [][] 
  []
 
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 419.
+
+[6]
 File: figures/gz2_bias_demo_task01.ps Graphic file (type eps)
-<figures/gz2_bias_demo_task01.ps>
+ <figures/gz2_bias_demo_task01.ps>
 Overfull \hbox (1.89pt too wide) in paragraph at lines 439--441
  [][] 
  []
 
 
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 448.
-
-[6]
 Underfull \hbox (badness 10000) in paragraph at lines 452--453
 []\OT1/cmr/m/n/9 Metrics on clas-si-fi-ca-tion con-fi-dence (Ta-ble 04,
  []
 
 
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 462.
+
+[7]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 466.
+(hyperref)                using `UNDEFINED' on input line 474.
 
-[7]
+[8]
 File: figures/stripe82_coadd_compare.ps Graphic file (type eps)
  <figures/stripe82_coadd_compare.ps>
 Overfull \hbox (1.89378pt too wide) in paragraph at lines 489--491
  [][] 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 503.
-
-[8]
 File: figures/gz2_stripe82_type_fractions.eps Graphic file (type eps)
- <figures/gz2_stripe82_type_fractions.eps>
+<figures/gz2_stripe82_type_fractions.eps>
 Overfull \hbox (1.8988pt too wide) in paragraph at lines 527--529
  [][] 
  []
@@ -457,22 +454,14 @@ Overfull \hbox (1.8988pt too wide) in paragraph at lines 527--529
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 555.
-
-[9]
 File: figures/gz1_gz2_trumpet.eps Graphic file (type eps)
- <figures/gz1_gz2_trumpet.eps>
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
+<figures/gz1_gz2_trumpet.eps>
 
 Package hyperref Warning: Empty destination name,
 (hyperref)                using `UNDEFINED' on input line 569.
 
-[10]
+[9]
 File: figures/gz1_gz2.eps Graphic file (type eps)
  <figures/gz1_gz2.eps>
 Overfull \hbox (1.89302pt too wide) in paragraph at lines 575--577
@@ -480,12 +469,30 @@ Overfull \hbox (1.89302pt too wide) in paragraph at lines 575--577
  []
 
 
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 610.
+(hyperref)                using `UNDEFINED' on input line 581.
+
+[10]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 583.
 
 [11]
+Underfull \vbox (badness 2828) has occurred while \output is active []
+
 File: figures/na_bars_axial_10.eps Graphic file (type eps)
- <figures/na_bars_axial_10.eps>
+
+<figures/na_bars_axial_10.eps>
 Overfull \hbox (1.89pt too wide) in paragraph at lines 612--614
  [][] 
  []
@@ -496,51 +503,42 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 632.
+(hyperref)                using `UNDEFINED' on input line 622.
 
 [12]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 636.
+
+[13]
 File: figures/na_rings_axial.eps Graphic file (type eps)
  <figures/na_rings_axial.eps>
 Overfull \hbox (1.89pt too wide) in paragraph at lines 638--640
  [][] 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 650.
-
-[13]
 File: figures/na_pairs.eps Graphic file (type eps)
- <figures/na_pairs.eps>
+<figures/na_pairs.eps>
 Overfull \hbox (1.89pt too wide) in paragraph at lines 654--656
  [][] 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 670.
-
-[14]
 File: figures/na_ttype.eps Graphic file (type eps)
- <figures/na_ttype.eps>
+<figures/na_ttype.eps>
 Overfull \hbox (1.88226pt too wide) in paragraph at lines 672--674
  [][] 
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 679.
 
+[14]
 File: figures/spiraltightness_color.ps Graphic file (type eps)
-
-<figures/spiraltightness_color.ps>
+ <figures/spiraltightness_color.ps>
 Overfull \hbox (1.90126pt too wide) in paragraph at lines 684--686
  [][] 
  []
@@ -549,48 +547,57 @@ Overfull \hbox (1.90126pt too wide) in paragraph at lines 684--686
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 690.
+(hyperref)                using `UNDEFINED' on input line 694.
 
 [15]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-File: figures/bulgeprominence_color.ps Graphic file (type eps)
 
-<figures/bulgeprominence_color.ps>
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 694.
+
+[16]
+File: figures/bulgeprominence_color.ps Graphic file (type eps)
+ <figures/bulgeprominence_color.ps>
 Overfull \hbox (1.90126pt too wide) in paragraph at lines 702--704
  [][] 
  []
 
 File: figures/wbulge_wspiral.eps Graphic file (type eps)
 <figures/wbulge_wspiral.eps>
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 718.
 
-[16]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 737.
+(hyperref)                using `UNDEFINED' on input line 718.
 
 [17]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 734.
+
+[18]
 Underfull \hbox (badness 10000) in paragraph at lines 760--761
 []\OT1/cmr/m/n/9 spiral arms: \OT1/cmtt/m/n/9 arm strength, arm curvature,
  []
 
 
-Underfull \vbox (badness 5288) has occurred while \output is active []
-
-
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 761.
-
-[18]
 Underfull \hbox (badness 10000) in paragraph at lines 761--762
 []\OT1/cmr/m/n/9 texture: \OT1/cmtt/m/n/9 visible dust, dust dispersion,
  []
@@ -607,48 +614,57 @@ Overfull \hbox (1.87675pt too wide) in paragraph at lines 772--774
  []
 
 
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 780.
+
+[19]
 Underfull \hbox (badness 1533) in paragraph at lines 785--786
 \OT1/cmr/m/n/9 is sig-nif-i-cantly higher than the mean bar frac-tion of
  []
 
 
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 789.
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[19]
 File: figures/efigi_arm_curvature.eps Graphic file (type eps)
- <figures/efigi_arm_curvature.eps>
+
+<figures/efigi_arm_curvature.eps>
 Overfull \hbox (1.89pt too wide) in paragraph at lines 794--796
  [][] 
  []
 
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 804.
+
+[20]
 File: figures/hc_histogram.eps Graphic file (type eps)
-<figures/hc_histogram.eps>
+ <figures/hc_histogram.eps>
 Overfull \hbox (1.8977pt too wide) in paragraph at lines 819--821
  [][] 
  []
 
 
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 827.
-
-[20]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 832.
+(hyperref)                using `UNDEFINED' on input line 831.
 
 [21]
-Underfull \vbox (badness 6380) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 845.
+
+[22]
 File: figures/hc_gz2.eps Graphic file (type eps)
-
-<figures/hc_gz2.eps>
+ <figures/hc_gz2.eps>
 Overfull \hbox (1.8977pt too wide) in paragraph at lines 849--851
  [][] 
  []
@@ -676,27 +692,17 @@ Underfull \hbox (badness 1152) in paragraph at lines 877--878
 \OT1/cmr/m/n/9 ([] []) and NA10 ([]
  []
 
+(./gz2datarelease.bbl
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 878.
+(hyperref)                using `UNDEFINED' on input line 83.
 
-[22] (./gz2datarelease.bbl
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 77.
-
-[23]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+[23])
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 159.
+(hyperref)                using `UNDEFINED' on input line 908.
 
-[24])
+[24]
 
 Package hyperref Warning: Empty destination name,
 (hyperref)                using `UNDEFINED' on input line 909.
@@ -747,14 +753,18 @@ Package hyperref Warning: Empty destination name,
 [28
 
 
-] (./gz2datarelease.aux) ) 
-Here is how much of TeX's memory you used:
- 5500 strings out of 493849
- 77766 string characters out of 3149230
- 184167 words of memory out of 3000000
- 8653 multiletter control sequences out of 15000+200000
- 18733 words of font info for 67 fonts, out of 3000000 for 9000
- 714 hyphenation exceptions out of 8191
- 38i,15n,39p,1462b,430s stack positions out of 5000i,500n,10000p,200000b,50000s
+] (./gz2datarelease.aux)
 
-Output written on gz2datarelease.dvi (28 pages, 259300 bytes).
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 5502 strings out of 493849
+ 77787 string characters out of 3149230
+ 183370 words of memory out of 3000000
+ 8654 multiletter control sequences out of 15000+200000
+ 18901 words of font info for 68 fonts, out of 3000000 for 9000
+ 714 hyphenation exceptions out of 8191
+ 38i,15n,39p,1462b,396s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+Output written on gz2datarelease.dvi (28 pages, 260952 bytes).
