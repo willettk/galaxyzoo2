@@ -2,3 +2,11 @@
 *.swo
 *.swp
 Icon?
+*.aux
+*.blg
+*.dvi
+*.log
+*.out
+*.synctex.gz
+gz2datarelease.pdf
+gz2_gallery.pdf
