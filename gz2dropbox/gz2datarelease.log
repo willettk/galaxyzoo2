@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=latex 2009.11.7)  22 FEB 2013 15:13
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=latex 2009.11.7)  22 FEB 2013 15:50
 entering extended mode
  file:line:error style messages enabled.
  %&-line parsing enabled.
@@ -48,13 +48,34 @@ LaTeX Info: Redefining \cite on input line 518.
 \c@figure=\count88
 \mathindent=\dimen103
 )
-(/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/local/texlive/2009/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2008/12/21 v4.2 Page Geometry
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks15
 )
+(/usr/local/texlive/2009/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode not detected.
+)
+(/usr/local/texlive/2009/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+\Gm@cnth=\count89
+\Gm@cntv=\count90
+\c@Gm@tempcnt=\count91
+\Gm@bindingoffset=\dimen104
+\Gm@wd@mp=\dimen105
+\Gm@odd@mp=\dimen106
+\Gm@even@mp=\dimen107
+\Gm@dimlist=\toks16
+
+(/usr/local/texlive/2009/texmf-dist/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
 (/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
@@ -69,13 +90,13 @@ Package graphics Info: Driver file: dvips.def on input line 91.
 (/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/dvips.def
 File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 ))
-\Gin@req@height=\dimen104
-\Gin@req@width=\dimen105
+\Gin@req@height=\dimen108
+\Gin@req@width=\dimen109
 )
 (/usr/local/texlive/2009/texmf-dist/tex/latex/tools/verbatim.sty
 Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks16
-\verbatim@line=\toks17
+\every@verbatim=\toks17
+\verbatim@line=\toks18
 \verbatim@in@stream=\read1
 )
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsmath/amsmath.sty
@@ -88,51 +109,51 @@ Package: amstext 2000/06/29 v2.01
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks18
-\ex@=\dimen106
+\@emptytoks=\toks19
+\ex@=\dimen110
 ))
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
-\pmbraise@=\dimen107
+\pmbraise@=\dimen111
 )
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
-\inf@bad=\count89
+\inf@bad=\count92
 LaTeX Info: Redefining \frac on input line 211.
-\uproot@=\count90
-\leftroot@=\count91
+\uproot@=\count93
+\leftroot@=\count94
 LaTeX Info: Redefining \overline on input line 307.
-\classnum@=\count92
-\DOTSCASE@=\count93
+\classnum@=\count95
+\DOTSCASE@=\count96
 LaTeX Info: Redefining \ldots on input line 379.
 LaTeX Info: Redefining \dots on input line 382.
 LaTeX Info: Redefining \cdots on input line 467.
 \Mathstrutbox@=\box26
 \strutbox@=\box27
-\big@size=\dimen108
+\big@size=\dimen112
 LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
-\macc@depth=\count94
-\c@MaxMatrixCols=\count95
+\macc@depth=\count97
+\c@MaxMatrixCols=\count98
 \dotsspace@=\muskip10
-\c@parentequation=\count96
-\dspbrk@lvl=\count97
-\tag@help=\toks19
-\row@=\count98
-\column@=\count99
-\maxfields@=\count100
-\andhelp@=\toks20
-\eqnshift@=\dimen109
-\alignsep@=\dimen110
-\tagshift@=\dimen111
-\tagwidth@=\dimen112
-\totwidth@=\dimen113
-\lineht@=\dimen114
-\@envbody=\toks21
+\c@parentequation=\count99
+\dspbrk@lvl=\count100
+\tag@help=\toks20
+\row@=\count101
+\column@=\count102
+\maxfields@=\count103
+\andhelp@=\toks21
+\eqnshift@=\dimen113
+\alignsep@=\dimen114
+\tagshift@=\dimen115
+\tagwidth@=\dimen116
+\totwidth@=\dimen117
+\lineht@=\dimen118
+\@envbody=\toks22
 \multlinegap=\skip49
 \multlinetaggap=\skip50
-\mathdisplay@stack=\toks22
+\mathdisplay@stack=\toks23
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
 )
@@ -150,17 +171,17 @@ File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 (./deluxetable.sty
 Package: deluxetable 
 \pt@box=\box28
-\pt@width=\dimen115
-\pt@line=\count101
-\pt@column=\count102
-\pt@nlines=\count103
-\pt@ncol=\count104
-\pt@page=\count105
-\pt@tmpcapwidth=\dimen116
+\pt@width=\dimen119
+\pt@line=\count104
+\pt@column=\count105
+\pt@nlines=\count106
+\pt@ncol=\count107
+\pt@page=\count108
+\pt@tmpcapwidth=\dimen120
 )
 (/usr/local/texlive/2009/texmf-dist/tex/latex/tools/enumerate.sty
 Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
-\@enLab=\toks23
+\@enLab=\toks24
 )
 (/usr/local/texlive/2009/texmf-dist/tex/latex/comment/comment.sty
 \CommentStream=\write3
@@ -169,14 +190,6 @@ Excluding comment 'comment')
 (/usr/local/texlive/2009/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2009/10/09 v6.79a Hypertext links for LaTeX
 
-(/usr/local/texlive/2009/texmf-dist/tex/generic/oberdiek/ifpdf.sty
-Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in pdf mode not detected.
-)
-(/usr/local/texlive/2009/texmf-dist/tex/generic/oberdiek/ifvtex.sty
-Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
-Package ifvtex Info: VTeX not detected.
-)
 (/usr/local/texlive/2009/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 Package: ifxetex 2009/01/23 v0.5 Provides ifxetex conditional
 )
@@ -187,9 +200,9 @@ O)
 (/usr/local/texlive/2009/texmf-dist/tex/latex/oberdiek/xcolor-patch.sty
 Package: xcolor-patch 2009/10/02 xcolor patch
 ))
-\@linkdim=\dimen117
-\Hy@linkcounter=\count106
-\Hy@pagecounter=\count107
+\@linkdim=\dimen121
+\Hy@linkcounter=\count109
+\Hy@pagecounter=\count110
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2009/10/09 v6.79a Hyperref: PDFDocEncoding definition (HO)
@@ -205,10 +218,6 @@ Package etexcmds Info: Could not find \expanded.
 (etexcmds)             that some package has redefined \expanded.
 (etexcmds)             In the latter case, load this package earlier.
 )
-
-Package hyperref Warning: Height of page (\paperheight) is invalid (0.0pt),
-(hyperref)                using 11in.
-
 (/usr/local/texlive/2009/texmf-dist/tex/latex/latexconfig/hyperref.cfg
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
@@ -258,10 +267,10 @@ Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 )))
-\Fld@menulength=\count108
-\Field@Width=\dimen118
-\Fld@charsize=\dimen119
-\Field@toks=\toks24
+\Fld@menulength=\count111
+\Field@Width=\dimen122
+\Fld@charsize=\dimen123
+\Field@toks=\toks25
 Package hyperref Info: Hyper figures OFF on input line 4377.
 Package hyperref Info: Link nesting OFF on input line 4382.
 Package hyperref Info: Hyper index ON on input line 4385.
@@ -273,9 +282,9 @@ Package hyperref Info: PDF/A mode OFF on input line 4407.
 (/usr/local/texlive/2009/texmf-dist/tex/generic/oberdiek/atbegshi.sty
 Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
 )
-\Hy@abspage=\count109
-\c@Item=\count110
-\c@Hfootnote=\count111
+\Hy@abspage=\count112
+\c@Item=\count113
+\c@Hfootnote=\count114
 )
 *hyperref using default driver hdvips*
 (/usr/local/texlive/2009/texmf-dist/tex/latex/hyperref/hdvips.def
@@ -283,76 +292,127 @@ File: hdvips.def 2009/10/09 v6.79a Hyperref driver for dvips
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/hyperref/pdfmark.def
 File: pdfmark.def 2009/10/09 v6.79a Hyperref definitions for pdfmark specials
-\pdf@docset=\toks25
+\pdf@docset=\toks26
 \pdf@box=\box29
-\pdf@toks=\toks26
-\pdf@defaulttoks=\toks27
-\Fld@listcount=\count112
+\pdf@toks=\toks27
+\pdf@defaulttoks=\toks28
+\Fld@listcount=\count115
 ))
 (./gz2datarelease.aux)
 \openout1 = `gz2datarelease.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-Package hyperref Info: Link coloring OFF on input line 63.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
 
+*geometry auto-detecting driver*
+*geometry detected driver: dvips*
+-------------------- Geometry parameters
+paper: letterpaper
+landscape: --
+twocolumn: true
+twoside: true
+asymmetric: --
+h-parts: 53.91792pt, 506.45914pt, 53.91794pt
+v-parts: 56.05193pt, 682.86613pt, 56.05193pt
+hmarginratio: 1:1
+vmarginratio: 1:1
+lines: --
+heightrounded: --
+bindingoffset: 0.0pt
+truedimen: --
+includehead: --
+includefoot: --
+includemp: --
+driver: dvips
+-------------------- Page layout dimensions and switches
+\paperwidth  614.295pt
+\paperheight 794.96999pt
+\textwidth  506.45914pt
+\textheight 682.86613pt
+\oddsidemargin  -18.35207pt
+\evensidemargin -18.35205pt
+\topmargin  -45.21806pt
+\headheight 14.0pt
+\headsep    15.0pt
+\footskip   22.0pt
+\marginparwidth 48.0pt
+\marginparsep   6.0pt
+\columnsep  24.0pt
+\skip\footins  19.5pt plus 12.0pt minus 1.0pt
+\hoffset 0.0pt
+\voffset 0.0pt
+\mag 1000
+\@twocolumntrue \@twosidetrue \@mparswitchtrue 
+(1in=72.27pt, 1cm=28.45pt)
+-----------------------
+Package hyperref Info: Link coloring OFF on input line 65.
 (/usr/local/texlive/2009/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/oberdiek/refcount.sty
 Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
-\c@section@level=\count113
+\c@section@level=\count116
 )
-LaTeX Info: Redefining \ref on input line 63.
-LaTeX Info: Redefining \pageref on input line 63.
+LaTeX Info: Redefining \ref on input line 65.
+LaTeX Info: Redefining \pageref on input line 65.
 
 (./gz2datarelease.out) (./gz2datarelease.out)
 \@outlinefile=\write4
 \openout4 = `gz2datarelease.out'.
 
 \AtBeginShipoutBox=\box30
-LaTeX Font Info:    Try loading font information for U+eur on input line 70.
+LaTeX Font Info:    Try loading font information for U+eur on input line 72.
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsfonts/ueur.fd
 File: ueur.fd 2009/06/22 v3.00 Euler Roman
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 70.
+LaTeX Font Info:    Try loading font information for U+msa on input line 72.
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-Underfull \hbox (badness 10000) in paragraph at lines 70--70
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 89--90
+Underfull \hbox (badness 10000) in paragraph at lines 91--92
 []\OT1/cmr/m/n/9 While the mor-pho-log-i-cal dis-tinc-tion used in
  []
 
 
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 90.
+Underfull \hbox (badness 1009) in paragraph at lines 91--92
+\OT1/cmr/m/n/9 Galaxy Zoo 1 (GZ1) -- that which di-vides spi-ral and
+ []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 90.
+
+Underfull \hbox (badness 1132) in paragraph at lines 91--92
+\OT1/cmr/m/n/9 phys-i-cal pa-ram-e-ters of the sys-tems be-ing stud-ied; the
+ []
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 92.
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 92.
 (/usr/local/texlive/2009/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 90.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 92.
  [1
 
 
@@ -364,71 +424,64 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 119.
+(hyperref)                using `UNDEFINED' on input line 121.
 
 [2]
-Overfull \hbox (21.82457pt too wide) in paragraph at lines 124--154
+Overfull \hbox (20.595pt too wide) in paragraph at lines 126--156
 [][] 
  []
 
 File: figures/Untitled.eps Graphic file (type eps)
 <figures/Untitled.eps>
-Overfull \hbox (42.69519pt too wide) in paragraph at lines 174--237
+Overfull \hbox (41.46562pt too wide) in paragraph at lines 176--239
 [][] 
  []
 
 
+Underfull \vbox (badness 1308) has occurred while \output is active []
+
+
+
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 289.
+(hyperref)                using `UNDEFINED' on input line 291.
 
 [3]
 File: figures/user_consistency.eps Graphic file (type eps)
  <figures/user_consistency.eps>
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 333.
+(hyperref)                using `UNDEFINED' on input line 331.
 
 [4]
 File: figures/gz2_type_fractions.eps Graphic file (type eps)
  <figures/gz2_type_fractions.eps>
-Overfull \hbox (1.8784pt too wide) in paragraph at lines 337--339
- [][] 
- []
+Underfull \vbox (badness 3623) has occurred while \output is active []
 
 
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 386.
+
+[5]
+File: figures/gz2_baselines.eps Graphic file (type eps)
+ <figures/gz2_baselines.eps>
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 391.
-
-[5]
-File: figures/gz2_baselines.eps Graphic file (type eps)
- <figures/gz2_baselines.eps>
-Overfull \hbox (1.87442pt too wide) in paragraph at lines 402--404
- [][] 
- []
-
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 419.
+(hyperref)                using `UNDEFINED' on input line 410.
 
 [6]
 File: figures/gz2_bias_demo_task01.ps Graphic file (type eps)
  <figures/gz2_bias_demo_task01.ps>
-Overfull \hbox (1.89pt too wide) in paragraph at lines 439--441
- [][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 452--453
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 []\OT1/cmr/m/n/9 Metrics on clas-si-fi-ca-tion con-fi-dence (Ta-ble 04,
  []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 462.
+(hyperref)                using `UNDEFINED' on input line 464.
 
 [7]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -436,45 +489,31 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 474.
+(hyperref)                using `UNDEFINED' on input line 475.
 
 [8]
 File: figures/stripe82_coadd_compare.ps Graphic file (type eps)
  <figures/stripe82_coadd_compare.ps>
-Overfull \hbox (1.89378pt too wide) in paragraph at lines 489--491
- [][] 
- []
-
-File: figures/gz2_stripe82_type_fractions.eps Graphic file (type eps)
-<figures/gz2_stripe82_type_fractions.eps>
-Overfull \hbox (1.8988pt too wide) in paragraph at lines 527--529
- [][] 
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-File: figures/gz1_gz2_trumpet.eps Graphic file (type eps)
+File: figures/gz2_stripe82_type_fractions.eps Graphic file (type eps)
 
-<figures/gz1_gz2_trumpet.eps>
+<figures/gz2_stripe82_type_fractions.eps>
+File: figures/gz1_gz2_trumpet.eps Graphic file (type eps)
+ <figures/gz1_gz2_trumpet.eps>
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 569.
+(hyperref)                using `UNDEFINED' on input line 570.
 
 [9]
 File: figures/gz1_gz2.eps Graphic file (type eps)
  <figures/gz1_gz2.eps>
-Overfull \hbox (1.89302pt too wide) in paragraph at lines 575--577
- [][] 
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 581.
+(hyperref)                using `UNDEFINED' on input line 583.
 
 [10]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -485,25 +524,17 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 583.
+(hyperref)                using `UNDEFINED' on input line 584.
 
 [11]
-Underfull \vbox (badness 2828) has occurred while \output is active []
-
 File: figures/na_bars_axial_10.eps Graphic file (type eps)
-
-<figures/na_bars_axial_10.eps>
-Overfull \hbox (1.89pt too wide) in paragraph at lines 612--614
- [][] 
- []
-
-
+ <figures/na_bars_axial_10.eps>
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 622.
+(hyperref)                using `UNDEFINED' on input line 624.
 
 [12]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -511,48 +542,32 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 636.
+(hyperref)                using `UNDEFINED' on input line 638.
 
 [13]
 File: figures/na_rings_axial.eps Graphic file (type eps)
  <figures/na_rings_axial.eps>
-Overfull \hbox (1.89pt too wide) in paragraph at lines 638--640
- [][] 
- []
-
 File: figures/na_pairs.eps Graphic file (type eps)
-<figures/na_pairs.eps>
-Overfull \hbox (1.89pt too wide) in paragraph at lines 654--656
- [][] 
+ <figures/na_pairs.eps>
+Underfull \hbox (badness 1092) in paragraph at lines 669--670
+\OT1/cmr/m/n/9 There has been no pub-lished dis-cus-sion in the lit-er-a-
  []
 
 File: figures/na_ttype.eps Graphic file (type eps)
 <figures/na_ttype.eps>
-Overfull \hbox (1.88226pt too wide) in paragraph at lines 672--674
- [][] 
- []
-
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 679.
+(hyperref)                using `UNDEFINED' on input line 682.
 
 [14]
 File: figures/spiraltightness_color.ps Graphic file (type eps)
  <figures/spiraltightness_color.ps>
-Overfull \hbox (1.90126pt too wide) in paragraph at lines 684--686
- [][] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 694.
+(hyperref)                using `UNDEFINED' on input line 696.
 
 [15]
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -560,152 +575,119 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 694.
+(hyperref)                using `UNDEFINED' on input line 696.
 
 [16]
 File: figures/bulgeprominence_color.ps Graphic file (type eps)
  <figures/bulgeprominence_color.ps>
-Overfull \hbox (1.90126pt too wide) in paragraph at lines 702--704
- [][] 
- []
-
 File: figures/wbulge_wspiral.eps Graphic file (type eps)
-<figures/wbulge_wspiral.eps>
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+ <figures/wbulge_wspiral.eps>
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 718.
+(hyperref)                using `UNDEFINED' on input line 720.
 
 [17]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 734.
+(hyperref)                using `UNDEFINED' on input line 741.
 
 [18]
-Underfull \hbox (badness 10000) in paragraph at lines 760--761
+Underfull \hbox (badness 10000) in paragraph at lines 762--763
 []\OT1/cmr/m/n/9 spiral arms: \OT1/cmtt/m/n/9 arm strength, arm curvature,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 761--762
+Underfull \hbox (badness 10000) in paragraph at lines 763--764
 []\OT1/cmr/m/n/9 texture: \OT1/cmtt/m/n/9 visible dust, dust dispersion,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 762--763
+Underfull \hbox (badness 10000) in paragraph at lines 764--765
 []\OT1/cmr/m/n/9 dynamics: \OT1/cmtt/m/n/9 bar length, inner ring, outer ring,
  []
 
 File: figures/efigi_bars.eps Graphic file (type eps)
 <figures/efigi_bars.eps>
-Overfull \hbox (1.87675pt too wide) in paragraph at lines 772--774
- [][] 
- []
-
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 780.
+(hyperref)                using `UNDEFINED' on input line 784.
 
 [19]
-Underfull \hbox (badness 1533) in paragraph at lines 785--786
-\OT1/cmr/m/n/9 is sig-nif-i-cantly higher than the mean bar frac-tion of
- []
+File: figures/efigi_arm_curvature.eps Graphic file (type eps)
+ <figures/efigi_arm_curvature.eps>
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-File: figures/efigi_arm_curvature.eps Graphic file (type eps)
-
-<figures/efigi_arm_curvature.eps>
-Overfull \hbox (1.89pt too wide) in paragraph at lines 794--796
- [][] 
- []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 804.
+(hyperref)                using `UNDEFINED' on input line 815.
 
 [20]
 File: figures/hc_histogram.eps Graphic file (type eps)
  <figures/hc_histogram.eps>
-Overfull \hbox (1.8977pt too wide) in paragraph at lines 819--821
- [][] 
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 831.
+(hyperref)                using `UNDEFINED' on input line 836.
 
 [21]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
+File: figures/hc_gz2.eps Graphic file (type eps)
+
+<figures/hc_gz2.eps>
+File: figures/hc_gz2_subclass.eps Graphic file (type eps)
+ <figures/hc_gz2_subclass.eps>
+File: figures/hc_gz2_bulge_contour.eps Graphic file (type eps)
+
+<figures/hc_gz2_bulge_contour.eps>
+Underfull \hbox (badness 6559) in paragraph at lines 870--871
+\OT1/cmr/m/n/9 Mention the vol-ume clas-si-fi-ca-tion of []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 870--871
+\OT1/cmr/m/n/9 ([]); re-cent de-vel-op-ments by []
+ []
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 880.
+
+[22] (./gz2datarelease.bbl
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+Package hyperref Warning: Empty destination name,
+(hyperref)                using `UNDEFINED' on input line 10.
+
+[23]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 845.
+(hyperref)                using `UNDEFINED' on input line 123.
 
-[22]
-File: figures/hc_gz2.eps Graphic file (type eps)
- <figures/hc_gz2.eps>
-Overfull \hbox (1.8977pt too wide) in paragraph at lines 849--851
- [][] 
- []
-
-File: figures/hc_gz2_subclass.eps Graphic file (type eps)
-<figures/hc_gz2_subclass.eps>
-File: figures/hc_gz2_bulge_contour.eps Graphic file (type eps)
- <figures/hc_gz2_bulge_contour.eps>
-Underfull \hbox (badness 5817) in paragraph at lines 868--869
-\OT1/cmr/m/n/9 Mention the vol-ume clas-si-fi-ca-tion of []
- []
-
-
-Underfull \hbox (badness 7888) in paragraph at lines 868--869
-\OT1/cmr/m/n/9 ([]); re-cent de-vel-op-ments by []
- []
-
-
-Underfull \hbox (badness 2261) in paragraph at lines 877--878
-\OT1/cmr/m/n/9 di-a-gram. Com-pare to early sci-ence re-sults of EFIGI
- []
-
-
-Underfull \hbox (badness 1152) in paragraph at lines 877--878
-\OT1/cmr/m/n/9 ([] []) and NA10 ([]
- []
-
-(./gz2datarelease.bbl
+[24])
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 83.
-
-[23])
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 908.
-
-[24]
-
-Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 909.
+(hyperref)                using `UNDEFINED' on input line 911.
 
 [25
 
@@ -714,30 +696,30 @@ Table 3 has been set to width 634.37367pt
 Table 4 has been set to width 634.37367pt
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 1005.
+(hyperref)                using `UNDEFINED' on input line 1007.
 
 [26]
 Table 5 has been set to width 601.76282pt
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 1053.
+(hyperref)                using `UNDEFINED' on input line 1055.
 
 [27
 
 
 
 ]
-Overfull \hbox (264.0pt too wide) in paragraph at lines 1071--1071
+Overfull \hbox (265.22957pt too wide) in paragraph at lines 1073--1073
  []$ 
  []
 
 
-Overfull \hbox (219.20279pt too wide) in paragraph at lines 1071--1111
+Overfull \hbox (217.97322pt too wide) in paragraph at lines 1073--1113
  [][] 
  []
 
 
-Overfull \hbox (219.20279pt too wide) in paragraph at lines 1111--1111
+Overfull \hbox (217.97322pt too wide) in paragraph at lines 1113--1113
  []$[]$ 
  []
 
@@ -748,23 +730,19 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Package hyperref Warning: Empty destination name,
-(hyperref)                using `UNDEFINED' on input line 1115.
+(hyperref)                using `UNDEFINED' on input line 1117.
 
 [28
 
 
-] (./gz2datarelease.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+] (./gz2datarelease.aux) ) 
 Here is how much of TeX's memory you used:
- 5502 strings out of 493849
- 77787 string characters out of 3149230
- 183370 words of memory out of 3000000
- 8654 multiletter control sequences out of 15000+200000
+ 5848 strings out of 493849
+ 83076 string characters out of 3149230
+ 193206 words of memory out of 3000000
+ 8993 multiletter control sequences out of 15000+200000
  18901 words of font info for 68 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 38i,15n,39p,1462b,396s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 38i,15n,39p,1687b,426s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on gz2datarelease.dvi (28 pages, 260952 bytes).
+Output written on gz2datarelease.dvi (28 pages, 257320 bytes).

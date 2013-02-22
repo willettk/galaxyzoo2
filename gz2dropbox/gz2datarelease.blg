@@ -4,43 +4,43 @@ The style file: mn2e.bst
 Database file #1: mn-jour.bib
 Database file #2: kwrefs.bib
 You've used 39 entries,
-            2601 wiz_defined-function locations,
-            1593 strings with 22713 characters,
-and the built_in function-call counts, 24308 in all, are:
-= -- 2094
-> -- 2484
-< -- 12
-+ -- 889
-- -- 888
-* -- 2565
-:= -- 4540
-add.period$ -- 0
+            2938 wiz_defined-function locations,
+            1659 strings with 26729 characters,
+and the built_in function-call counts, 34155 in all, are:
+= -- 2154
+> -- 4807
+< -- 2
++ -- 1490
+- -- 1465
+* -- 2832
+:= -- 6506
+add.period$ -- 3
 call.type$ -- 39
-change.case$ -- 452
+change.case$ -- 633
 chr.to.int$ -- 38
 cite$ -- 39
-duplicate$ -- 439
-empty$ -- 654
-format.name$ -- 939
-if$ -- 4289
+duplicate$ -- 664
+empty$ -- 1043
+format.name$ -- 1536
+if$ -- 6610
 int.to.chr$ -- 2
-int.to.str$ -- 0
-missing$ -- 42
-newline$ -- 124
+int.to.str$ -- 1
+missing$ -- 38
+newline$ -- 121
 num.names$ -- 158
-pop$ -- 391
+pop$ -- 606
 preamble$ -- 1
-purify$ -- 490
+purify$ -- 633
 quote$ -- 0
-skip$ -- 703
+skip$ -- 993
 stack$ -- 0
-substring$ -- 810
-swap$ -- 47
+substring$ -- 791
+swap$ -- 50
 text.length$ -- 2
-text.prefix$ -- 295
+text.prefix$ -- 0
 top$ -- 0
 type$ -- 342
 warning$ -- 0
-while$ -- 150
+while$ -- 166
 width$ -- 0
 write$ -- 390

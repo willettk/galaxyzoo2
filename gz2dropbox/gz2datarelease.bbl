@@ -1,241 +1,206 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{39}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
-\bibitem[\protect\citeauthoryear{{Abazajian}, {Adelman-McCarthy},
+\bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
   {Ag{\"u}eros}, {Allam}, {Allende Prieto}, {An}, {Anderson}, {Anderson},
-  {Annis}, {Bahcall} \& {et al.}}{{Abazajian} et~al.}{2009}]{aba09}
-{Abazajian} K.~N.,  {Adelman-McCarthy} J.~K.,  {Ag{\"u}eros} M.~A.,  {Allam}
-  S.~S.,  {Allende Prieto} C.,  {An} D.,  {Anderson} K.~S.~J.,  {Anderson}
-  S.~F.,  {Annis} J.,  {Bahcall} N.~A.,    {et al.} 2009, \apjs, 182, 543
+  {Annis}, {Bahcall}, \& et~al.}]{aba09}
+{Abazajian} K.~N. {et~al.}, 2009, \apjs, 182, 543
 
-\bibitem[\protect\citeauthoryear{{Aguerri}, {M{\'e}ndez-Abreu} \&
-  {Corsini}}{{Aguerri} et~al.}{2009}]{agu09}
-{Aguerri} J.~A.~L.,  {M{\'e}ndez-Abreu} J.,    {Corsini} E.~M.,  2009, \aap,
-  495, 491
+\bibitem[{{Aguerri}, {M{\'e}ndez-Abreu} \& {Corsini}(2009){Aguerri},
+  {M{\'e}ndez-Abreu}, \& {Corsini}}]{agu09}
+{Aguerri} J.~A.~L., {M{\'e}ndez-Abreu} J., {Corsini} E.~M., 2009, \aap, 495,
+  491
 
-\bibitem[\protect\citeauthoryear{{Annis}, {Soares-Santos}, {Strauss}, {Becker},
-  {Dodelson}, {Fan}, {Gunn}, {Hao}, {Ivezic}, {Jester}, {Jiang}, {Johnston},
-  {Kubo}, {Lampeitl}, {Lin}, {Lupton}, {Miknaitis}, {Seo}, {Simet} \&
-  {Yanny}}{{Annis} et~al.}{2011}]{ann11}
-{Annis} J.,  {Soares-Santos} M.,  {Strauss} M.~A.,  {Becker} A.~C.,  {Dodelson}
-  S.,  {Fan} X.,  {Gunn} J.~E.,  {Hao} J.,  {Ivezic} Z.,  {Jester} S.,  {Jiang}
-  L.,  {Johnston} D.~E.,  {Kubo} J.~M.,  {Lampeitl} H.,  {Lin} H.,  {Lupton}
-  R.~H.,  {Miknaitis} G.,  {Seo} H.-J.,  {Simet} M.,    {Yanny} B.,  2011,
-  ArXiv e-prints
+\bibitem[{{Annis} {et~al}\mbox{.}(2011){Annis}, {Soares-Santos}, {Strauss},
+  {Becker}, {Dodelson}, {Fan}, {Gunn}, {Hao}, {Ivezic}, {Jester}, {Jiang},
+  {Johnston}, {Kubo}, {Lampeitl}, {Lin}, {Lupton}, {Miknaitis}, {Seo}, {Simet},
+  \& {Yanny}}]{ann11}
+{Annis} J. {et~al.}, 2011, ArXiv e-prints
 
-\bibitem[\protect\citeauthoryear{{Baillard}, {Bertin}, {de Lapparent},
+\bibitem[{{Baillard} {et~al}\mbox{.}(2011){Baillard}, {Bertin}, {de Lapparent},
   {Fouqu{\'e}}, {Arnouts}, {Mellier}, {Pell{\'o}}, {Leborgne}, {Prugniel},
-  {Makarov}, {Makarova}, {McCracken}, {Bijaoui} \& {Tasca}}{{Baillard}
-  et~al.}{2011}]{bai11}
-{Baillard} A.,  {Bertin} E.,  {de Lapparent} V.,  {Fouqu{\'e}} P.,  {Arnouts}
-  S.,  {Mellier} Y.,  {Pell{\'o}} R.,  {Leborgne} J.-F.,  {Prugniel} P.,
-  {Makarov} D.,  {Makarova} L.,  {McCracken} H.~J.,  {Bijaoui} A.,    {Tasca}
-  L.,  2011, \aap, 532, A74
+  {Makarov}, {Makarova}, {McCracken}, {Bijaoui}, \& {Tasca}}]{bai11}
+{Baillard} A. {et~al.}, 2011, \aap, 532, A74
 
-\bibitem[\protect\citeauthoryear{{Bamford}, {Nichol}, {Baldry}, {Land},
+\bibitem[{{Bamford} {et~al}\mbox{.}(2009){Bamford}, {Nichol}, {Baldry}, {Land},
   {Lintott}, {Schawinski}, {Slosar}, {Szalay}, {Thomas}, {Torki}, {Andreescu},
-  {Edmondson}, {Miller}, {Murray}, {Raddick} \& {Vandenberg}}{{Bamford}
-  et~al.}{2009}]{bam09}
-{Bamford} S.~P.,  {Nichol} R.~C.,  {Baldry} I.~K.,  {Land} K.,  {Lintott}
-  C.~J.,  {Schawinski} K.,  {Slosar} A.,  {Szalay} A.~S.,  {Thomas} D.,
-  {Torki} M.,  {Andreescu} D.,  {Edmondson} E.~M.,  {Miller} C.~J.,  {Murray}
-  P.,  {Raddick} M.~J.,    {Vandenberg} J.,  2009, \mnras, 393, 1324
+  {Edmondson}, {Miller}, {Murray}, {Raddick}, \& {Vandenberg}}]{bam09}
+{Bamford} S.~P. {et~al.}, 2009, \mnras, 393, 1324
 
-\bibitem[\protect\citeauthoryear{{Banerji}, {Lahav}, {Lintott}, {Abdalla},
-  {Schawinski}, {Bamford}, {Andreescu}, {Murray}, {Raddick}, {Slosar},
-  {Szalay}, {Thomas} \& {Vandenberg}}{{Banerji} et~al.}{2010}]{ban10}
-{Banerji} M.,  {Lahav} O.,  {Lintott} C.~J.,  {Abdalla} F.~B.,  {Schawinski}
-  K.,  {Bamford} S.~P.,  {Andreescu} D.,  {Murray} P.,  {Raddick} M.~J.,
-  {Slosar} A.,  {Szalay} A.,  {Thomas} D.,    {Vandenberg} J.,  2010, \mnras,
-  406, 342
+\bibitem[{{Banerji} {et~al}\mbox{.}(2010){Banerji}, {Lahav}, {Lintott},
+  {Abdalla}, {Schawinski}, {Bamford}, {Andreescu}, {Murray}, {Raddick},
+  {Slosar}, {Szalay}, {Thomas}, \& {Vandenberg}}]{ban10}
+{Banerji} M. {et~al.}, 2010, \mnras, 406, 342
 
-\bibitem[\protect\citeauthoryear{{Barazza}, {Jogee} \& {Marinova}}{{Barazza}
-  et~al.}{2008}]{bar08}
-{Barazza} F.~D.,  {Jogee} S.,    {Marinova} I.,  2008, \apj, 675, 1194
+\bibitem[{{Barazza}, {Jogee} \& {Marinova}(2008){Barazza}, {Jogee}, \&
+  {Marinova}}]{bar08}
+{Barazza} F.~D., {Jogee} S., {Marinova} I., 2008, \apj, 675, 1194
 
-\bibitem[\protect\citeauthoryear{{Buta} \& {Combes}}{{Buta} \&
-  {Combes}}{1996}]{but96}
-{Buta} R.,  {Combes} F.,  1996, \fcp, 17, 95
+\bibitem[{{Buta} \& {Combes}(1996)}]{but96}
+{Buta} R., {Combes} F., 1996, \fcp, 17, 95
 
-\bibitem[\protect\citeauthoryear{{Buta}}{{Buta}}{2011}]{but11}
-{Buta} R.~J.,  2011, ArXiv e-prints
+\bibitem[{{Buta}(2011)}]{but11}
+{Buta} R.~J., 2011, ArXiv e-prints
 
-\bibitem[\protect\citeauthoryear{{Cappellari}, {Emsellem}, {Krajnovi{\'c}},
-  {McDermid}, {Serra}, {Alatalo}, {Blitz}, {Bois}, {Bournaud} \& {et
-  al.}}{{Cappellari} et~al.}{2011}]{cap11}
-{Cappellari} M.,  {Emsellem} E.,  {Krajnovi{\'c}} D.,  {McDermid} R.~M.,
-  {Serra} P.,  {Alatalo} K.,  {Blitz} L.,  {Bois} M.,  {Bournaud} F.,    {et
-  al.} 2011, \mnras, 416, 1680
+\bibitem[{{Cappellari} {et~al}\mbox{.}(2011){Cappellari}, {Emsellem},
+  {Krajnovi{\'c}}, {McDermid}, {Serra}, {Alatalo}, {Blitz}, {Bois}, {Bournaud},
+  {Bureau}, {Davies}, {Davis}, {de Zeeuw}, {Khochfar}, {Kuntschner},
+  {Lablanche}, {Morganti}, {Naab}, {Oosterloo}, {Sarzi}, {Scott}, {Weijmans},
+  \& {Young}}]{cap11}
+{Cappellari} M. {et~al.}, 2011, \mnras, 416, 1680
 
-\bibitem[\protect\citeauthoryear{{Darg}, {Kaviraj}, {Lintott}, {Schawinski},
-  {Sarzi}, {Bamford}, {Silk}, {Proctor}, {Andreescu}, {Murray}, {Nichol},
-  {Raddick}, {Slosar}, {Szalay}, {Thomas} \& {Vandenberg}}{{Darg}
-  et~al.}{2010}]{dar10a}
-{Darg} D.~W.,  {Kaviraj} S.,  {Lintott} C.~J.,  {Schawinski} K.,  {Sarzi} M.,
-  {Bamford} S.,  {Silk} J.,  {Proctor} R.,  {Andreescu} D.,  {Murray} P.,
-  {Nichol} R.~C.,  {Raddick} M.~J.,  {Slosar} A.,  {Szalay} A.~S.,  {Thomas}
-  D.,    {Vandenberg} J.,  2010, \mnras, 401, 1043
+\bibitem[{{Darg} {et~al}\mbox{.}(2010){Darg}, {Kaviraj}, {Lintott},
+  {Schawinski}, {Sarzi}, {Bamford}, {Silk}, {Proctor}, {Andreescu}, {Murray},
+  {Nichol}, {Raddick}, {Slosar}, {Szalay}, {Thomas}, \& {Vandenberg}}]{dar10a}
+{Darg} D.~W. {et~al.}, 2010, \mnras, 401, 1043
 
-\bibitem[\protect\citeauthoryear{{Davis} \& {Hayes}}{{Davis} \&
-  {Hayes}}{2013}]{dav13}
-{Davis} D.,  {Hayes} W.,  2013, ArXiv e-prints
+\bibitem[{{Davis} \& {Hayes}(2013)}]{dav13}
+{Davis} D., {Hayes} W., 2013, ArXiv e-prints
 
-\bibitem[\protect\citeauthoryear{{de~Lapparent}, {Baillard} \&
-  {Bertin}}{{de~Lapparent} et~al.}{2011}]{del11a}
-{de~Lapparent} V.,  {Baillard} A.,    {Bertin} E.,  2011, \aap, 532, A75
+\bibitem[{{de~Lapparent}, {Baillard} \& {Bertin}(2011){de~Lapparent},
+  {Baillard}, \& {Bertin}}]{del11a}
+{de~Lapparent} V., {Baillard} A., {Bertin} E., 2011, \aap, 532, A75
 
-\bibitem[\protect\citeauthoryear{{de~Vaucouleurs}}{{de~Vaucouleurs}}{1959}]{de%
-v59}
-{de~Vaucouleurs} G.,  1959, Handbuch der Physik, 53, 275
+\bibitem[{{de~Vaucouleurs}(1959)}]{dev59}
+{de~Vaucouleurs} G., 1959, Handbuch der Physik, 53, 275
 
-\bibitem[\protect\citeauthoryear{{de~Vaucouleurs}, {de~Vaucouleurs}, {Corwin}
-  Jr., {Buta}, {Paturel} \& {Fouque}}{{de~Vaucouleurs} et~al.}{1991}]{dev91}
-{de~Vaucouleurs} G.,  {de~Vaucouleurs} A.,  {Corwin} Jr. H.~G.,  {Buta} R.~J.,
-  {Paturel} G.,    {Fouque} P.,  1991, {Third Reference Catalogue of Bright
-  Galaxies}.
-Springer-Verlag
+\bibitem[{{de~Vaucouleurs} {et~al}\mbox{.}(1991){de~Vaucouleurs},
+  {de~Vaucouleurs}, {Corwin}, {Buta}, {Paturel}, \& {Fouque}}]{dev91}
+{de~Vaucouleurs} G., {de~Vaucouleurs} A., {Corwin}, Jr. H.~G., {Buta} R.~J.,
+  {Paturel} G., {Fouque} P., 1991, {Third Reference Catalogue of Bright
+  Galaxies}. Springer-Verlag
 
-\bibitem[\protect\citeauthoryear{{Fischer}, {Schwamb}, {Schawinski}, {Lintott},
-  {Brewer}, {Giguere}, {Lynn}, {Parrish}, {Sartori}, {Simpson} \& {et
-  al.}}{{Fischer} et~al.}{2011}]{fis11}
-{Fischer} D.,  {Schwamb} M.,  {Schawinski} K.,  {Lintott} C.,  {Brewer} J.,
-  {Giguere} M.,  {Lynn} S.,  {Parrish} M.,  {Sartori} T.,  {Simpson} R.,    {et
-  al.} 2011, ArXiv e-prints
+\bibitem[{{Fischer} {et~al}\mbox{.}(2012){Fischer}, {Schwamb}, {Schawinski},
+  {Lintott}, {Brewer}, {Giguere}, {Lynn}, {Parrish}, {Sartori}, {Simpson},
+  {Smith}, {Spronck}, {Batalha}, {Rowe}, {Jenkins}, {Bryson}, {Prsa},
+  {Tenenbaum}, {Crepp}, {Morton}, {Howard}, {Beleu}, {Kaplan}, {Vannispen},
+  {Sharzer}, {Defouw}, {Hajduk}, {Neal}, {Nemec}, {Schuepbach}, \&
+  {Zimmermann}}]{fis12}
+{Fischer} D.~A. {et~al.}, 2012, \mnras, 419, 2900
 
-\bibitem[\protect\citeauthoryear{{Fukugita}, {Nakamura}, {Okamura}, {Yasuda},
-  {Barentine}, {Brinkmann}, {Gunn}, {Harvanek}, {Ichikawa}, {Lupton},
-  {Schneider}, {Strauss} \& {York}}{{Fukugita} et~al.}{2007}]{fuk07}
-{Fukugita} M.,  {Nakamura} O.,  {Okamura} S.,  {Yasuda} N.,  {Barentine} J.~C.,
-   {Brinkmann} J.,  {Gunn} J.~E.,  {Harvanek} M.,  {Ichikawa} T.,  {Lupton}
-  R.~H.,  {Schneider} D.~P.,  {Strauss} M.~A.,    {York} D.~G.,  2007, \aj,
-  134, 579
+\bibitem[{{Fukugita} {et~al}\mbox{.}(2007){Fukugita}, {Nakamura}, {Okamura},
+  {Yasuda}, {Barentine}, {Brinkmann}, {Gunn}, {Harvanek}, {Ichikawa}, {Lupton},
+  {Schneider}, {Strauss}, \& {York}}]{fuk07}
+{Fukugita} M. {et~al.}, 2007, \aj, 134, 579
 
-\bibitem[\protect\citeauthoryear{{Hoyle}, {Masters}, {Nichol}, {Edmondson},
-  {Smith}, {Lintott}, {Scranton}, {Bamford}, {Schawinski} \& {Thomas}}{{Hoyle}
-  et~al.}{2011}]{hoy11}
-{Hoyle} B.,  {Masters} K.~L.,  {Nichol} R.~C.,  {Edmondson} E.~M.,  {Smith}
-  A.~M.,  {Lintott} C.,  {Scranton} R.,  {Bamford} S.,  {Schawinski} K.,
-  {Thomas} D.,  2011, \mnras, 415, 3627
+\bibitem[{{Hoyle} {et~al}\mbox{.}(2011){Hoyle}, {Masters}, {Nichol},
+  {Edmondson}, {Smith}, {Lintott}, {Scranton}, {Bamford}, {Schawinski}, \&
+  {Thomas}}]{hoy11}
+{Hoyle} B. {et~al.}, 2011, \mnras, 415, 3627
 
-\bibitem[\protect\citeauthoryear{{Hubble}}{{Hubble}}{1936}]{hub36}
-{Hubble} E.~P.,  1936, {Realm of the Nebulae}.
-Yale University Press
+\bibitem[{{Hubble}(1936)}]{hub36}
+{Hubble} E.~P., 1936, {Realm of the Nebulae}. Yale University Press
 
-\bibitem[\protect\citeauthoryear{{Huertas-Company}, {Aguerri}, {Bernardi},
-  {Mei} \& {S{\'a}nchez Almeida}}{{Huertas-Company} et~al.}{2011}]{hue11}
-{Huertas-Company} M.,  {Aguerri} J.~A.~L.,  {Bernardi} M.,  {Mei} S.,
-  {S{\'a}nchez Almeida} J.,  2011, \aap, 525, A157+
+\bibitem[{{Huertas-Company} {et~al}\mbox{.}(2011){Huertas-Company}, {Aguerri},
+  {Bernardi}, {Mei}, \& {S{\'a}nchez Almeida}}]{hue11}
+{Huertas-Company} M., {Aguerri} J.~A.~L., {Bernardi} M., {Mei} S., {S{\'a}nchez
+  Almeida} J., 2011, \aap, 525, A157+
 
-\bibitem[\protect\citeauthoryear{{Huertas-Company}, {Rouan}, {Tasca}, {Soucail}
-  \& {Le F{\`e}vre}}{{Huertas-Company} et~al.}{2008}]{hue08}
-{Huertas-Company} M.,  {Rouan} D.,  {Tasca} L.,  {Soucail} G.,    {Le
-  F{\`e}vre} O.,  2008, \aap, 478, 971
+\bibitem[{{Huertas-Company} {et~al}\mbox{.}(2008){Huertas-Company}, {Rouan},
+  {Tasca}, {Soucail}, \& {Le F{\`e}vre}}]{hue08}
+{Huertas-Company} M., {Rouan} D., {Tasca} L., {Soucail} G., {Le F{\`e}vre} O.,
+  2008, \aap, 478, 971
 
-\bibitem[\protect\citeauthoryear{{Kormendy} \& {Bender}}{{Kormendy} \&
-  {Bender}}{2012}]{kor12}
-{Kormendy} J.,  {Bender} R.,  2012, \apjs, 198, 2
+\bibitem[{{Kormendy} \& {Bender}(2012)}]{kor12}
+{Kormendy} J., {Bender} R., 2012, \apjs, 198, 2
 
-\bibitem[\protect\citeauthoryear{{Kormendy} \& {Kennicutt} Jr.}{{Kormendy} \&
-  {Kennicutt}}{2004}]{kor04}
-{Kormendy} J.,  {Kennicutt} Jr. R.~C.,  2004, \araa, 42, 603
+\bibitem[{{Kormendy} \& {Kennicutt}(2004)}]{kor04}
+{Kormendy} J., {Kennicutt}, Jr. R.~C., 2004, \araa, 42, 603
 
-\bibitem[\protect\citeauthoryear{{Krajnovi{\'c}}, {Emsellem}, {Cappellari},
-  {Alatalo}, {Blitz}, {Bois}, {Bournaud} \& {et al.}}{{Krajnovi{\'c}}
-  et~al.}{2011}]{kra11}
-{Krajnovi{\'c}} D.,  {Emsellem} E.,  {Cappellari} M.,  {Alatalo} K.,  {Blitz}
-  L.,  {Bois} M.,  {Bournaud} F.,    {et al.} 2011, \mnras, 414, 2923
+\bibitem[{{Krajnovi{\'c}} {et~al}\mbox{.}(2011){Krajnovi{\'c}}, {Emsellem},
+  {Cappellari}, {Alatalo}, {Blitz}, {Bois}, {Bournaud}, {Bureau}, {Davies},
+  {Davis}, {de Zeeuw}, {Khochfar}, {Kuntschner}, {Lablanche}, {McDermid},
+  {Morganti}, {Naab}, {Oosterloo}, {Sarzi}, {Scott}, {Serra}, {Weijmans}, \&
+  {Young}}]{kra11}
+{Krajnovi{\'c}} D. {et~al.}, 2011, \mnras, 414, 2923
 
-\bibitem[\protect\citeauthoryear{{Laurikainen}, {Salo}, {Buta} \&
-  {Knapen}}{{Laurikainen} et~al.}{2011}]{lau11}
-{Laurikainen} E.,  {Salo} H.,  {Buta} R.,    {Knapen} J.~H.,  2011, \mnras,
-  418, 1452
+\bibitem[{{Laurikainen} {et~al}\mbox{.}(2011){Laurikainen}, {Salo}, {Buta}, \&
+  {Knapen}}]{lau11}
+{Laurikainen} E., {Salo} H., {Buta} R., {Knapen} J.~H., 2011, \mnras, 418, 1452
 
-\bibitem[\protect\citeauthoryear{{Lintott}, {Schawinski}, {Bamford}, {Slosar},
-  {Land}, {Thomas}, {Edmondson}, {Masters}, {Nichol}, {Raddick}, {Szalay},
-  {Andreescu}, {Murray} \& {Vandenberg}}{{Lintott} et~al.}{2011}]{lin11}
-{Lintott} C.,  {Schawinski} K.,  {Bamford} S.,  {Slosar} A.,  {Land} K.,
-  {Thomas} D.,  {Edmondson} E.,  {Masters} K.,  {Nichol} R.~C.,  {Raddick}
-  M.~J.,  {Szalay} A.,  {Andreescu} D.,  {Murray} P.,    {Vandenberg} J.,
-  2011, \mnras, 410, 166
+\bibitem[{{Lintott} {et~al}\mbox{.}(2011){Lintott}, {Schawinski}, {Bamford},
+  {Slosar}, {Land}, {Thomas}, {Edmondson}, {Masters}, {Nichol}, {Raddick},
+  {Szalay}, {Andreescu}, {Murray}, \& {Vandenberg}}]{lin11}
+{Lintott} C. {et~al.}, 2011, \mnras, 410, 166
 
-\bibitem[\protect\citeauthoryear{{Lintott}, {Schawinski}, {Slosar}, {Land},
-  {Bamford}, {Thomas}, {Raddick}, {Nichol}, {Szalay}, {Andreescu}, {Murray} \&
-  {Vandenberg}}{{Lintott} et~al.}{2008}]{lin08}
-{Lintott} C.~J.,  {Schawinski} K.,  {Slosar} A.,  {Land} K.,  {Bamford} S.,
-  {Thomas} D.,  {Raddick} M.~J.,  {Nichol} R.~C.,  {Szalay} A.,  {Andreescu}
-  D.,  {Murray} P.,    {Vandenberg} J.,  2008, \mnras, 389, 1179
+\bibitem[{{Lintott} {et~al}\mbox{.}(2008){Lintott}, {Schawinski}, {Slosar},
+  {Land}, {Bamford}, {Thomas}, {Raddick}, {Nichol}, {Szalay}, {Andreescu},
+  {Murray}, \& {Vandenberg}}]{lin08}
+{Lintott} C.~J. {et~al.}, 2008, \mnras, 389, 1179
 
-\bibitem[\protect\citeauthoryear{{Martig}, {Bournaud}, {Croton}, {Dekel} \&
-  {Teyssier}}{{Martig} et~al.}{2012}]{mar12}
-{Martig} M.,  {Bournaud} F.,  {Croton} D.~J.,  {Dekel} A.,    {Teyssier} R.,
-  2012, \apj, 756, 26
+\bibitem[{{Martig} {et~al}\mbox{.}(2012){Martig}, {Bournaud}, {Croton},
+  {Dekel}, \& {Teyssier}}]{mar12}
+{Martig} M., {Bournaud} F., {Croton} D.~J., {Dekel} A., {Teyssier} R., 2012,
+  \apj, 756, 26
 
-\bibitem[\protect\citeauthoryear{{Masters}, {Nichol}, {Hoyle}, {Lintott},
-  {Bamford}, {Edmondson}, {Fortson}, {Keel}, {Schawinski}, {Smith} \&
-  {Thomas}}{{Masters} et~al.}{2011}]{mas11c}
-{Masters} K.~L.,  {Nichol} R.~C.,  {Hoyle} B.,  {Lintott} C.,  {Bamford} S.~P.,
-   {Edmondson} E.~M.,  {Fortson} L.,  {Keel} W.~C.,  {Schawinski} K.,  {Smith}
-  A.~M.,    {Thomas} D.,  2011, \mnras, 411, 2026
+\bibitem[{{Masters} {et~al}\mbox{.}(2011){Masters}, {Nichol}, {Hoyle},
+  {Lintott}, {Bamford}, {Edmondson}, {Fortson}, {Keel}, {Schawinski}, {Smith},
+  \& {Thomas}}]{mas11c}
+{Masters} K.~L. {et~al.}, 2011, \mnras, 411, 2026
 
-\bibitem[\protect\citeauthoryear{{Nair} \& {Abraham}}{{Nair} \&
-  {Abraham}}{2010a}]{nai10}
-{Nair} P.~B.,  {Abraham} R.~G.,  2010a, \apjs, 186, 427
+\bibitem[{{Nair} \& {Abraham}(2010{\natexlab{a}})}]{nai10}
+{Nair} P.~B., {Abraham} R.~G., 2010{\natexlab{a}}, \apjs, 186, 427
 
-\bibitem[\protect\citeauthoryear{{Nair} \& {Abraham}}{{Nair} \&
-  {Abraham}}{2010b}]{nai10a}
-{Nair} P.~B.,  {Abraham} R.~G.,  2010b, \apjl, 714, L260
+\bibitem[{{Nair} \& {Abraham}(2010{\natexlab{b}})}]{nai10a}
+{Nair} P.~B., {Abraham} R.~G., 2010{\natexlab{b}}, \apjl, 714, L260
 
-\bibitem[\protect\citeauthoryear{{Nair}, {van den Bergh} \& {Abraham}}{{Nair}
-  et~al.}{2010}]{nai10b}
-{Nair} P.~B.,  {van den Bergh} S.,    {Abraham} R.~G.,  2010, \apj, 715, 606
+\bibitem[{{Nair}, {van den Bergh} \& {Abraham}(2010){Nair}, {van den Bergh}, \&
+  {Abraham}}]{nai10b}
+{Nair} P.~B., {van den Bergh} S., {Abraham} R.~G., 2010, \apj, 715, 606
 
-\bibitem[\protect\citeauthoryear{{Nieto-Santisteban}, {Szalay} \&
-  {Gray}}{{Nieto-Santisteban} et~al.}{2004}]{nie04}
-{Nieto-Santisteban} M.~A.,  {Szalay} A.~S.,    {Gray} J.,  2004, in
-  {Ochsenbein} F.,  {Allen} M.~G.,   {Egret} D.,  eds, Astronomical Data
-  Analysis Software and Systems (ADASS) XIII Vol.~314 of Astronomical Society
-  of the Pacific Conference Series, {ImgCutout, an Engine of Instantaneous
-  Astronomical Discovery}.
-p.~666
+\bibitem[{{Nieto-Santisteban}, {Szalay} \& {Gray}(2004){Nieto-Santisteban},
+  {Szalay}, \& {Gray}}]{nie04}
+{Nieto-Santisteban} M.~A., {Szalay} A.~S., {Gray} J., 2004, in Astronomical
+  Society of the Pacific Conference Series, Vol. 314, Astronomical Data
+  Analysis Software and Systems (ADASS) XIII, {Ochsenbein} F., {Allen} M.~G.,
+  {Egret} D., eds., p. 666
 
-\bibitem[\protect\citeauthoryear{{Sandage}}{{Sandage}}{1961}]{san61}
-{Sandage} A.,  1961, {The Hubble atlas of galaxies}.
-{Carnegie Institute of Washington}
+\bibitem[{{Sandage}(1961)}]{san61}
+{Sandage} A., 1961, {The Hubble atlas of galaxies}. {Carnegie Institute of
+  Washington}
 
-\bibitem[\protect\citeauthoryear{{Schawinski}, {Lintott}, {Thomas}, {Sarzi},
-  {Andreescu}, {Bamford}, {Kaviraj}, {Khochfar}, {Land}, {Murray}, {Nichol},
-  {Raddick}, {Slosar}, {Szalay}, {Vandenberg} \& {Yi}}{{Schawinski}
-  et~al.}{2009}]{sch09}
-{Schawinski} K.,  {Lintott} C.,  {Thomas} D.,  {Sarzi} M.,  {Andreescu} D.,
-  {Bamford} S.~P.,  {Kaviraj} S.,  {Khochfar} S.,  {Land} K.,  {Murray} P.,
-  {Nichol} R.~C.,  {Raddick} M.~J.,  {Slosar} A.,  {Szalay} A.,  {Vandenberg}
-  J.,    {Yi} S.~K.,  2009, \mnras, 396, 818
+\bibitem[{{Schawinski} {et~al}\mbox{.}(2009){Schawinski}, {Lintott}, {Thomas},
+  {Sarzi}, {Andreescu}, {Bamford}, {Kaviraj}, {Khochfar}, {Land}, {Murray},
+  {Nichol}, {Raddick}, {Slosar}, {Szalay}, {Vandenberg}, \& {Yi}}]{sch09}
+{Schawinski} K. {et~al.}, 2009, \mnras, 396, 818
 
-\bibitem[\protect\citeauthoryear{{Schwamb}, {Lintott}, {Fischer}, {Giguere},
-  {Lynn}, {Smith}, {Brewer}, {Parrish}, {Schawinski} \& {Simpson}}{{Schwamb}
-  et~al.}{2012}]{sch12}
-{Schwamb} M.~E.,  {Lintott} C.~J.,  {Fischer} D.~A.,  {Giguere} M.~J.,  {Lynn}
-  S.,  {Smith} A.~M.,  {Brewer} J.~M.,  {Parrish} M.,  {Schawinski} K.,
-  {Simpson} R.~J.,  2012, \apj, 754, 129
+\bibitem[{{Schwamb} {et~al}\mbox{.}(2012){Schwamb}, {Lintott}, {Fischer},
+  {Giguere}, {Lynn}, {Smith}, {Brewer}, {Parrish}, {Schawinski}, \&
+  {Simpson}}]{sch12}
+{Schwamb} M.~E. {et~al.}, 2012, \apj, 754, 129
 
-\bibitem[\protect\citeauthoryear{{Simmons}, {Lintott}, {Schawinski}, {Moran},
-  {Han}, {Kaviraj}, {Masters}, {Urry}, {Willett}, {Bamford} \&
-  {Nichol}}{{Simmons} et~al.}{2013}]{sim13}
-{Simmons} B.~D.,  {Lintott} C.,  {Schawinski} K.,  {Moran} E.~C.,  {Han} A.,
-  {Kaviraj} S.,  {Masters} K.~L.,  {Urry} C.~M.,  {Willett} K.~W.,  {Bamford}
-  S.~P.,    {Nichol} R.~C.,  2013, \mnras, 429, 2199
+\bibitem[{{Simmons} {et~al}\mbox{.}(2013){Simmons}, {Lintott}, {Schawinski},
+  {Moran}, {Han}, {Kaviraj}, {Masters}, {Urry}, {Willett}, {Bamford}, \&
+  {Nichol}}]{sim13}
+{Simmons} B.~D. {et~al.}, 2013, \mnras, 429, 2199
 
-\bibitem[\protect\citeauthoryear{{Simpson}, {Povich}, {Kendrew}, {Lintott},
-  {Bressert}, {Arvidsson}, {Cyganowski}, {Maddison}, {Schawinski}, {Sherman},
-  {Smith} \& {Wolf-Chase}}{{Simpson} et~al.}{2012}]{sim12b}
-{Simpson} R.~J.,  {Povich} M.~S.,  {Kendrew} S.,  {Lintott} C.~J.,  {Bressert}
-  E.,  {Arvidsson} K.,  {Cyganowski} C.,  {Maddison} S.,  {Schawinski} K.,
-  {Sherman} R.,  {Smith} A.~M.,    {Wolf-Chase} G.,  2012, \mnras, 424, 2442
+\bibitem[{{Simpson} {et~al}\mbox{.}(2012){Simpson}, {Povich}, {Kendrew},
+  {Lintott}, {Bressert}, {Arvidsson}, {Cyganowski}, {Maddison}, {Schawinski},
+  {Sherman}, {Smith}, \& {Wolf-Chase}}]{sim12b}
+{Simpson} R.~J. {et~al.}, 2012, \mnras, 424, 2442
 
-\bibitem[\protect\citeauthoryear{{York}, {Adelman}, {Anderson} Jr., {Anderson},
-  {Annis}, {Bahcall}, {Bakken}, {Barkhouser}, {Bastian}, {Berman} \& {et
-  al.}}{{York} et~al.}{2000}]{yor00}
-{York} D.~G.,  {Adelman} J.,  {Anderson} Jr. J.~E.,  {Anderson} S.~F.,  {Annis}
-  J.,  {Bahcall} N.~A.,  {Bakken} J.~A.,  {Barkhouser} R.,  {Bastian} S.,
-  {Berman} E.,    {et al.} 2000, \aj, 120, 1579
+\bibitem[{{York} {et~al}\mbox{.}(2000){York}, {Adelman}, {Anderson},
+  {Anderson}, {Annis}, {Bahcall}, {Bakken}, {Barkhouser}, {Bastian}, {Berman},
+  {Boroski}, {Bracker}, {Briegel}, {Briggs}, {Brinkmann}, {Brunner}, {Burles},
+  {Carey}, {Carr}, {Castander}, {Chen}, {Colestock}, {Connolly}, {Crocker},
+  {Csabai}, {Czarapata}, {Davis}, {Doi}, {Dombeck}, {Eisenstein}, {Ellman},
+  {Elms}, {Evans}, {Fan}, {Federwitz}, {Fiscelli}, {Friedman}, {Frieman},
+  {Fukugita}, {Gillespie}, {Gunn}, {Gurbani}, {de Haas}, {Haldeman}, {Harris},
+  {Hayes}, {Heckman}, {Hennessy}, {Hindsley}, {Holm}, {Holmgren}, {Huang},
+  {Hull}, {Husby}, {Ichikawa}, {Ichikawa}, {Ivezi{\'c}}, {Kent}, {Kim},
+  {Kinney}, {Klaene}, {Kleinman}, {Kleinman}, {Knapp}, {Korienek}, {Kron},
+  {Kunszt}, {Lamb}, {Lee}, {Leger}, {Limmongkol}, {Lindenmeyer}, {Long},
+  {Loomis}, {Loveday}, {Lucinio}, {Lupton}, {MacKinnon}, {Mannery}, {Mantsch},
+  {Margon}, {McGehee}, {McKay}, {Meiksin}, {Merelli}, {Monet}, {Munn},
+  {Narayanan}, {Nash}, {Neilsen}, {Neswold}, {Newberg}, {Nichol}, {Nicinski},
+  {Nonino}, {Okada}, {Okamura}, {Ostriker}, {Owen}, {Pauls}, {Peoples},
+  {Peterson}, {Petravick}, {Pier}, {Pope}, {Pordes}, {Prosapio},
+  {Rechenmacher}, {Quinn}, {Richards}, {Richmond}, {Rivetta}, {Rockosi},
+  {Ruthmansdorfer}, {Sandford}, {Schlegel}, {Schneider}, {Sekiguchi}, {Sergey},
+  {Shimasaku}, {Siegmund}, {Smee}, {Smith}, {Snedden}, {Stone}, {Stoughton},
+  {Strauss}, {Stubbs}, {SubbaRao}, {Szalay}, {Szapudi}, {Szokoly}, {Thakar},
+  {Tremonti}, {Tucker}, {Uomoto}, {Vanden Berk}, {Vogeley}, {Waddell}, {Wang},
+  {Watanabe}, {Weinberg}, {Yanny}, {Yasuda}, \& {SDSS Collaboration}}]{yor00}
+{York} D.~G. {et~al.}, 2000, \aj, 120, 1579
 
 \end{thebibliography}
