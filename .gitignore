@@ -6,7 +6,13 @@ Icon?
 *.blg
 *.dvi
 *.log
+*.pyc
 *.out
 *.synctex.gz
-gz2dropbox/gz2datarelease.pdf
-gz2dropbox/gz2_gallery.pdf
+*.pdf
+*.ps
+*.eps
+*.fits
+*.fits.gz
+*.vot.gz
+*.csv.gz
