@@ -12,6 +12,7 @@ from matplotlib import rc
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.font_manager import FontProperties
+from random import sample
 from itertools import chain
 from scipy.stats import scoreatpercentile
 from scipy.stats import tsem
@@ -3310,3 +3311,16 @@ def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=
     
     return None
 
+def objlist(gzdata,str):
+
+    ra = gzdata['RA'][gzdata[str+'_flag'].astype(bool)]
+    dec = gzdata['DEC'][gzdata[str+'_flag'].astype(bool)]
+    
+    print ' '
+    print 'ra dec'
+    ll = len(ra) if len(ra) < 25 else 25
+    for coo in sample(zip(ra,dec),ll):
+        print "%6.3f, %6.3f" % (coo[0],coo[1])
+    print ' '
+
+    return None
