@@ -4,7 +4,7 @@ galaxyzoo2
 Code for data reduction and analysis of Galaxy Zoo 2. Currently intended for exclusive use by
 the Galaxy Zoo science team. 
 
-The draft of the data release paper (gz2datarelease.pdf), along with associated files, is in the gz2dropbox/ folder. 
+The draft of the data release paper (gz2datarelease.pdf), along with associated files, is in the datapaper/ folder. 
 This folder also includes the gallery of examples from GZ2 (gz2\_gallery.pdf). 
 
 Code used for data reduction is stored in idl/ and python/.
