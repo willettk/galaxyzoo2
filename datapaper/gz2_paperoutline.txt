@@ -1,0 +1,64 @@
+GZ2 data release paper: outline
+June 12, 2012
+following discussion at Oxford
+
+Authors: Chris Lintott, Kyle Willett, Steven Bamford, Karen L. Masters, Brooke Simmons, etc. (order to be determined - Chris has expressed preference to be the first author)
+
+1. Introduction (CL)
+2. Data description (CL, SB, KLM)
+	
+	Data:
+	- GZ2 original + extra samples
+	- Stripe 82 normal depth
+	- Stripe 82 coadd depth (image processing versions 1 and 2)
+	
+	Decision tree
+	
+3. Debiasing (KW, SB)
+
+	- Our motto: "No Evolution in Sloan"
+	
+	- likely have statistics to debias features/bars/bulge/spiral arms questions
+	- CL suggests treating these independently; not sure if possible (KW)
+	- not all answers may be possible or appropriate to debias (ie, 3-arms vs. 4-arms at high redshift shouldn't be any different)
+	
+	Two possible approaches:
+		- use Stripe 82 coadd + normal depth data to compute bias correction, then apply it to the main GZ2 sample
+		- compute local morphology relation for galaxies based on low-redshift bins in apparent magnitude/size/surface brightness space, then correct as a function of redshift. This was the approach taken for GZ1. 
+		
+3a. Weighting users to match samples (CL)
+
+4. The data release (KW, SB, KLM)
+
+	Table 1: GZ2 "easy use" version, containing debiased weight fractions, confidence intervals, and flags/code (expectation values?) for each galaxy and answer
+	Table 2: GZ2 raw votes and fractions (similar if not identical to what Steven has now on CasJobs)
+	Explanation: how to use the catalog
+	
+	Simultaneous publishing on CasJobs and at data.galaxyzoo.org
+	
+5. Comparison to existing catalogs (KW, BS, CL)
+
+	Professional: Nair & Abraham, EFIGI, RC3
+		compare bars, rings, mergers, T-Types
+	Machine-learning: Huertas-Company, Horvitz
+		compare T-Types
+	Ourselves: Zoo1
+		compare T-Types for consistency
+	
+	Decision made to skip comparisons to CAS data for now (no easily available catalogs for all three parameters)
+	
+6. Galaxy Wars (SB)
+
+7. Astronomy (CL, KW, KLM, BS, SB)
+	- sample comparisons to color vs. concentration
+	- morphological demographics of the color-magnitude diagram
+	- Hubble sequence as taken from RC3, tested with GZ2. Is this a valid paradigm?
+	- number of spiral arms
+	- Hambleton et al. (2011); CAS results for simulated galaxies
+	
+8. Conclusions (CL)
+
+Timeline:
+
+	- bottleneck is the debiasing of data, currently being led by KW. His objective is to have this completed by end of July 2012 so that analysis can begin on catalog generation, comparison to other data sets, and whatever science we include. Likely working closely with SB on this. 
+	- possibly to be presented at Jan 2013 AAS meeting?
