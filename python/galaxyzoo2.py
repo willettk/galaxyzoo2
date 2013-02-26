@@ -20,7 +20,6 @@ from matplotlib import rc
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.font_manager import FontProperties
-from random import sample
 from itertools import chain
 from scipy.stats import scoreatpercentile
 from scipy.stats import tsem
@@ -296,38 +295,17 @@ def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
 
     # Load the GZ2 sample data
 
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var_str[vartop],bintype))
-        p_var2 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var_str[varbot],bintype))
-        d_var1 = p_var1[0].data.astype(int)                         # Data is pre-binned
-        d_var2 = p_var2[0].data.astype(int)
+    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
+    d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
+    d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
 
-        zbins = p_var1['REDSHIFT_BIN_CENTERS'].data['centers']
-        magbins = p_var1['MR_BIN_CENTERS'].data['centers']
-        sizebins = p_var1['R50_KPC_BIN_CENTERS'].data['centers']
-        
-        p_var1.close()
-        p_var2.close()
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path_task+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        if task_dict['reverse']:
-            d_var1 = np.squeeze(d_allvar[varbot,:,:,:])
-            d_var2 = np.squeeze(d_allvar[vartop,:,:,:])
-        else:
-            d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
-            d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
+    p_allvar.close()
 
     # Bin sizes are set when FITS file is created
 
@@ -514,7 +492,6 @@ def plot_ratio_baseline(task_dict,
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
 
     f_ratio = fits_path_task+'%s_r%s%s_local_ratio_baseline.fits' % (var_def,vartop,varbot)
     p_ratio = pyfits.open(f_ratio)
@@ -536,7 +513,7 @@ def plot_ratio_baseline(task_dict,
     if unset_vrange:
         ratio_vrange = (np.min(ratio_baseline_masked),np.max(ratio_baseline_masked))
 
-    vrange = [(0,np.max(sumcounts)),ratio_vrange]
+    vranges = [(0,np.max(sumcounts)),ratio_vrange]
 
     fig = plt.figure(3,(14,8))
     fig.clf()
@@ -547,8 +524,8 @@ def plot_ratio_baseline(task_dict,
         cmap.set_bad('k')
         imextent=(edges_mag[0],edges_mag[-1],edges_size[0],edges_size[-1])
         im = ax.imshow(data.T, 
-                       vmin = vrange[index][0],
-                       vmax = vrange[index][1],
+                       vmin = vranges[index][0],
+                       vmax = vranges[index][1],
                        extent=imextent,
                        interpolation='nearest',
                        origin='lower'
@@ -613,35 +590,14 @@ def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
 
     # Load the GZ2 sample data
 
-    """
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var1_str,bintype))
-        p_var2 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var2_str,bintype))
-        d_var1 = p_var1[0].data.astype(int)                         # Data is pre-binned
-        d_var2 = p_var2[0].data.astype(int)
+    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
+    centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-        zbins = p_var1['REDSHIFT_BIN_CENTERS'].data['centers']
-        magbins = p_var1['MR_BIN_CENTERS'].data['centers']
-        sizebins = p_var1['R50_KPC_BIN_CENTERS'].data['centers']
-        
-        p_var1.close()
-        p_var2.close()
-    """
-    assert bintype is 'rawlikelihood', \
-        "task_dict['bintype'] must be 'rawlikelihood' to run this module"
-
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path_task+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
+    p_allvar.close()
 
     hmask_hypercube = np.ma.masked_equal(d_allvar,0.)
 
@@ -876,9 +832,47 @@ def ratio_minfunc(p, x, y, z, w, funcname):
 
 def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vartop=0, varbot=1):
 
+    """ Fit the morphology ratio with an analytic function
+        and estimate the uncertainty in each bin. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    nboot : int
+        Number of tries to permute weights. Higher numbers give
+        better accuracy on the estimated uncertainty. 
+
+    plot : bool
+        When `True`, calls `plot_ratio_function` and plots
+        the data and overlaid best fit. 
+
+    unset_vrange : bool
+        When `True`, min and max of the colormap are set to the 
+        range of the data.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
+
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
     funcname = task_dict['funcname']
 
     centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
@@ -945,13 +939,67 @@ def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vart
 def plot_ratio_baseline_fit(task_dict, 
                             fitbins=1000, 
                             unset_vrange = False, 
-                            vrange = (min_ratio,max_ratio), 
+                            ratio_vrange = (min_ratio,max_ratio), 
                             match_databins = False, 
                             plot_local_transparent = True,
                             kernel_size = 3, 
                             plot_contour=False,
                             vartop=0,varbot=1
                             ):
+
+    """ Plot the best fit to morphology ratio using parameters
+        computed in `fit_ratio_baseline`. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    fitbins : int
+        Number of bins along x,y axes on which to plot function
+
+    unset_vrange : bool
+        When `True`, min and max of the colormap are set to the 
+        range of the data.
+
+    ratio_vrange: tuple
+        Sets the min and max of the colormap. Only applies if
+        `unset_vrange` = `False`.
+
+    match_databins: bool
+        When `True`, use the same bin size for the function grid
+        as for the original data. 
+
+    plot_local_transparent : bool
+        When `True`, overplot the local baseline relation as
+        a semi-transparent grid. 
+
+    kernel_size : int
+        Size of the kernel used to convolve the data and fit
+        a boundary to the outer edge.
+
+    plot_contour : bool
+        When `True`, overplot a contour around the outer edge
+        of the data as a dashed line. 
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
@@ -988,12 +1036,12 @@ def plot_ratio_baseline_fit(task_dict,
     fig.clf()
     ax = fig.add_subplot(111)
     if unset_vrange:
-        vrange = (np.min(fitarray_fn),np.max(fitarray_fn))
+        ratio_vrange = (np.min(fitarray_fn),np.max(fitarray_fn))
 
     imf = ax.imshow(fitarray_fn.T,
                    alpha=1.0,
                    extent = fit_extent,
-                   vmin = vrange[0], vmax = vrange[1], 
+                   vmin = ratio_vrange[0], vmax = ratio_vrange[1], 
                    interpolation='nearest', origin='lower')
     cb = plt.colorbar(imf)
     cb.set_label(r'$%s(n_{%s}/n_{%s})$' % (label_prefix,var_str[vartop],var_str[varbot]),fontsize=20)
@@ -1008,7 +1056,7 @@ def plot_ratio_baseline_fit(task_dict,
                        alpha=0.5,
                        cmap = cmap_gray,
                        extent = masked_extent,
-                       vmin = vrange[0], vmax = vrange[1], 
+                       vmin = ratio_vrange[0], vmax = ratio_vrange[1], 
                        interpolation='nearest',
                        origin='lower')
 
@@ -1052,10 +1100,44 @@ def plot_ratio_function(p=np.array([-3.5, 1.9, -22.8, 0.3, 0.3, -4.4, 2.2, 1.1, 
                         y = np.linspace(0,15,50),
                         unset_vrange = False,
                         funcname='sb',
-                        fignum=4,
-                        vrange = (min_ratio,max_ratio)):
+                        ratio_vrange = (min_ratio,max_ratio)):
 
-    # The effect of the nine parameters:
+    """ Plot `ratio_function` on a 2D grid. 
+
+    Parameters
+    ----------
+    p : numpy.array
+        Parameters of `ratio_function` f[x,y;p]
+
+    x : numpy.array
+        x-axis of the data grid
+
+    y : numpy.array
+        y-axis of the data grid
+
+    unset_vrange : bool
+        When `True`, min and max of the colormap are set to the 
+        range of the data.
+
+    funcname: str
+        Name of functional form to which data is fit. Options:
+
+        * `sb` - original, 9-parameter equation from GZ1
+
+        * `tilt - function varying linearly in both x and y 
+
+    ratio_vrange: tuple
+        Sets the min and max of the colormap. Only applies if
+        `unset_vrange` = `False`.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    # Effects of nine parameters in funcname=`sb`:
 
     # a - horizontal shift (along mag axis)
     # b - curvature tilt
@@ -1067,17 +1149,19 @@ def plot_ratio_function(p=np.array([-3.5, 1.9, -22.8, 0.3, 0.3, -4.4, 2.2, 1.1, 
     # h - curvature strength (multiplicative)
     # i - curvature strength (exponential)
 
+    """
+
     fit = ratio_function(p,x,y,funcname)
 
     if unset_vrange:
-        vrange = (np.min(fit),np.max(fit))
+        ratio_vrange = (np.min(fit),np.max(fit))
 
-    fig = plt.figure(fignum)
+    fig = plt.figure(4)
     fig.clf()
     ax = fig.add_subplot(111)
     im = ax.imshow(fit.T, 
         extent = (min(x),max(x),min(y),max(y)), 
-        vmin = vrange[0], vmax = vrange[1],
+        vmin = ratio_vrange[0], vmax = ratio_vrange[1],
         interpolation='nearest', 
         origin='lower')
     cb = plt.colorbar(im)
@@ -1095,13 +1179,110 @@ def plot_ratio_function(p=np.array([-3.5, 1.9, -22.8, 0.3, 0.3, -4.4, 2.2, 1.1, 
 
 def get_task_dict(task):
 
-    # Define dictionaries that define which GZ2 parameters to measure
+    """ Return dictionary of pre-computed parameters for
+        reduction of each GZ2 task.
+
+    Parameters
+    ----------
+    task : str
+        Name of the GZ2 task. Possible options:
+
+        * 'smooth'        Task 01; smooth, features/disk, or star/artifact
+        * 'edgeon'        Task 02; edge-on disk or not
+        * 'bar'           Task 03; bar or not
+        * 'spiral'        Task 04; spiral structure or not
+        * 'bulge'         Task 05; bulge prominence in disks
+        * 'odd'           Task 06; anything odd?
+        * 'rounded'       Task 07; ellipticity of smooth galaxies
+        * 'odd_feature'   Task 08; ring, lens/arc, disturbed, irregular,
+                                   other, merger, or dust lane
+        * 'bulge_shape'   Task 09; rounded, boxy, or no bulge in edge-on disks
+        * 'arms_winding'  Task 10; tightness (pitch angle) of spiral arms
+        * 'arms_number'   Task 11; number of visible spiral arms
+
+
+    Returns
+    -------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. 
+
+    Notes
+    -------
+
+    Parameters in dictionary:
+
+      'task_name_count' : 
+          name of the variable in gz2table corresponding to
+          total number of weighted number of votes for that task
+      
+      'task_names_wf' : tuple
+          Contains names of variables in gz2table corresponding to
+          giving weighted vote fractions for each response
+
+      'var_str' : tuple
+          Contains string abbreviations for each reponse. 
+          Used in filenames and labels in plots (legends,axes)
+
+      'var_def' : str
+          Abbreviation with task name and number (eg, 'task01'). 
+          Used in filenames and labels in plots (legends,axes)
+      
+      'task_str' : str 
+          Name of the task variable.
+          Used in filenames and labels in plots (legends,axes)
+
+      'ratio_type' : str
+          Specifies form of the morphology ratio. 
+          Options are either 'log' (default) or 'linear'.
+      
+      'min_prob' : float
+          gives minimum vote fraction for clean 
+          identification. Currently not in use, but could be set in
+          `make_tables`. 
+
+      'min_classifications' : int 
+          minimum number of classifications per
+          galaxy to be considered in establishing baseline ratio
+          or included in clean sample. 
+      
+      'min_galperbin' : int
+          minimum number of galaxies in each (M,R,z) bin to be
+          included as well-sampled and fit with analytical function.
+
+      'direct' : numpy.array(dtype=bool)
+          Where `True`, correction for a given pair of responses is
+          determined by directly taking the difference between the
+          baseline ratio and the data. Where `False`, it takes the 
+          difference between the analytically fit function and the
+          data. 
+
+      'funcname': str
+          Name of functional form to which data is fit; to be passed to
+          `ratio_function`. Options:
+
+          * `sb` - original, 9-parameter equation from GZ1
+
+          * `tilt - function varying linearly in both x and y 
+
+      'dependent_tasks' : tuple
+          Strings giving the variable names from gz2table for the
+          weighted fractions for the responses that must be selected
+          in order for this task to be viewed. For Task 02, for example,
+          the user must have selected "features or disk" as the response
+          to Task 01. Used to determine inclusion of galaxies in both
+          baseline morphology ratio and clean samples. Not a key for
+          `smooth` or `odd` tasks.  
+
+
+    """
 
     assert task in ('smooth','edgeon','bar','spiral','bulge',\
         'rounded','odd','odd_feature','bulge_shape','arms_winding','arms_number'), \
         "Task must be a string in 'smooth','edgeon','bar','spiral','bulge','rounded','odd','odd_feature','bulge_shape','arms_winding','arms_number')"
 
-    # Default dictionary
+
+    # Default dictionary keys
 
     task_dict = {'task_name_count' : 't01_smooth_or_features_total_weight',
                  'task_names_wf' : ('t01_smooth_or_features_a01_smooth_weighted_fraction',
@@ -1110,25 +1291,20 @@ def get_task_dict(task):
                  'var_str' : ('el','sp','ar'),
                  'var_def' : 'task01',
                  'task_str' : task,
-                 'wp_lim' : 0.5,
-                 'wp_type' : 'binary',
                  'ratio_type' : 'log',
-                 'bintype': 'rawlikelihood', 
                  'min_prob': 0.8,
                  'min_classifications': 30, 
                  'min_galperbin': 25, 
-                 'direct': True, 
-                 'reverse' : False,
+                 'direct' : np.ones((3,3),bool)
                  'funcname' : 'tilt'
                  }
 
-    # Change entries for various GZ2 tasks
+    # Set parameters for various GZ2 tasks
 
     if task is 'smooth':
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
         task_dict['direct'][0,1] = False
         task_dict['funcname'] = 'sb'
-        pass
  
     if task is 'edgeon':
         task_dict['task_name_count'] = 't02_edgeon_total_weight'
@@ -1180,9 +1356,7 @@ def get_task_dict(task):
                                       't05_bulge_prominence_a12_obvious_weighted_fraction',
                                       't05_bulge_prominence_a13_dominant_weighted_fraction')
         task_dict['var_str'] = ('nobulge','justnoticeable','obvious','dominant')
-        task_dict['wp_lim'] = 0.5
         task_dict['min_classifications'] = 10
-        task_dict['wp_type'] = 'weighted'
         task_dict['ratio_type'] = 'log'
         task_dict['var_def'] = 'task05'
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction')
@@ -1198,8 +1372,6 @@ def get_task_dict(task):
                                       't07_rounded_a17_in_between_weighted_fraction',
                                       't07_rounded_a18_cigar_shaped_weighted_fraction')
         task_dict['var_str'] = ('round','inbetween','cigar')
-        task_dict['wp_lim'] = 0.3
-        task_dict['wp_type'] = 'weighted'
         task_dict['ratio_type'] = 'log'
         task_dict['var_def'] = 'task07'
         task_dict['min_classifications'] = 15
@@ -1217,8 +1389,6 @@ def get_task_dict(task):
                                       't10_arms_winding_a30_loose_weighted_fraction')
         task_dict['var_str'] = ('tight','medium','loose')
         task_dict['var_def'] = 'task10'
-        task_dict['wp_lim'] = 0.4
-        task_dict['wp_type'] = 'weighted'
         task_dict['min_classifications'] = 5
         task_dict['ratio_type'] = 'log'
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction','t04_spiral_a08_spiral_weighted_fraction')
@@ -1234,8 +1404,6 @@ def get_task_dict(task):
                                       't11_arms_number_a37_cant_tell_weighted_fraction')
         task_dict['var_str'] = ('1','2','3','4','5+','cant_tell')
         task_dict['var_def'] = 'task11'
-        task_dict['wp_lim'] = 0.25
-        task_dict['wp_type'] = 'weighted'
         task_dict['ratio_type'] = 'log'
         task_dict['min_classifications'] = 5
         task_dict['min_galperbin'] = 10
@@ -1267,7 +1435,6 @@ def get_task_dict(task):
                                       't09_bulge_shape_a27_no_bulge_weighted_fraction')
         task_dict['var_str'] = ('rounded','boxy','nobulge')
         task_dict['var_def'] = 'task09'
-        task_dict['wp_type'] = 'trinary'
         task_dict['min_prob'] = 0.5
         task_dict['min_classifications'] = 10
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a04_yes_weighted_fraction')
@@ -1301,6 +1468,45 @@ def run_task(task_dict,
              unset_vrange = True
              ):
     
+    """ Run all the steps in reduction pipeline
+        for a single task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    nboot : int
+        Number of tries to permute weights. Higher numbers give
+        better accuracy on the estimated uncertainty. 
+
+    fitbins : int
+        Number of bins along x,y axes on which to plot function
+
+    plot : bool
+        When `True`, create and save all plots in the reduction
+        pipeline. Can be skipped to save time. 
+
+    unset_vrange : bool
+        When `True`, min and max of the colormap are set to the 
+        range of the data in all plots. Only affects function
+        if `plot` is `True`. 
+
+    Returns
+    -------
+    None
+
+    Raises
+    -------
+    UserWarning,RuntimeWarning
+
+    Notes
+    -------
+
+
+    """
+
     tstart = time.time()
 
     warnings.filterwarnings('ignore', category=UserWarning,    append=True)
@@ -1315,6 +1521,9 @@ def run_task(task_dict,
     bin_data_idl(task_dict)
 
     ntask = len(task_dict['task_names_wf'])
+
+    # Determine baseline ratio and correction for all pairs of variables per task
+
     for idx1, vartop in enumerate(np.arange(ntask)):
         setdiff = np.concatenate((np.arange(vartop),np.arange(ntask - (vartop+1)) + (vartop+1) ))
         for idx2, varbot in enumerate(setdiff):
@@ -1330,6 +1539,7 @@ def run_task(task_dict,
                 plot_ratio_baseline_redshift(task_dict,vartop,varbot)
                 plot_baseline_correction(task_dict,vartop=vartop,varbot=varbot)
 
+    # Remaining tasks that do not require looping over variable pairs
 
     adjust_probabilities(task_dict)
     if plot:
@@ -1345,14 +1555,22 @@ def run_task(task_dict,
 
 def run_all_tasks():
 
-    """
-    Old method (skipping the Pythonic binning):
-        Took 88 minutes to run at nboot = 50, although I think ipython may have stopped when computer went to sleep. 
-        Takes 164 seconds to run at nboot=1. 
+    """ Runs full data pipeline for all tasks.
 
-    New method (including the IDL-called binning):
-        Takes 164 seconds to run at nboot=1. 
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
     """
+
 
     tstart = time.time()
 
@@ -1371,36 +1589,55 @@ def run_all_tasks():
 
 def determine_baseline_correction(task_dict, vartop = 0, varbot = 1):
 
+    """ Determine the correction ratio baseline for a single pair of
+        responses to a GZ2 task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    correction : numpy.array
+        3D array binned in (M,R,z); values are the correction
+        C[vartop,varbot] determined from the difference between the
+        baseline ratio and the data. 
+
+    correction_masked : numpy.masked_array
+        3D array binned in (M,R,z). Same values as `correction`, 
+        except that bins without either well-sampled data or 
+        a baseline measurement are masked. 
+
+    ratio_masked : numpy.masked_array
+        3D array binned in (M,R,z). Contains the morphology
+        ratios for responses in each bin. Bins without well-sampled
+        data or baseline measurements are masked. 
+
+    """
+
     # Load best fit data
 
     var_def  = task_dict['var_def']
     var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
 
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var_str[vartop],bintype))
-        p_var2 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var_str[varbot],bintype))
-        d_var1 = p_var1[0].data.astype(int)                         # Data is pre-binned
-        d_var2 = p_var2[0].data.astype(int)
+    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
+    d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
+    d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
 
-        zbins = p_var1['REDSHIFT_BIN_CENTERS'].data['centers']
-        magbins = p_var1['MR_BIN_CENTERS'].data['centers']
-        sizebins = p_var1['R50_KPC_BIN_CENTERS'].data['centers']
-        
-        p_var1.close()
-        p_var2.close()
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path_task+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
-        d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
+    p_allvar.close()
 
     ratio_baseline_masked = pickle.load(file(pkl_path+'%s_r%s%s_local_ratio_baseline_masked.pkl' % (var_def,vartop,varbot),'rb')) 
 
@@ -1438,38 +1675,48 @@ def determine_baseline_correction(task_dict, vartop = 0, varbot = 1):
 
     return correction, correction_masked, ratio_masked
 
-def plot_baseline_correction(task_dict,vrange=(min_ratio,max_ratio),vartop=0,varbot=1):
+def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop=0,varbot=1):
+
+    """ Plot the derived correction for a single pair of responses to a
+        GZ2 task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    ratio_vrange: tuple
+        Sets the min and max of the colormap. Only applies if
+        `unset_vrange` = `False`.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    None
+
+    """
 
     c,cmasked, ratio_masked = determine_baseline_correction(task_dict, vartop, varbot)
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
-    bintype = task_dict['bintype']
 
-    if bintype is 'counts':
-        p_var1 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var_str[vartop],bintype))
-        p_var2 = pyfits.open(fits_path_task+'%s_%s_binned_%s.fits' % (var_def,var_str[varbot],bintype))
-        d_var1 = p_var1[0].data.astype(int)                         # Data is pre-binned
-        d_var2 = p_var2[0].data.astype(int)
+    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
+    d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
+    d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
 
-        zbins = p_var1['REDSHIFT_BIN_CENTERS'].data['centers']
-        edges_mag = p_var1['MR_BIN_EDGES'].data['edges']
-        edges_size = p_var1['R50_KPC_BIN_EDGES'].data['edges']
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
-        p_var1.close()
-        p_var2.close()
-
-    if bintype is 'rawlikelihood':
-        #p_allvar = pyfits.open(fits_path_task+'%s_binned_%s.fits' % (var_def,bintype))
-        #d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
-        d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-        d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
-        d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
-
-        p_allvar.close()
+    p_allvar.close()
 
     zstep = centers_redshift[1] - centers_redshift[0]
 
@@ -1483,7 +1730,7 @@ def plot_baseline_correction(task_dict,vrange=(min_ratio,max_ratio),vartop=0,var
         ax = fig.add_subplot(6,4,idx+1)
         im = ax.imshow(cmasked[idx,:,:].T,
                        extent=(edges_mag[0],edges_mag[-1],edges_size[0],edges_size[-1]),
-                       vmin=vrange[0],vmax=vrange[1],
+                       vmin=ratio_vrange[0],vmax=ratio_vrange[1],
                        interpolation='nearest',origin='lower')
         ax.set_aspect('auto')
 
@@ -1506,10 +1753,46 @@ def plot_baseline_correction(task_dict,vrange=(min_ratio,max_ratio),vartop=0,var
     return None
 
 def plot_baseline_correction_slice(task_dict, bslice=5,
-                                   vmin = -2.0, vmax = 2.0,
+                                   ratio_vrange = (min_ratio,max_ratio),
                                    vartop = 0, varbot=1, 
                                    smoothfunc = False,
                                    savefig=False):
+
+    """ Plot the data, fit, and correction for a single pair of responses to a
+        GZ2 task at a particular redshift.  
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    bslice : int
+        Index of the redshift slice in binned data cube to plot. 
+
+    ratio_vrange: tuple
+        Sets the min and max of the colormap. Only applies if
+        `unset_vrange` = `False`.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    smoothfunc : bool
+        When `True`, plot the analytic fit on a 1000x1000 grid. 
+
+    savefig : bool
+        When `True`, save the figure as a file. 
+
+    Returns
+    -------
+    None
+
+    """
 
     c,cmasked, ratio_masked = determine_baseline_correction(task_dict)
 
@@ -1533,7 +1816,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     cmap.set_bad('k')
     im1 = ax1.imshow(zslice.T,
                      extent=(edges_mag[0],edges_mag[-1],edges_size[0],edges_size[-1]),
-                     vmin = vmin, vmax = vmax,
+                     vmin = ratio_vrange[0], vmax = ratio_vrange[1],
                      interpolation='nearest',origin='lower')
     ax1.set_title('Data ratio, %5.3f < z < %5.3f' % (centers_redshift[bslice]-zstep/2.,centers_redshift[bslice]+zstep/2.))
     ax1.set_aspect('auto')
@@ -1567,7 +1850,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
                      alpha=1.0,
                      cmap = cmap,
                      extent = fit_extent,
-                     vmin = vmin, vmax = vmax,
+                     vmin = ratio_vrange[0], vmax = ratio_vrange[1],
                      interpolation='nearest', 
                      origin='lower')
     cb = plt.colorbar(im2)
@@ -1582,7 +1865,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     im2a = ax2.imshow(zslice_opaque.T, 
                       alpha=0.5,
                       extent = fit_extent,
-                      vmin = vmin, vmax = vmax,
+                      vmin = ratio_vrange[0], vmax = ratio_vrange[1],
                       cmap = cmap_gray,
                       interpolation='nearest',
                       origin='lower')
@@ -1596,7 +1879,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     cmap.set_bad('k',alpha=1.0)
     im3 = ax3.imshow(cmasked[bslice,:,:].T,
                      extent=fit_extent,
-                     vmin = vmin, vmax = vmax,
+                     vmin = ratio_vrange[0], vmax = ratio_vrange[1],
                      interpolation='nearest',origin='lower')
     ax3.set_title('Correction')
     cb = fig.colorbar(im3)
@@ -1621,6 +1904,39 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
 
 def ratio_adj(p_el,p_sp,correction,ratio_type):
     
+    """ Function to determine the adjusted elliptical/spiral
+        vote ratio, based on raw data and a correction.
+
+    Parameters
+    ----------
+    p_el : float
+        vote fraction for elliptical galaxies. Assumed to be parameter
+        that decreases when positive correction is applied. 
+
+    p_sp : float
+        vote fraction for spiral galaxies. Assumed to be parameter
+        that increases when positive correction is applied. 
+
+    correction : float
+        Correction to apply to individual vote fractions based on
+        difference in morphology ratio for this galaxy as function
+        of (M,R,z) and a baseline relation. 
+
+    ratio_type' : str
+        Specifies form of the morphology ratio. 
+        Options are either 'log' (default) or 'linear'.
+      
+    Returns
+    -------
+    ratio_adj : float
+        elliptical/spiral ratio adjusted for classification bias
+
+    Notes
+    -------
+
+
+    """
+
     assert ratio_type in ('linear','log'), \
         "Ratio type must be defined and either 'linear' or 'log'"
 
@@ -1634,11 +1950,67 @@ def ratio_adj(p_el,p_sp,correction,ratio_type):
 
 def p_x(p_el,p_sp):
 
+    """ Gives the percentage of any votes not allocated to
+        one of the two primary responses (el or sp).
+
+    Parameters
+    ----------
+    p_el : float
+        vote fraction for elliptical galaxies. Assumed to be parameter
+        that decreases when positive correction is applied. 
+
+    p_sp : float
+        vote fraction for spiral galaxies. Assumed to be parameter
+        that increases when positive correction is applied. 
+
+    Returns
+    -------
+    p_x : float
+        Fraction of votes not allocated to either of the primary responses.
+
+    Notes
+    -------
+
+
+    """
+
     p_x = 1. - p_el - p_sp
 
     return p_x
 
 def p_el_adj(p_el,p_sp,correction,ratio_type):
+
+    """ Function to determine the adjusted elliptical vote fraction
+
+    Parameters
+    ----------
+    p_el : float
+        vote fraction for elliptical galaxies. Assumed to be parameter
+        that decreases when positive correction is applied. 
+
+    p_sp : float
+        vote fraction for spiral galaxies. Assumed to be parameter
+        that increases when positive correction is applied. 
+
+    correction : float
+        Correction to apply to individual vote fractions based on
+        difference in morphology ratio for this galaxy as function
+        of (M,R,z) and a baseline relation. 
+
+    ratio_type' : str
+        Specifies form of the morphology ratio. 
+        Options are either 'log' (default) or 'linear'.
+      
+    Returns
+    -------
+    p_el_adj : float
+        elliptical vote fraction adjusted for classification bias
+
+    Notes
+    -------
+
+
+    """
 
     denom_el = 1./ratio_adj(p_el,p_sp,correction,ratio_type) + (p_x(p_el,p_sp) / p_el) + 1.
     p_el_adj = 1./denom_el
@@ -1647,12 +2019,78 @@ def p_el_adj(p_el,p_sp,correction,ratio_type):
 
 def p_sp_adj(p_el,p_sp,correction,ratio_type):
 
+    """ Function to determine the adjusted spiral vote fraction
+
+    Parameters
+    ----------
+    p_el : float
+        vote fraction for elliptical galaxies. Assumed to be parameter
+        that decreases when positive correction is applied. 
+
+    p_sp : float
+        vote fraction for spiral galaxies. Assumed to be parameter
+        that increases when positive correction is applied. 
+
+    correction : float
+        Correction to apply to individual vote fractions based on
+        difference in morphology ratio for this galaxy as function
+        of (M,R,z) and a baseline relation. 
+
+    ratio_type' : str
+        Specifies form of the morphology ratio. 
+        Options are either 'log' (default) or 'linear'.
+      
+    Returns
+    -------
+    p_sp_adj : float
+        spiral vote fraction adjusted for classification bias
+
+    Notes
+    -------
+
+
+    """
+
     denom_sp = ratio_adj(p_el,p_sp,correction,ratio_type) + (p_x(p_el,p_sp) / p_sp) + 1.
     p_sp_adj = 1./denom_sp
 
     return p_sp_adj
 
 def p_adj_new(f, corr):
+
+    """ Function to determine the adjusted vote fraction
+        for a given response, given all raw vote fractions
+        and corrections between each pair. 
+
+    Parameters
+    ----------
+    f : numpy.array
+        vote fractions for all responses to the task. The first 
+        entry is the vote fraction being corrected for.
+
+    corr : numpy.array
+        Corrections for each pair of responses in the task with respect
+        to f[0]. The task order must be the same as that in f (once the
+        response being corrected for has been removed). 
+
+    Returns
+    -------
+    p_adj: float
+        adjusted vote fraction
+
+    Notes
+    -------
+
+    Example: there are three responses to a task (i,j,k). To determine
+        the adjusted vote fraction for response j:
+
+        >> f = numpy.array((f_j,f_i,f_k))
+        >> corr = numpy.array((C_ji,C_jk))
+        >> p_j = p_adj_new(f,corr)
+        
+    This would be improved if a dictionary were used instead of arrays.
+
+    """
 
     if corr.ndim > 0:
         assert len(f) - 1 == len(corr), \
@@ -1672,6 +2110,38 @@ def p_adj_new(f, corr):
     return p_adj
 
 def adjust_probabilities(task_dict, stripe82=False, photoz=False):
+
+    """ Adjust vote fractions for all responses to a task
+        based on the derived corrections. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    stripe82 : bool
+        When `True`, adjust probabilities for spectroscopic Stripe 82 data.
+
+    photoz : bool
+        When `True`, adjust probabilities for main sample data with
+        photometric redshifts.
+
+    Returns
+    -------
+    p_raw : numpy.array
+        (N x M) array of raw vote fractions for task, where N is the number
+        of galaxies in the sample and M the number of responses for the task.
+
+    p_adj : numpy.array
+        (N x M) array of adjusted vote fractions for task, where N is the number
+        of galaxies in the sample and M the number of responses for the task.
+
+    Notes
+    -------
+    Default settings run the analysis on the spectroscopic main-sample data. 
+
+    """
 
     timestart2 = time.time()
 
@@ -1693,8 +2163,7 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
 
     # Load in the bin sizes
 
-    if task_dict['bintype'] is 'rawlikelihood':
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
     # Take each galaxy, find which bin it corresponds to, adjust probability
 
@@ -1843,18 +2312,42 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
 
     return p_raw,p_adj
 
-def plot_galaxy_counts(task_dict,min_classifications=20,magstep=0.25,sizestep=0.5, vmax=1000):
+def plot_galaxy_counts(task_dict,vmax=1000):
+
+    """ Plot 2D histogram of galaxy counts for binned GZ2 data
+        for each task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    vmax : int or float
+        maximum range of the colormap
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
 
     p = pyfits.open(gz2_full_data_file)
     gzall = p[1].data
     p.close()
 
-    gzdata = gzall[(gzall[task_dict['task_name_count']] > min_classifications) & np.isfinite(gzall['REDSHIFT'])]
+    gzdata = gzall[(gzall[task_dict['task_name_count']] > task_dict['min_classifications']) & np.isfinite(gzall['REDSHIFT'])]
 
     centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
     zstep = centers_redshift[1] - centers_redshift[0]
     magmin,magmax = edges_mag.min(),edges_mag.max()
     sizemin,sizemax = edges_size.min(),edges_size.max()
+    magstep = centers_mag[1] - centers_mag[0]
+    sizestep = centers_size[1] - centers_size[0]
 
     cmap = cm.jet
     cmap.set_bad('k')
@@ -1899,6 +2392,40 @@ def plot_galaxy_counts(task_dict,min_classifications=20,magstep=0.25,sizestep=0.
     return fig
 
 def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False):
+
+    """ Plot the mean type fractions for all responses for each task
+        as a function of redshift. Left plot shows all galaxies,
+        right plot is a magnitude-limited sample. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    zlo : float
+        minimum redshift range to plot
+
+    zhi : float
+        redshift at which to set the magnitude limit for the sample,
+        based on the apparent magnitude sensitivity at that redshift
+
+    zwidth : float
+        width of the redshift bins
+
+    stripe82 : bool
+        When `True`, plot the results for the Stripe 82 spectroscopic sample
+
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
 
     # Load data 
 
@@ -2057,6 +2584,24 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
 def plot_all_baselines(paperplot=False):
 
+    """ Plot the baseline morphology ratios for all 11 tasks in GZ2
+
+    Parameters
+    ----------
+    paperplot : bool
+        When `True`, only plot a 2x2 version of the plot containing
+        data for Tasks 01-04. 
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
+
     fig = plt.figure(13)
     fig.clf()
 
@@ -2089,7 +2634,6 @@ def plot_all_baselines(paperplot=False):
     for idx,task_dict in enumerate(tasklist):
 
         var_def = task_dict['var_def']
-        bintype = task_dict['bintype']
 
         centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
@@ -2141,6 +2685,34 @@ def plot_all_baselines(paperplot=False):
     return None
 
 def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=False):
+
+    """ Plot the type fractions as function of redshift for all 11 tasks in GZ2
+
+    Parameters
+    ----------
+    zlo : float
+        minimum redshift range to plot
+
+    zhi : float
+        redshift at which to set the magnitude limit for the sample,
+        based on the apparent magnitude sensitivity at that redshift
+
+    stripe82 : bool
+        When `True`, plot the results for the Stripe 82 spectroscopic sample
+
+    paperplot : bool
+        When `True`, only plot a 2x2 version of the plot containing
+        data for Tasks 01-04. 
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
 
     fig = plt.figure(14)
     fig.clf()
@@ -2229,6 +2801,29 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=Fal
 
 def posterplot_debiasing(zlimval=0.085,stripe82=False):
 
+    """ Plot the type fractions for five binary tasks in GZ2. 
+
+    Parameters
+    ----------
+    zlimval : float
+        redshift at which to set the magnitude limit for the sample,
+        based on the apparent magnitude sensitivity at that redshift
+
+    stripe82 : bool
+        When `True`, plot the results for the Stripe 82 spectroscopic sample
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    Uses the old debiasing technique, deprecated as of Jan 2013. Made plot on
+    poster presented by KW at 2013 AAS meeting. 
+
+    """
+
     fig = plt.figure(15, (22,13))
     fig.clf()
 
@@ -2247,7 +2842,6 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
 
         var_def = task_dict['var_def']
         var1_str,var2_str = task_dict['var_str']
-        bintype = task_dict['bintype']
 
         centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
 
@@ -2351,6 +2945,25 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
 
 def poster_table():
 
+    """ Return combination of debiased and raw vote fractions for
+        GZ2 data used on 2013 AAS poster (now deprecated).
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    Used the old debiasing technique, deprecated as of Jan 2013. Made data for
+    poster presented by KW at 2013 AAS meeting. 
+
+    """
+
     taskstrings=('smooth','edgeon','bar','spiral','odd')
     smooth = get_task_dict('smooth')
     edgeon = get_task_dict('edgeon')
@@ -2371,7 +2984,6 @@ def poster_table():
 
         var_def = task_dict['var_def']
         var1_str,var2_str = task_dict['var_str']
-        bintype = task_dict['bintype']
         
         p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_adj.pkl' % (var_def,var1_str),'rb')) 
         p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_adj.pkl' % (var_def,var2_str),'rb')) 
@@ -2456,9 +3068,23 @@ def poster_table():
 
 def confidence_measures(task_dict):
 
+    """ Compute the confidence measures for GZ2 from Lintott et al. (2011). Not functional.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    To be finished - KW, 26 Feb 2013
+
     """
-    Compute the confidence measures for GZ2 from Lintott et al. (2011)
-    """
+
 
     var_def = task_dict['var_def']
     centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict)
@@ -2487,6 +3113,23 @@ def confidence_measures(task_dict):
 
 def plot_confidence_measures(task_dict):
 
+    """ Plot the confidence measures for GZ2 from Lintott et al. (2011). Not functional.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    To be finished - KW, 26 Feb 2013
+
+    """
+
     corrarr         = pickle.load(open(pkl_path+'%s_corrarr.pkl' % (task_dict['var_def']),'rb')) 
     """
     deltap, sigmap = confidence_measures(task_dict)
@@ -2507,6 +3150,38 @@ def plot_confidence_measures(task_dict):
     return None 
 
 def save_adjusted_probabilities(photoz=False,stripe82=False):
+
+    """ Adjust and save the vote fractions for all tasks and responses.
+
+    Parameters
+    ----------
+
+    stripe82 : bool
+        When `True`, adjust probabilities for spectroscopic Stripe 82 data.
+
+    photoz : bool
+        When `True`, adjust probabilities for main sample data with
+        photometric redshifts.
+
+    Returns
+    -------
+    allprobs : numpy.array
+        (N x M) array of raw vote fractions for task, where N is the number
+        of galaxies in the sample and M = (total number of responses) * 2. 
+        Includes separate columns for raw and adjusted vote fractions. 
+
+        Data is also saved to a pickle file.
+
+
+    Notes
+    -------
+    Default settings run the analysis on the spectroscopic main-sample data. 
+
+    This could be better constructed by making `allprobs` a N x M x 2 array,
+    so that the odd column numbering makes sense. Alternatively, make it a 
+    dictionary or FITS object. 
+
+    """
 
     # Load in the raw probabilities for all GZ2 galaxies with redshifts
 
@@ -2722,7 +3397,23 @@ def save_adjusted_probabilities(photoz=False,stripe82=False):
 
 def gz1_comparison():
 
-    # Load the GZ1 and GZ2 debiased data. Matched against each other in TOPCAT
+    """ Compare the GZ1 and GZ2 results for consistency
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
+
+    # Load the GZ1 and GZ2 debiased data, already matched against each other in TOPCAT
 
     gz1_gz2_file = fits_path_main+'gz1_gz2_debiased.fits'
 
@@ -2907,8 +3598,39 @@ def gz1_comparison():
 
 def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=False):
 
-    """
-    Make tables for final data products; includes both FITS files (for site) and formatted LaTeX table samples (for paper)
+    """ Make final GZ2 data products in FITS format. 
+
+    Parameters
+    ----------
+    makefits : bool
+        When `True`, write the FITS files to disk
+
+    stripe82 : bool
+        When `True`, adjust probabilities for spectroscopic Stripe 82 data.
+
+    photoz : bool
+        When `True`, adjust probabilities for main sample data with
+        photometric redshifts.
+
+    latex : bool
+        When `True`, print a LaTeX-formatted sample of lines to the screen.
+        Intended to be copied into the paper draft. 
+
+    imagelist : bool
+        When `True`, print a sample list of objid, RA, dec to the screen.
+        Used in the SDSS Image List tool and for creating the figures
+        in gz2_gallery.tex
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    Results are saved as binary FITS files. They can be converted to 
+        CSV and VOTables in TOPCAT.
+
     """
 
     file_str = ''
@@ -3615,10 +4337,40 @@ def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=
     
     return None
 
-def objlist(gzdata,str):
+def objlist(gzdata,response):
 
-    ra = gzdata['RA'][gzdata[str+'_flag'].astype(bool)]
-    dec = gzdata['DEC'][gzdata[str+'_flag'].astype(bool)]
+    """ Print random list of objid, RA, dec to the screen 
+        for use with SDSS Image List tool
+
+    Parameters
+    ----------
+    gzdata : astropy.io.fits.FITS
+        FITS file for GZ2 produced by `make_tables`
+
+    response : str
+        Response for which to retrieve examples of clean, debiased galaxies.
+        Follows same format as gz2table headers, with suffix stripped.
+        Example: 
+        
+            >> response = 't01_smooth_or_features_a01_smooth'
+        
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+    Results are saved as binary FITS files. They can be converted to 
+        CSV and VOTables in TOPCAT.
+
+    """
+
+    from random import sample
+
+    ra = gzdata['RA'][gzdata[response+'_flag'].astype(bool)]
+    dec = gzdata['DEC'][gzdata[response+'_flag'].astype(bool)]
     
     print ' '
     print 'ra dec'
