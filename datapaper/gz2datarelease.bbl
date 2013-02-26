@@ -1,4 +1,4 @@
-\begin{thebibliography}{39}
+\begin{thebibliography}{40}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -48,6 +48,10 @@
   {Lablanche}, {Morganti}, {Naab}, {Oosterloo}, {Sarzi}, {Scott}, {Weijmans},
   \& {Young}}]{cap11}
 {Cappellari} M. {et~al.}, 2011, \mnras, 416, 1680
+
+\bibitem[{{Casteels} {et~al}\mbox{.}(2013){Casteels}, {Bamford}, {Skibba},
+  {Masters}, {Lintott}, {Keel}, {Schawinski}, {Nichol}, \& {Smith}}]{cas13}
+{Casteels} K.~R.~V. {et~al.}, 2013, \mnras, 429, 1051
 
 \bibitem[{{Darg} {et~al}\mbox{.}(2010){Darg}, {Kaviraj}, {Lintott},
   {Schawinski}, {Sarzi}, {Bamford}, {Silk}, {Proctor}, {Andreescu}, {Murray},
