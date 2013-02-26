@@ -1,9 +1,17 @@
+"""
+
+This code is intended to reduce data from Galaxy Zoo 2, and to 
+reproduce the tables, figures, and data in Willett et al. (in prep). It
+relies on the aggregate GZ2 data tables created by Steven Bamford, as well
+as other metadata retrieved from the SDSS CasJobs server. 
+
+"""
+
 import gc
+import cPickle as pickle
 import numpy as np
 import numpy.ma as ma
-import cPickle as pickle
 import time
-import cosmology
 import subprocess
 import os
 import warnings
@@ -21,24 +29,18 @@ from scipy.signal import convolve2d
 from astropy.io import fits as pyfits
 from astroML.plotting import hist as histML
 
-"""
+# From Steven Bamford's Python modules
+import cosmology
 
-Code is hosted on github at willettk/galaxyzoo2.
-
-To do:
-
- - find the proper bin size for each task
- - find the proper limits on probability, number of classifications per galaxy, number of galaxies per bin for each task
- - input different probabilities for different variables
-
-"""
-
+# Set paths for I/O
 gz_path = '/Users/willettk/Astronomy/Research/GalaxyZoo/'
 fits_path_main = gz_path+'fits/'
 fits_path_task = fits_path_main+'tasks/'
 pkl_path = gz_path+'pickle/'
 plots_path = gz_path+'plots/'
 dropbox_figs_path = gz_path+'gz2dropbox/figures/'
+
+# Locations of input FITS data files
 gz2table_data_file = fits_path_main+'gz2table.fits'
 gz2_photoz_data_file = fits_path_main+'gz2_photoz_table_sample.fits'
 gz2_coadd2_data_file = fits_path_main+'gz2_coadd2_table_sample.fits'
@@ -47,25 +49,73 @@ gz2_full_data_file = fits_path_main+'gz2_original_extra_s82norm_table_sample.fit
 gz2_both_data_file = fits_path_main+'gz2main_table_sample.fits'
 gz2_stripe82_data_file = fits_path_main+'gz2_stripe82_normal.fits'
 
+# Global parameters for data reduction
 min_ratio = -2.0
 max_ratio = 2.0
 range_ratio = max_ratio - min_ratio
 unknown_ratio = -999
 no_correction_applied = unknown_ratio + 10
 eps = 0.000001
-
 SBlim_app = 23.0
 appmag_lim = 17.0
 SBlim_size = np.arange(200) / 10.0
 
+# Collect memory and run plotting interactively
 gc.collect()
 plt.ion()
 
-def bin_data_idl(task_dict,
-                           zmin = 0.00, zmax = 0.26, zstep = 0.01,
-                           magmin = -24, magmax = -16, magstep = 0.25,
-                           sizemin = 0, sizemax = 15, sizestep = 0.5
-                           ):
+def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
+                 magmin = -24, magmax = -16, magstep = 0.25,
+                 sizemin = 0, sizemax = 15, sizestep = 0.5):
+
+    """ Bins the galaxies in three dimensions: absolute magnitude,
+        physical size, and redshift. Only bins galaxies with
+        spectroscopic redshifts. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    zmin : float or integer
+        Minimum redshift value for binning galaxies
+
+    zmax : float or integer
+        Maximum redshift value for binning galaxies
+
+    zstep : float or integer
+        Redshift interval for binning galaxies
+
+    magmin : float or integer
+        Minimum absolute magnitude value for binning galaxies
+
+    magmax : float or integer
+        Maximum absolute magnitude value for binning galaxies
+
+    magstep : float or integer
+        Absolute magnitude interval for binning galaxies
+
+    sizemin : float or integer
+        Minimum size [kpc] value for binning galaxies
+
+    sizemax : float or integer
+        Maximum size [kpc] value for binning galaxies
+
+    sizestep : float or integer
+        Size interval [kpc] for binning galaxies
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+    Calls the IDL function `bin_gz2_from_python.pro`. Uses IDL since
+        it was unclear how to bin in three dimensions while tracking
+        indexes of metadata in pure Python. 
+
+    """
 
     tstart = time.time()
     p = pyfits.open(gz2_maglim_data_file)
@@ -189,6 +239,24 @@ def bin_data_idl(task_dict,
 
 def get_bins(task_dict):
 
+    """ Retrive the bin edges and centers from `bin_data_idl`
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    Returns
+    -------
+    centers_redshift, centers_mag, centers_size: float, float, float
+        Centers of the bins in redshift, absolute magnitude, and size
+    
+    edges_redshift, edges_mag, edges_size center : float, float, float
+        Edges of the bins in redshift, absolute magnitude, and size
+
+    """
+
     idl_binned = pyfits.open(fits_path_task+'%s_idlbinned.fits' % (task_dict['var_def']))
     bindata = idl_binned[1].data
 
@@ -202,6 +270,29 @@ def get_bins(task_dict):
     return centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size 
 
 def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
+
+    """ Determine the morphology ratio baseline for a single
+        GZ2 task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    None
+
+    """
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
@@ -314,6 +405,34 @@ def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
 
 def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
 
+
+    """ Determine the uncertainty in the morphology ratio baseline 
+        for a single GZ2 task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    plot: bool
+        When `True`, plot and save the uncertainty in the morphology
+        ratio. 
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    None
+
+    """
+
     var_def = task_dict['var_def']
 
     data = pyfits.getdata(fits_path_task+'%s_r%s%s_local_counts_baseline.fits' % (var_def,vartop,varbot))
@@ -356,6 +475,42 @@ def plot_ratio_baseline(task_dict,
                         plot_mag_lims=False,
                         vartop=0, varbot=1
                         ):
+
+    """ Plot the morphology ratio baseline for a single
+        GZ2 task. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    unset_vrange : bool
+        When `True`, min and max of the colormap are set to the 
+        range of the data.
+
+    ratio_vrange: tuple
+        Sets the min and max of the colormap. Only applies if
+        `unset_vrange` = `False`.
+
+    plot_mag_lims : bool
+        When `True`, overplot the default absolute magnitude limits
+        of the sample.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    ax:
+        matplotlib Axes object
+
+    """
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
@@ -428,6 +583,33 @@ def plot_ratio_baseline(task_dict,
     return ax
 
 def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
+
+    """ Plot the morphology baseline at all redshift slices
+        in the binned data. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    vartop: int
+        Index for the variable in the numerator of the baseline
+        morphology ratio. 
+
+    varbot: int
+        Index for the variable in the denominator of the baseline
+        morphology ratio. 
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
@@ -520,6 +702,58 @@ def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
     return None
 
 def bootstrap_fmin(f, p0, x, y, z, mask, funcname, nboot):
+
+    """ Run optimization function on data and permute weights
+        on fit to estimate the uncertainty. 
+
+    Parameters
+    ----------
+    f : str
+        Name of the minimization function.
+
+    p0 : numpy.array
+        Starting parameters to which to fit data.
+
+    x : numpy.array
+        x-axis of the data grid
+
+    y : numpy.array
+        y-axis of the data grid
+
+    z : numpy.array
+        2-D array of the data values to be fit
+
+    mask: numpy.masked_array
+        Boolean array giving values of data that are not fit
+
+    funcname: str
+        Name of functional form to which data is fit. Options:
+
+        * `sb` - original, 9-parameter equation from GZ1
+
+        * `tilt - function varying linearly in both x and y 
+
+    nboot : int
+        Number of tries to permute weights. Higher numbers give
+        better accuracy on the estimated uncertainty. 
+
+
+    Returns
+    -------
+    p : tuple
+        Best fit parameters of the function based on original,
+        unweighted bask
+
+    perr : tuple
+        Error in the fit parameters based on the mean of the
+        16th and 84th percentiles. 
+
+    Notes
+    -------
+
+
+    """
+
     plist = np.zeros((nboot, len(p0)), np.float)                                # Zero array for number of tries, number of parameters
     ndata = len(mask.ravel().nonzero()[0])                                      # number of non-masked cells in the ratio data
     for i in range(nboot):
@@ -540,6 +774,38 @@ def bootstrap_fmin(f, p0, x, y, z, mask, funcname, nboot):
     return p, perr
 
 def ratio_function(p,x,y,funcname):
+
+    """ Return values for the functional form of the 
+        morphology ratio.
+
+    Parameters
+    ----------
+    p0 : numpy.array
+        Starting parameters to which to fit data.
+
+    x : numpy.array
+        x-axis of the data grid
+
+    y : numpy.array
+        y-axis of the data grid
+
+    funcname: str
+        Name of functional form to which data is fit. Options:
+
+        * `sb` - original, 9-parameter equation from GZ1
+
+        * `tilt - function varying linearly in both x and y 
+
+    Returns
+    -------
+    z : numpy.array
+        2-D array with values of funcname(x,y)
+
+    Notes
+    -------
+
+
+    """
 
     assert funcname in ('sb','tilt'), \
         'funcname must be either "tilt" (for linear stretch in mag,size) or "sb" (original fn. from Bamford+09)'
@@ -563,6 +829,44 @@ def ratio_function(p,x,y,funcname):
     return z
 
 def ratio_minfunc(p, x, y, z, w, funcname):
+
+    """ Compute chi-squared statistic for the fit to weighted
+        data using `funcname`. 
+
+    Parameters
+    ----------
+    p0 : numpy.array
+        Starting parameters to which to fit data.
+
+    x : numpy.array
+        x-axis of the data grid
+
+    y : numpy.array
+        y-axis of the data grid
+
+    z : numpy.array
+        2-D array of the data values to be fit
+
+    w: numpy.array
+        float array giving weights of each data point in z
+
+    funcname: str
+        Name of functional form to which data is fit. Options:
+
+        * `sb` - original, 9-parameter equation from GZ1
+
+        * `tilt - function varying linearly in both x and y 
+
+    Returns
+    -------
+    s : float
+        chi-squared statistic from fit to data
+
+    Notes
+    -------
+
+
+    """
 
     f = ratio_function(p, x, y, funcname)
     r2 = (z - f)**2                                     # Difference between model and data
