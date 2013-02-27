@@ -1,4 +1,4 @@
-\begin{thebibliography}{40}
+\begin{thebibliography}{41}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -132,6 +132,11 @@
   {Murray}, \& {Vandenberg}}]{lin08}
 {Lintott} C.~J. {et~al.}, 2008, \mnras, 389, 1179
 
+\bibitem[{{Lupton} {et~al}\mbox{.}(2004){Lupton}, {Blanton}, {Fekete}, {Hogg},
+  {O'Mullane}, {Szalay}, \& {Wherry}}]{lup04}
+{Lupton} R., {Blanton} M.~R., {Fekete} G., {Hogg} D.~W., {O'Mullane} W.,
+  {Szalay} A., {Wherry} N., 2004, \pasp, 116, 133
+
 \bibitem[{{Martig} {et~al}\mbox{.}(2012){Martig}, {Bournaud}, {Croton},
   {Dekel}, \& {Teyssier}}]{mar12}
 {Martig} M., {Bournaud} F., {Croton} D.~J., {Dekel} A., {Teyssier} R., 2012,
@@ -178,10 +183,9 @@
   {Nichol}}]{sim13}
 {Simmons} B.~D. {et~al.}, 2013, \mnras, 429, 2199
 
-\bibitem[{{Simmons} {et~al}\mbox{.}(2012){Simmons}, {Urry}, {Schawinski},
-  {Cardamone}, \& {Glikman}}]{sim12b}
-{Simmons} B.~D., {Urry} C.~M., {Schawinski} K., {Cardamone} C., {Glikman} E.,
-  2012, \apj, 761, 75
+\bibitem[{{Simpson} {et~al}\mbox{.}(2012){Simpson}, {Roberts}, {Psorakis}, \&
+  {Smith}}]{sim12}
+{Simpson} E., {Roberts} S., {Psorakis} I., {Smith} A., 2012, ArXiv e-prints
 
 \bibitem[{{York} {et~al}\mbox{.}(2000){York}, {Adelman}, {Anderson},
   {Anderson}, {Annis}, {Bahcall}, {Bakken}, {Barkhouser}, {Bastian}, {Berman},

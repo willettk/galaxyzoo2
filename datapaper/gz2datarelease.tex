@@ -28,6 +28,7 @@
 \newcommand{\apjs}{ApJS}
 \newcommand{\aap}{A\&A}
 \newcommand{\araa}{ARA\&A}
+\newcommand{\pasp}{PASP}
 \newcommand{\fcp}{FCP}
 \newcommand{\dcoadd}{$\Delta_{coadd}$}
 \newcommand{\mr}{$M_r$}
@@ -97,7 +98,7 @@ The use of proxies for morphology such as colour, concentration index, spectral 
 
 Despite recent advances in automated morphological classification, driven in part by the availability of large training sets from the original Galaxy~Zoo \citep{ban10,hue11,dav13} XXX ADD MORE REFS XXX, the state of the art does not provide an adequate substitute for classification by eye. In particular, as \citet{lin11} note such efforts typically use proxies for morphology as their input, and so they suffer equally from the objections raised above to the use of morphological proxies. The release of the dataset associated with this paper will be of interest to those developing such machine learning and computer vision systems. 
 
-These results have been made possible by the participation in the Galaxy~Zoo project by hundreds of thousands of `citizen scientists'. Since the original Galaxy~Zoo demonstrated the utility of this method in producing both scientifically-useful catalogues and serendipitous discoveries (see \citet{lin11} for a review of Galaxy~Zoo~1 results), this method has been expanded beyond simple classifications to  use cases which include exoplanet discovery \citep{fis12,sch12} and a census of bubbles associated with star formation \citep{sim12b} amongst many others. 
+These results have been made possible by the participation in the Galaxy~Zoo project by hundreds of thousands of `citizen scientists'. Since the original Galaxy~Zoo demonstrated the utility of this method in producing both scientifically-useful catalogues and serendipitous discoveries (see \citet{lin11} for a review of Galaxy~Zoo~1 results), this method has been expanded beyond simple classifications to  use cases which include exoplanet discovery \citep{fis12,sch12} and a census of bubbles associated with star formation \citep{sim12} amongst many others. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%    Project description  %%%%%%%%%%%%%
@@ -106,21 +107,15 @@ These results have been made possible by the participation in the Galaxy~Zoo pro
 \section{Project description} \label{sec-description}
 
 \subsection{Sample selection} \label{ssec-sample}
-Objects classified for Galaxy~Zoo~2 included around 250,000 of the brightest resolved galaxies from the SDSS North Galactic Cap region. The goal was to exclude the most distant, faintest and smallest systems within which fine morphological features would not be resolved. The sample was restricted to the SDSS DR7 `Legacy' catalogue \citep{aba09}, and therefore excludes observations made by SDSS for other purposes, such as the SEGUE survey. 
+The primary sample of objects classified for Galaxy~Zoo~2 comprised roughly the brightest 25\% of the resolved galaxies in the SDSS North Galactic Cap region. The goal was to exclude the most distant, faintest and smallest systems within which fine morphological features would not be resolved. Our sample was restricted to the SDSS DR7 `Legacy' catalogue \citep{aba09}, and therefore excludes observations made by SDSS for other purposes, such as the SEGUE survey. 
 
-Three further cuts were applied to the DR7 Legacy sample. A Petrosian magnitude brighter than 17.0 in the $r$-band (after Galactic extinction correction was applied) is required, along with a $r$-band Petrosian radius greater than 3 arcsec. Galaxies which had a spectroscopic redshift in the DR7 catalogue outside the range $0.0005<z<0.25$ were also excluded; however, galaxies without reported redshifts were kept. Finally, objects which are flagged by the SDSS pipeline as \textsc{saturated}, \textsc{bright} or \textsc{blended} without an accompanying \textsc{nodeblend} flag are also excluded. Galaxy~Zoo~2 was launched with the resulting sample of 245,609 images on 2009-02-16. 
+Several cuts were applied to the DR7 Legacy sample for selection in GZ2. We require a Petrosian magnitude brighter than 17.0 in the $r$-band (after Galactic extinction correction was applied), along with a $r$-band Petrosian radius greater than 3 arcsec. Galaxies which had a spectroscopic redshift in the DR7 catalogue outside the range $0.0005<z<0.25$ were removed; however, galaxies without reported redshifts were kept. Finally, objects which are flagged by the SDSS pipeline as \textsc{saturated}, \textsc{bright} or \textsc{blended} without an accompanying \textsc{nodeblend} flag were also excluded. The 245,609 galaxies satisfying these criteria are referred to as the ``original'' sample.  
 
-An error in the original query meant that the initial Galaxy~Zoo~2 sample (``original'' sample) was missing some objects (``extra'' sample) on launch, specifically those flagged as both \textsc{blended} and \textsc{child}. These objects, which are typically slightly brighter, larger and bluer than the general population, were added to the site on 2009-09-02. The rate at which images from the respective samples were shown to users was tuned so that the ``extra'' sample would catch-up to the same number of classifications as the ``original'' sample. 
+An error in the original query meant that the ``original'' sample initially missed some objects on launch, specifically those flagged as both \textsc{blended} and \textsc{child}. These galaxies, which are typically slightly brighter, larger and bluer than the general population, were added to the site on 2009-09-02. The rate at which these images were shown to users was tuned so that the average number of classifications would catch up to those in the ``original'' sample. These additional 28,174 galaxies are referred to as the ``extra'' sample. 
 
-In addition to the sample from the Legacy survey, we later added images from Stripe~82, a section along the celestial equator in the Southern Galactic Cap. These are the only images for which we included multiple images of individual galaxies: single-depth and co-added. The coadded images combined 47 (south) or 55 (north) separate scans of the region, resulting in an object detection limit approximately two magnitudes lower than in normal single-depth imaging \citep{ann11}. This coadded sample was added after launch, together with matching galaxies from the normal-depth Stripe~82 imaging (``stripe82'' sample). These were mostly added on 2009-09-02 (but note that $\sim7700$ of the ``stripe82\_coadd'' sample were not added until 2010-09-24).
+In addition to the sample from the Legacy survey, we later added images from Stripe~82, a section along the celestial equator in the Southern Galactic Cap. The selection criteria are the sample as that for the Legacy galaxies, with the exception of a fainter magnitude limit of $r < 17.77$. For the Stripe~82 sample only, we included multiple images of individual galaxies: one set of images at single-depth exposures, and two sets of co-added images with multiple exposures. Coadded images combined 47 (south) or 55 (north) separate scans of the region, resulting in an object detection limit approximately two magnitudes lower than in normal imaging \citep{ann11}. 
 
-The initial Stripe~82 coadd images were visually very different from the normal SDSS images. In order to rectify this, another set of Stripe~82 coadd images were produced and added into the site on 2009-11-04. In the tables these two sets of images are indicated by sample names ``stripe82\_coadd\_1'' and ``stripe82\_coadd\_2''. 
-
-{\em Need paragraph from SB or EE on the details for making the coadded images.}
-
-For most of the duration of Galaxy~Zoo~2, all the images were shown to classifiers in a random order. However, we desired to have all galaxies classified at least a minimum number of times. Therefore, in the final period of Galaxy~Zoo~2, accompanied by a competition with a running tally (dubbed the Zoonometer), objects with low numbers of classifications were preferentially shown in an attempt to get them up to a minimum of 40 classifications for the ``original'', ``extra'' and ``stripe82'' samples, and 20 for the ``stripe82\_coadd\_2'' sample. The ``stripe82\_coadd\_1'' sample was removed from the site at this time. This effort had mixed success, since separate classifications of the Galaxy Wars project also contributed to the count. The main sample galaxies finished with a median of 44 classifications, with 27\% having fewer than 40; the ``stripe82\_coadd\_2'' galaxies had a median of 21 classifications and 26\% of them had fewer than 20 (Table~\ref{tbl-sample}). 
-
-The primary sample for GZ2 analysis consists of the combined ``original'', ``extra'', and the Stripe~82 normal-depth images for which $r\leq17.0$. We have verified that there are no significant differences in classifications between these samples that could have been caused, for example, by a time-dependent bias (since the samples were introduced on different dates). This is hereafter referred to as the GZ2 {\bf main sample}. Data from both the Stripe~82 normal-depth images with $r>17.0$ and the two sets of coadded images are included as separate data products. 
+The primary sample for GZ2 analysis consists of the combined ``original'', ``extra'', and the Stripe~82 normal-depth images with $r\leq17.0$. We have verified that there are no significant differences in classifications between these samples that could have been caused, for example, by a time-dependent bias. This is hereafter referred to as the GZ2 {\bf main sample} (Table~\ref{tbl-sample}). Data from both the Stripe~82 normal-depth images with $r>17.0$ and the two sets of coadded images are included as separate data products. 
 
 \begin{table}
  \caption{GZ2 sample properties \label{tbl-sample}}
@@ -156,81 +151,94 @@ main                           & 283,971 & 44  & 17.0   \\     % 43.3
  %\end{flushleft}
 \end{table}
 
+\subsection{Image creation}\label{ssec-imagecreation}
+
+Images of galaxies from the Legacy and Stripe~82 normal depth surveys were generated from the SDSS ImgCutout web service \citep{nie04}. Each image is a $gri$ colour composite $424\times424$ pixels in size, scaled to $(0.02\times$petror90\_r) arcsec/pixel.
+
+Coadded images from Stripe~82 were generated from the corrected SDSS FITS frames in $g$, $r$ and $i$. Frames were stitched together using Montage\footnote{\url{http://montage.ipac.caltech.edu}} and converted to a colour image using a slightly modified version of the asinh stretch code \citep{lup04}, with parameters adjusted to try to replicate normal SDSS colour balance. The parameterisation of the stretch function used is:
+
+\begin{equation}
+f(x)=\text{asinh}(\alpha Q x)/Q
+\label{eqn-imagegen}
+\end{equation}
+
+\noindent where $Q=3.5$ and $\alpha=0.06$. The colour scaling is [1.000,1.176,1.818] in $g$, $r$ and $i$, respectively. 
+
+The first set of coadded images were visually very different from the normal SDSS images. The background sky noise was high and colour saturated in many individual pixels. Since we were concerned that this could affect morphological classifications, we created a second set of coadd images with a desaturated background. The two coadded sets are labeled ``stripe82\_coadd\_1'' and ``stripe82\_coadd\_2'', respectively (Table~\ref{tbl-sample}). 
+
 \subsection{Decision tree}\label{ssec-decision_tree}
 
-Data for Galaxy~Zoo~2 was collected via a web-based interface. Users of the interface needed to register with a username for classifications to be recorded, but were not required to complete any tutorials. They were then shown a {\it gri} colour composite image of a galaxy generated from the SDSS ImgCutout web service \citep{nie04}, with the image randomly chosen from our sample database. 
+Data for Galaxy~Zoo~2 was collected via a web-based interface. Users of the interface needed to register with a username for their clicks to be recorded, but were not required to complete any tutorials. They were then shown a {\it gri} colour composite image of a galaxy for classification (Figure~\ref{fig-interface}). Users had the option to invert the default colour scaling on any image being classified. 
 
-{\em Need text from CL, EE, AS, or SB on image cutout creation; pixel scale, dynamic range, size/centering of images, etc.}
-
-Classification of the galaxies proceeds via a multi-step tree. Each classification begins with a slightly modified version of the original Galaxy~Zoo task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact'' in the image. Subsequent classification questions depend on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this question will not be asked if they select either of the other two options. 
+Classification of the galaxies proceeds via a multi-step tree. Each classification begins with a slightly modified version of the original Galaxy~Zoo task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact'' in the image. Subsequent questions depend on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this question will not be asked if they select either of the other two options. 
 
 \begin{figure}
-\includegraphics[angle=0,width=3.0in]{figures/Untitled.eps}
+\includegraphics[angle=0,width=3.0in]{figures/interface.eps}
 \caption{{\it Top:} Front page of the web interface for Galaxy~Zoo~2, displaying Task~01. {\it Bottom:} Flowchart of the 11 classification tasks for GZ2, beginning at the top centre. 
-\label{fig-original_vs_extra}}
+\label{fig-interface}}
 \end{figure}
 
 The Galaxy~Zoo~2 tree has 11 classification tasks with a total of 37 possible responses (Table~\ref{tbl-tree}). A classifier selects only one option for each task, after which they are immediately taken to the next step in the tree. Task~01 is the only question answered for all objects in the sample. Once a classification was completed, an image of the next galaxy is automatically displayed and the user can begin on a new object. 
 
 \begin{table}
  \caption{GZ2 classification tree \label{tbl-tree}}
- \begin{tabular}{@{}cllc}
+ \begin{tabular}{@{}cllr}
  \hline
-\multicolumn{1}{c}{Task} &
+\multicolumn{1}{l}{Task} &
 \multicolumn{1}{c}{Question} &
 \multicolumn{1}{c}{Responses} &
-\multicolumn{1}{c}{Next task} 
+\multicolumn{1}{c}{Next} 
 \\ 
 \hline
 \hline						% Mean N_class for Task 01
-01    & {\it "Is the galaxy simply smooth     }  & smooth           & $\rightarrow$~07 \\
-      & {\it and rounded, with no sign of     }  & features or disk & $\rightarrow$~02 \\
-      & {\it a disk?"                         }  & star or artifact & {\bf end} \\
+01    & {\it Is the galaxy simply smooth   }  & smooth           & $\rightarrow$~07 \\
+      & {\it and rounded, with no sign of  }  & features or disk & $\rightarrow$~02 \\
+      & {\it a disk?                       }  & star or artifact & {\bf end} \\
       \hline
-02    & {\it "Could this be a disk viewed     }  & yes              & $\rightarrow$~09 \\
-      & {\it edge-on?"                        }  & no               & $\rightarrow$~03 \\
+02    & {\it Could this be a disk viewed   }  & yes              & $\rightarrow$~09 \\
+      & {\it edge-on?                      }  & no               & $\rightarrow$~03 \\
       \hline
-03    & {\it "Is there a sign of a bar        }  & yes              & $\rightarrow$~04 \\
-      & {\it feature through the centre of    }  & no               & $\rightarrow$~04 \\
-      & {\it the galaxy?"                     }                                        \\
+03    & {\it Is there a sign of a bar      }  & yes              & $\rightarrow$~04 \\
+      & {\it feature through the centre    }  & no               & $\rightarrow$~04 \\
+      & {\it of the galaxy?                }                                        \\
       \hline
-04    & {\it "Is there any sign of a spiral   }  & yes              & $\rightarrow$~10 \\
-      & {\it arm pattern?"                    }  & no               & $\rightarrow$~05 \\
+04    & {\it Is there any sign of a        }  & yes              & $\rightarrow$~10 \\
+      & {\it spiral arm pattern?           }  & no               & $\rightarrow$~05 \\
       \hline
-05    & {\it "How prominent is the central    }  & no bulge         & $\rightarrow$~06 \\
-      & {\it bulge, compared with the rest    }  & just noticeable  & $\rightarrow$~06 \\
-      & {\it of the galaxy?"                  }  & obvious          & $\rightarrow$~06 \\
-      & {\it                                  }  & dominant         & $\rightarrow$~06 \\
+05    & {\it How prominent is the          }  & no bulge         & $\rightarrow$~06 \\
+      & {\it central bulge, compared       }  & just noticeable  & $\rightarrow$~06 \\
+      & {\it with the rest of the galaxy?  }  & obvious          & $\rightarrow$~06 \\
+      & {\it                               }  & dominant         & $\rightarrow$~06 \\
       \hline
-06    & {\it "Is there anything odd?"         }  & yes              & $\rightarrow$~08 \\ 
-      & {\it                                  }  & no               & {\bf end}        \\
+06    & {\it Is there anything odd?        }  & yes              & $\rightarrow$~08 \\ 
+      & {\it                               }  & no               & {\bf end}        \\
       \hline
-07    & {\it "How rounded is it?"             }  & completely round & $\rightarrow$~06 \\
-      & {\it                                  }  & in between       & $\rightarrow$~06 \\
-      & {\it                                  }  & cigar-shaped     & $\rightarrow$~06 \\
+07    & {\it How rounded is it?            }  & completely round & $\rightarrow$~06 \\
+      & {\it                               }  & in between       & $\rightarrow$~06 \\
+      & {\it                               }  & cigar-shaped     & $\rightarrow$~06 \\
       \hline
-08    & {\it "Is the odd feature a ring,      }  & ring             & {\bf end}        \\
-      & {\it or is the galaxy disturbed       }  & lens or arc      & {\bf end}        \\
-      & {\it or irregular?"                   }  & disturbed        & {\bf end}        \\
-      & {\it                                  }  & irregular        & {\bf end}        \\  
-      & {\it                                  }  & other            & {\bf end}        \\  
-      & {\it                                  }  & merger           & {\bf end}        \\  
-      & {\it                                  }  & dust lane        & {\bf end}        \\  
+08    & {\it Is the odd feature a ring,    }  & ring             & {\bf end}        \\
+      & {\it or is the galaxy disturbed    }  & lens or arc      & {\bf end}        \\
+      & {\it or irregular?                 }  & disturbed        & {\bf end}        \\
+      & {\it                               }  & irregular        & {\bf end}        \\  
+      & {\it                               }  & other            & {\bf end}        \\  
+      & {\it                               }  & merger           & {\bf end}        \\  
+      & {\it                               }  & dust lane        & {\bf end}        \\  
       \hline
-09    & {\it "Does the galaxy have a bulge    }  & rounded          & $\rightarrow$~06 \\
-      & {\it at its centre? If so, what       }  & boxy             & $\rightarrow$~06 \\
-      & {\it shape?"                          }  & no bulge         & $\rightarrow$~06 \\
+09    & {\it Does the galaxy have a        }  & rounded          & $\rightarrow$~06 \\
+      & {\it bulge at its centre? If       }  & boxy             & $\rightarrow$~06 \\
+      & {\it so, what shape?               }  & no bulge         & $\rightarrow$~06 \\
       \hline
-10    & {\it "How tightly wound do the        }  & tight            & $\rightarrow$~11 \\
-      & {\it spiral arms appear?:             }  & medium           & $\rightarrow$~11 \\
-      & {\it                                  }  & loose            & $\rightarrow$~11 \\    
+10    & {\it How tightly wound do the      }  & tight            & $\rightarrow$~11 \\
+      & {\it spiral arms appear?           }  & medium           & $\rightarrow$~11 \\
+      & {\it                               }  & loose            & $\rightarrow$~11 \\    
       \hline
-11    & {\it "How many spiral arms            }  & 1    & $\rightarrow$~05 \\
-      & {\it  are there?"                     }  & 2                & $\rightarrow$~05 \\
-      & {\it                                  }  & 3                & $\rightarrow$~05 \\
-      & {\it                                  }  & 4                & $\rightarrow$~05 \\
-      & {\it                                  }  & more than four   & $\rightarrow$~05 \\
-      & {\it                                  }  & can't tell       & $\rightarrow$~05 \\
+11    & {\it How many spiral arms          }  & 1                & $\rightarrow$~05 \\
+      & {\it  are there?                   }  & 2                & $\rightarrow$~05 \\
+      & {\it                               }  & 3                & $\rightarrow$~05 \\
+      & {\it                               }  & 4                & $\rightarrow$~05 \\
+      & {\it                               }  & more than four   & $\rightarrow$~05 \\
+      & {\it                               }  & can't tell       & $\rightarrow$~05 \\
 \hline
  \end{tabular}
  %\medskip
@@ -241,11 +249,14 @@ The Galaxy~Zoo~2 tree has 11 classification tasks with a total of 37 possible re
 
 Data from the classifications was stored in a live Structured Query Language (SQL) database. In addition to the morphology classifications, we also registered the timestamp, user identification, and galaxy identification for each asset in the database. 
 
-The last GZ2 classifications were collected on 2010-04-29, spanning just over 14 months. The final dataset contained 16,340,298 classifications (comprising a total of 58,719,719 questions) by 83,943 participants.
+Galaxy~Zoo~2 was launched on 2009-02-16 with the ``original'' sample of 245,609 images. The ``extra'' galaxies from the Legacy survey were added on 2009-09-02. The normal-depth and first coadded Stripe~82 images were mostly added on 2009-09-02, with an additional $\sim7700$ of the coadded images added on 2010-09-24. Finally, the second version of the coadded images were added to the site on 2009-11-04. 
+
+For most of the duration of Galaxy~Zoo~2, all images were shown to classifiers in a random order. However, we desired to have all galaxies classified a minimum number of times. Therefore, in the final period of Galaxy~Zoo~2, accompanied by a competition with a running tally (dubbed the Zoonometer), objects with low numbers of classifications were shown to users at a higher rate. The goal was a minimum of 40 classifications for the ``original'', ``extra'' and ``stripe82'' samples, and 20 for the ``stripe82\_coadd\_2'' sample. The ``stripe82\_coadd\_1'' sample was removed from the site at this time. The main sample galaxies finished with a median of 44 classifications, with 27\% having fewer than 40; the ``stripe82\_coadd\_2'' galaxies had a median of 21 classifications and 26\% of them had fewer than 20 (Table~\ref{tbl-sample}). 
+
+The last GZ2 classifications were collected on 2010-04-29, spanning a period of just over 14 months. The final dataset contained 16,340,298 classifications (comprising a total of 58,719,719 questions) by 83,943 participants.
 
 \begin{comment}
-
-\subsection{Comparing main and additional samples}\label{ssec-mainsample}
+\subsection{Comparing the main and additional samples}\label{ssec-mainsample}
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/check_children.eps}
@@ -284,7 +295,7 @@ A final complication is that the SDSS stripe82 database does not provide matches
 \section{Data reduction} \label{sec-datareduction}
 
 \subsection{Multiple classifications}
-In a small percentage of cases, an individual user may classify the same object more than once. Since we wish to treat each click as an independent measurement, we removed multiple classifications of the same object by a given user from the data, keeping only the last submitted classification. Such repeat classifications only occurred for a small proportion of objects ($\sim1\%$), and an even smaller proportion ($\sim0.01\%$) significantly enough to potentially alter their classifications. 
+In a small percentage of cases, an individual user may classify the same object more than once. Since we wish to treat each click as an independent measurement, we removed multiple classifications of the same object by a given user from the data, keeping only the last submitted classification. Such repeats only occurred for a small proportion of objects ($\sim1\%$), with only a tiny proportion ($\sim0.01\%$) occurring enough to significantly alter the final vote fractions. 
 
 \subsection{Consistency and invididual user weighting}\label{ssec-consistency}
 
@@ -895,6 +906,8 @@ Statistical properties and demographics of galaxies to be placed here. At minimu
 The data in this paper are the result of the efforts of the Galaxy~Zoo~2 volunteers, without whom none of this work would have been possible. Their efforts are individually acknowledged at \url{http://authors.galaxyzoo.org}. 
 
 Boilerplate for individual grants, Zooniverse support, etc.
+
+This research made use of Montage, funded by the National Aeronautics and Space Administration's Earth Science Technology Office, Computation Technologies Project, under Cooperative Agreement Number NCC5-626 between NASA and the California Institute of Technology. Montage is maintained by the NASA/IPAC Infrared Science Archive.
 
 Funding for the SDSS and SDSS-II has been provided by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, the Max Planck Society, and the Higher Education Funding Council for England. The SDSS website is \url{http://www.sdss.org/}.
 
