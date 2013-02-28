@@ -12,19 +12,13 @@ import cPickle as pickle
 import numpy as np
 import numpy.ma as ma
 import time
-import subprocess
 import os
-import warnings
 
 from matplotlib import rc
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.font_manager import FontProperties
 from itertools import chain
-from scipy.stats import scoreatpercentile
-from scipy.stats import tsem
-from scipy.optimize import fmin_powell
-from scipy.signal import convolve2d
 from astropy.io import fits as pyfits
 from astroML.plotting import hist as histML
 
@@ -115,6 +109,8 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
         indexes of metadata in pure Python. 
 
     """
+
+    import subprocess
 
     tstart = time.time()
     p = pyfits.open(gz2_maglim_data_file)
@@ -710,6 +706,9 @@ def bootstrap_fmin(f, p0, x, y, z, mask, funcname, nboot):
 
     """
 
+    from scipy.stats import scoreatpercentile
+    from scipy.optimize import fmin_powell
+ 
     plist = np.zeros((nboot, len(p0)), np.float)                                # Zero array for number of tries, number of parameters
     ndata = len(mask.ravel().nonzero()[0])                                      # number of non-masked cells in the ratio data
     for i in range(nboot):
@@ -1000,6 +999,8 @@ def plot_ratio_baseline_fit(task_dict,
 
 
     """
+
+    from scipy.signal import convolve2d
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
@@ -1295,7 +1296,7 @@ def get_task_dict(task):
                  'min_prob': 0.8,
                  'min_classifications': 30, 
                  'min_galperbin': 25, 
-                 'direct' : np.ones((3,3),bool)
+                 'direct' : np.ones((3,3),bool),
                  'funcname' : 'tilt'
                  }
 
@@ -1506,6 +1507,8 @@ def run_task(task_dict,
 
 
     """
+
+    import warnings
 
     tstart = time.time()
 
@@ -4336,6 +4339,59 @@ def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=
         print " "
     
     return None
+
+def get_cat():
+
+
+    """ Retrieve the saved GZ2 main sample catalog
+
+    Arguments
+    ----------
+
+    Returns
+    -------
+    gzdata : astropy.io.fits.FITS
+        FITS table with the GZ2 data
+
+
+    Example
+    -------
+
+    >>> data = gz2cat()
+
+    Notes
+    -------
+
+    Originally written by Kyle Willett, 2013-02-27
+
+    """
+
+    p = pyfits.open(fits_path_main+'gz2table_debiased.fits')
+    gzdata = p[1].data
+    p.close()
+
+    return gzdata
+
+def which_flags(data,objid=588015508218577115):
+
+    names = data.names
+
+    flaglist = []
+    for idx,name in enumerate(names):
+        stub4 = name[-4:]
+        if stub4 == 'flag':
+            flaglist.append(name)
+
+    if len(flaglist) > 0:
+        ind = np.where(data['objid'] == objid)
+        for flag in flaglist:
+            val = data[flag][ind]
+            if val == 1:
+                print flag[:-5]
+
+    return None
+
+
 
 def objlist(gzdata,response):
 
