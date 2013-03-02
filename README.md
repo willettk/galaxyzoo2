@@ -1,8 +1,9 @@
 galaxyzoo2
 ==========
 
-Code for data reduction and analysis of Galaxy Zoo 2. Currently intended for exclusive use by
-the Galaxy Zoo science team. 
+Code for data reduction and analysis of Galaxy Zoo 2. 
+
+*This repo is currently intended for exclusive use by the Galaxy Zoo science team. Please do not download any of the data or code without the express permission of Dr. Kyle Willett.*
 
 The draft of the data release paper (gz2datarelease.pdf), along with associated files, is in the datapaper/ folder. 
 This folder also includes the gallery of examples from GZ2 (gz2\_gallery.pdf). 
