@@ -55,8 +55,9 @@
   Ramin A. Skibba$^{6}$,
   Edward M. Edmondson$^{4}$,
   Arfon M. Smith$^{2,7}$,
-  Robert C. Nichol$^{4}$,
-  Kevin R.V. Casteels$^{8}$\\
+  Kevin R.V. Casteels$^{8}$,
+  M. Jordan Raddick$^{9}$,
+  Robert C. Nichol$^{4}$\\
   }\\
 $^{1}$University of Minnesota, USA \\
 $^{2}$University of Oxford, UK \\
@@ -66,6 +67,7 @@ $^{5}$ETH, Z\"urich, Switzerland \\
 $^{6}$University of California San Diego, USA \\
 $^{7}$Adler Planetarium, USA \\
 $^{8}$University of Barcelona, Spain \\
+$^{9}$Johns Hopkins University, USA \\
 }
 
 \begin{document}
@@ -725,9 +727,9 @@ Overall, we see a clear trend for looser GZ2 spiral arms to correspond with late
 \end{figure*}
 
 \begin{figure}
-\includegraphics[angle=0,width=3.3in]{figures/wbulge_wspiral.eps}
+\includegraphics[angle=0,width=3.3in]{figures/eureqa.eps}
 \caption{Weighted bulge classifications vs. weighted spiral classifications from GZ2. Galaxies are colour-coded by their morphologies in EFIGI ({\it top}) and NA10 ({\it bottom}). Data are for galaxies with at least 10 classifications for both Task 05 (bulge dominance) and Task 10 (spiral structure) in GZ2. 
-\label{fig-bulgespiral}}
+\label{fig-eureqa}}
 \end{figure}
 
 Disk galaxies in GZ2 are also classified by the visible level of bulge dominance (Task~05), irrespective of whether spiral structure is also identified. This task has four options: ``no bulge'', ``just noticeable'', ``obvious'', and ``dominant'' (accompanied with pictograms that illustrated bulge sizes compared to face-on spiral arms). Similar to the arm tightness task, we analyze the relationships between GZ2 classification and Hubble types from NA10. 
@@ -738,22 +740,17 @@ The left side of Figure~\ref{fig-bulgeprominence} shows the distribution of NA10
 
 The link to T-type is more sharply defined for bulge prominence than for spiral tightness, according to the NA10 classifications. Very clean samples of late-type (Sb--Sd) spirals can be selected using only the ``no bulge'' parameter; additional samples with $\sim10$\% contamination can be selected with the ``just noticeable'' and ``obvious'' distributions. Early-type spirals and lenticulars at the same purity level can also be selected. Elliptical galaxies for which the bulge question was answered are most often ``dominant'', but there is no obvious separation of ellipticals from disk galaxies based on this task. 
 
-Since Hubble types are based on both bulge dominance and the distance of their spirals, we explore whether the combination of Tasks 05 and 10 from GZ2 improve the separation between T-types. Figure~\ref{fig-bulgespiral} shows the GZ2 bulge prominence vs. spiral tightness, colour-coded by their NA10 T-types. The GZ2 variables are simple weighted averages of the vote fractions for all possible task responses, where:
+Since Hubble types are based on the relative size of the bulge and the extent to which arms are unwound \citep{hub26}, we explored whether the combination of Tasks 05 and 10 from GZ2 can be mapped directly to T-types. We attempted to fit the numerical T-types to a linear combination of the GZ2 vote fractions for responses 10--13 (bulge dominance) and 28--30 (arms winding). The best-fit result using symbolic regression \citep{sch09c} depended only on parameters relating to bulge dominance:
 
 \begin{eqnarray}
-\label{eqn-wbulge}
-\omega_{bulge} = (0f_{nobulge} + 1f_{justnoticeable} \\
-            + 2f_{obvious} + 3f_{dominant}) / 3., \nonumber
+\label{eqn-eureqa}
+\text{T-type} = 4.63 + 4.17\times f_{no bulge} - 2.27\times f_{obvious} \\ \nonumber
+- 8.38\times f_{dominant}.
 \end{eqnarray}
 
-\noindent and 
+\noindent Note that the $f_{just noticeable}$ is implicitly included in this equation since the vote fractions for Task~05 must sum to 1. Inclusion of any vote fractions for arms winding responses made no significant difference in the $r^2$ goodness-of-fit metric.
 
-\begin{equation}
-\label{eqn-wspiral}
-\omega_{spiral} = (0 \times f_{tight} + 1 \times f_{medium} + 2 \times f_{loose}) / 2.
-\end{equation}
-
-Using the weighted feature classifications shows a clear separation in T-types; the majority of this, however, is for the bulge prominence category. Spiral prominence does not seem to significantly affect any of the classifications.
+This technique assumes that the difference in morphology is well-defined by mapping T-types to a linear scale, which is far from being justified. Figure~\ref{fig-eureqa} shows the distribution of the GZ-derived T-type from Equation~\ref{eqn-eureqa} compared to the ``true'' NA10 values. The large amounts of overlap between adjoining T-types show that this clearly does not serve as a clean discriminator. S0~galaxies in particular would mistakenly be judged as significantly later types (Sa) on average using only this metric. One could make a cut between the earliest (Sa) and latest (Sd) spiral types based only on the vote fractions. Alternatively, the relative numbers galaxies could be used as the weights to construct the {\em probability} of a given T-type. This has yet to be conclusively tested. 
 
 Finally, we note that \citet{sim13} identified a significant effect in which nuclear point sources, such as AGN, can mimic bulges in the GZ2 classifications. This has not yet been accounted for in this analysis, but could potentially be addressed by separating the sample into AGN and quiescent galaxies (via BPT line ratios) and looking for systematic differences between the two samples. 
 

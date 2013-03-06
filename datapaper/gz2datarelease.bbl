@@ -1,4 +1,4 @@
-\begin{thebibliography}{41}
+\begin{thebibliography}{43}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -92,6 +92,9 @@
   {Thomas}}]{hoy11}
 {Hoyle} B. {et~al.}, 2011, \mnras, 415, 3627
 
+\bibitem[{{Hubble}(1926)}]{hub26}
+{Hubble} E.~P., 1926, \apj, 64, 321
+
 \bibitem[{{Hubble}(1936)}]{hub36}
 {Hubble} E.~P., 1936, {Realm of the Nebulae}. Yale University Press
 
@@ -172,6 +175,9 @@
   {Sarzi}, {Andreescu}, {Bamford}, {Kaviraj}, {Khochfar}, {Land}, {Murray},
   {Nichol}, {Raddick}, {Slosar}, {Szalay}, {Vandenberg}, \& {Yi}}]{sch09}
 {Schawinski} K. {et~al.}, 2009, \mnras, 396, 818
+
+\bibitem[{{Schmidt} \& {Lipson}(2009)}]{sch09c}
+{Schmidt} M., {Lipson} H., 2009, Science, 324, 81
 
 \bibitem[{{Schwamb} {et~al}\mbox{.}(2012){Schwamb}, {Lintott}, {Fischer},
   {Giguere}, {Lynn}, {Smith}, {Brewer}, {Parrish}, {Schawinski}, \&
