@@ -1,4 +1,4 @@
-\begin{thebibliography}{43}
+\begin{thebibliography}{45}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -36,6 +36,12 @@
   {Marinova}}]{bar08}
 {Barazza} F.~D., {Jogee} S., {Marinova} I., 2008, \apj, 675, 1194
 
+\bibitem[{{Blanton} {et~al}\mbox{.}(2003){Blanton}, {Hogg}, {Bahcall},
+  {Brinkmann}, {Britton}, {Connolly}, {Csabai}, {Fukugita}, {Loveday},
+  {Meiksin}, {Munn}, {Nichol}, {Okamura}, {Quinn}, {Schneider}, {Shimasaku},
+  {Strauss}, {Tegmark}, {Vogeley}, \& {Weinberg}}]{bla03a}
+{Blanton} M.~R. {et~al.}, 2003, \apj, 592, 819
+
 \bibitem[{{Buta} \& {Combes}(1996)}]{but96}
 {Buta} R., {Combes} F., 1996, \fcp, 17, 95
 
@@ -52,6 +58,11 @@
 \bibitem[{{Casteels} {et~al}\mbox{.}(2013){Casteels}, {Bamford}, {Skibba},
   {Masters}, {Lintott}, {Keel}, {Schawinski}, {Nichol}, \& {Smith}}]{cas13}
 {Casteels} K.~R.~V. {et~al.}, 2013, \mnras, 429, 1051
+
+\bibitem[{{Csabai} {et~al}\mbox{.}(2003){Csabai}, {Budav{\'a}ri}, {Connolly},
+  {Szalay}, {Gy{\H o}ry}, {Ben{\'{\i}}tez}, {Annis}, {Brinkmann}, {Eisenstein},
+  {Fukugita}, {Gunn}, {Kent}, {Lupton}, {Nichol}, \& {Stoughton}}]{csa03}
+{Csabai} I. {et~al.}, 2003, \aj, 125, 580
 
 \bibitem[{{Darg} {et~al}\mbox{.}(2010){Darg}, {Kaviraj}, {Lintott},
   {Schawinski}, {Sarzi}, {Bamford}, {Silk}, {Proctor}, {Andreescu}, {Murray},

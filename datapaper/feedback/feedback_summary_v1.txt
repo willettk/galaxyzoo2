@@ -2,6 +2,11 @@ GZ2 data release paper
 Summary of changes from first round of feedback
 Mar 14, 2013
 
+global s/r
+
+coadded or co-added
+questions/tasks
+answers/responses
 
 
 Kevin Schawinski
@@ -10,4 +15,18 @@ Kevin Schawinski
 - supports not including the matched SDSS metadata as a table
 
 Jordan Raddick
+
+- should we mention CSA/Zooniverse anywhere?
+- does the color-stretch in Section 2.2 apply to coadd1, coadd2, or both?
+- questions on Section 3.2 - ask SB. Especially good point on consistency: why does agreeing with the majority imply that users are correct?
+- everyone's doing a good job of catching my demonstrative pronouns
+- how to justify Equation 5?
+- add table with minimum thresholds and vote counts per task
+- online or Appendix version of Fig. 4, with baseline morphology ratios for all response pairs?
+- raises the issue of 50% thresholds
+- What should users do about the rare objects with high variance in Stripe 82?
+- How do differences in coadded data affect use by potential users?
+- Suggestion: add section 4.4 with example cases on using data
+
+
 
