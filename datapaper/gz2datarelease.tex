@@ -102,7 +102,7 @@ While the morphological distinction used in Galaxy~Zoo~1 (GZ1) -- that which div
 
 Whereas traditional morphological classification relied on the careful inspection of small numbers of images by experts \citep[e.g., ][]{san61,dev91}, the sheer size of modern data sets make this approach impractical. The largest detailed professional classification effort to date was undertaken by \citet{nai10}, who provide classifications of $\sim14000$ systems. The present study includes an order of magnitude more systems, allowing for a more careful study of the relationships and interdependence of such small scale morphological features. 
 
-The use of proxies for morphology such as colour, concentration index, spectral features, surface brightness proﬁle, structural features, spectral energy distribution or some combination of these is not an adequate substitute; each proxy has an unknown biased relation with the morphological features under study. The complexity of the relationship between these variables is, rather, the main reason for requiring such a large set of classifications, as one can only isolate significant numbers of red, barred, bulgeless spirals in the field (to give one example) with a sufficiently comprehensive starting set. 
+The use of proxies for morphology such as colour, concentration index, spectral features, surface brightness profile, structural features, spectral energy distribution or some combination of these is not an adequate substitute; each proxy has an unknown biased relation with the morphological features under study. The complexity of the relationship between these variables is, rather, the main reason for requiring such a large set of classifications, as one can only isolate significant numbers of red, barred, bulgeless spirals in the field (to give one example) with a sufficiently comprehensive starting set. 
 
 Despite recent advances in automated morphological classification, driven in part by the availability of large training sets from the original Galaxy~Zoo \citep{ban10,hue11,dav13} XXX ADD MORE REFS XXX, the state of the art does not provide an adequate substitute for classification by eye. In particular, as \citet{lin11} note such efforts typically use proxies for morphology as their input, and so they suffer equally from the objections raised above to the use of morphological proxies. The release of the dataset associated with this paper will be of interest to those developing such machine learning and computer vision systems. 
 
@@ -176,14 +176,14 @@ The first set of coadded images were visually very different from the normal SDS
 
 \subsection{Decision tree}\label{ssec-decision_tree}
 
-Data for Galaxy~Zoo~2 was collected via a web-based interface. Users of the interface needed to register with a username for their clicks to be recorded, but were not required to complete any tutorials. They were then shown a {\it gri} colour composite image of a galaxy for classification (Figure~\ref{fig-interface}). Users had the option to invert the default colour scaling on any image being classified. 
+Data for Galaxy~Zoo~2 was collected via a web-based interface. Users of the interface needed to register with a username for their clicks to be recorded, but were not required to complete any tutorials. They were then shown a {\it gri} colour composite image of a galaxy for classification. Users had the option to invert the default colour scaling on any image being classified. 
 
-Classification of the galaxies proceeds via a multi-step tree. Each classification begins with a slightly modified version of the original Galaxy~Zoo task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact'' in the image. Subsequent questions depend on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this question will not be asked if they select either of the other two options. 
+Classification of the galaxies proceeds via a multi-step tree. Each classification begins with a slightly modified version of the original Galaxy~Zoo task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact'' in the image. Subsequent questions depend on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this question will not be asked if they select either of the other two options (Figure~\ref{fig-flowchart}). 
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/flowchart.eps}
 \caption{Flowchart of the classification tasks and responses for GZ2, beginning at the top centre. Tasks are color-coded by their relative depths in the decision tree. Tasks outlined in brown are asked of every galaxy. Tasks outlined in green, blue, and purple are (respectively) one, two or three steps below branching points in the decision tree. Table~\ref{tbl-tree} gives a description of the responses that correspond to the icons shown here. 
-\label{fig-interface}}
+\label{fig-flowchart}}
 \end{figure*}
 
 The Galaxy~Zoo~2 tree has 11 classification tasks with a total of 37 possible responses (Table~\ref{tbl-tree}). A classifier selects only one option for each task, after which they are immediately taken to the next step in the tree. Task~01 is the only question answered for all objects in the sample. Once a classification was completed, an image of the next galaxy is automatically displayed and the user can begin on a new object. 
@@ -620,7 +620,7 @@ In addition to the T-types, she also classified various ``fine structure'' morph
 	\item tails (number)
 \end{itemize}
 
-Several of the fine structure features in NA10 can be directly compared to the GZ2 data: namely, bars, rings, and pairs/interactions. All references to the GZ2 vote fraction in the following sections refer to $^\star_weighted_fraction$, which has been weighted but not debiased. 
+Several of the fine structure features in NA10 can be directly compared to the GZ2 data: namely, bars, rings, and pairs/interactions. All references to the GZ2 vote fraction in the following sections refer to data which has been weighted for consistency, but not debiased. 
 
 \subsubsection{Bars}
 
