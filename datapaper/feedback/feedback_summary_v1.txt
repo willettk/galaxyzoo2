@@ -1,0 +1,13 @@
+GZ2 data release paper
+Summary of changes from first round of feedback
+Mar 14, 2013
+
+
+
+Kevin Schawinski
+
+- missing Kevin's even-numbered pages, but he no longer has the original hardcopy
+- supports not including the matched SDSS metadata as a table
+
+Jordan Raddick
+
