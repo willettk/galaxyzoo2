@@ -1,0 +1,43 @@
+Hi Kyle,
+
+I read through your GZ2 draft, and I have a few comments and suggestions for you.  I hope they're helpful.  (If you disagree with any of the suggestions though, or they conflict with what other people say, I won't be offended if you ignore them.)
+
+First, a few general comments, and then I have more specific things below.  I think this works well as a data/catalog release paper.  The descriptions in Sections 2 and 3 are good, and most of the figures and tables seem like they'll be a useful resource.
+
+I would recommend shorting Section 5 though (since it's almost half the paper right now) and adding a few scientific results for Section 6, such as distributions/statistics/demographics of the GZ2 classifications: for example, you could show how some of the spiral (arm) and bulge properties correlate with each other.  (Some people working with Steven and Karen might be working on similar things though, so you should check with them so that you don't overlap too much.)
+
+Of Section 5, the NA10 comparisons now constitutes 7 pages, which seems too long to me.  Maybe just show Sections 5.2.1, 5.2.3, and 5.2.6?  And/or maybe some or all of Section 5 (other than the GZ1 vs GZ2 stuff, which should be in the body of the paper) could go to the end, as an appendix?  These are just ideas.  I think the Section 5 comparisons are useful, but they could potentially distract from the data release aspect of the paper.
+
+Cheers,
+Ramin
+
+
+and now for the specific comments...
+
+Section 1
+-- If you want, you could mention studies of the morphology-density relation (e.g., Dressler 1980; Postman & Geller 1984) and related GZ work on that (Bamford et al. 2009; Skibba et al. 2009 and 2012).
+-- Make sure to end the intro with a "This paper is organized as follows..." paragraph.
+
+Section 3
+-- In Equation (3), I would use "(\kappa/0.6)^{8.5}", rather than "power".
+-- For Figure 3, mention why these classifications are shown for z ranges.  For example, I think the description of classification bias and selection bias in Sec. 2.3 of Bamford et al. (2009) is good.
+-- In Eqs. (16) and (19) and Fig. 4, make sure to be consistent and always use M_r, rather than M_R.
+
+Section 4
+-- Out of curiosity, I was wondering: what are Voronoi tessellation bins?
+-- In Fig. 6, why does the "just noticeable" bulge have more scatter?  Should that classification be treated as less reliable?
+
+Section 5
+-- As I said above, this section is useful, but currently seems too long.
+-- You might want to mention bulge/disk decomposition studies too, such as Simard et al. (2011, ApJS, 196, 11).
+-- In Sec. 5.1, why are there much fewer "clean" ellipticals (~34k) than "clean" spirals (~84k)?
+-- When you talk about merger/interactions in GZ at the end of Sec. 5.1, it would be good to mention Kasteels et al. (2013, MNRAS, 429, 1051) too.
+-- In some of the figures with distributions in Sec. 5, the lines need to be thickened.
+-- There seems to be a typo in "weighted fraction" right before Sec. 5.2.1.
+-- In Sec. 5.3, I'm not sure if the term "salaried astronomers" is good.  Maybe say "professional astronomers (as opposed to citizen scientists)", or something like that.  It's up to you though.
+
+Section 6
+-- What were you thinking of putting here?  I think demographics and statistical properties are good ideas.  I think it would be cool to show to what extent some of the GZ morphological properties correlate with each other, for a clean (and volume-limited?) sample.  Color-magnitude diagram(s) might be useful too.  It's up to you though.
+-- I would avoid making the paper too long though (keep it <30 pages) and we don't want to have too many figures (maybe 20-25 max), or we risk diluting the impact of the results or distracting the reader.  (These are subjective issues though, so it's up to you.)
+
+

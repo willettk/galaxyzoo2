@@ -1,0 +1,23 @@
+Hi Kyle,
+
+I have been having a read through your draft, which I think is really concise and well written. There is a lot of work in here, and I think you explain the selections really well. I particularly like your description of individual user weighting and the inclusion of Table 2 in addition to a schematic of the decision tree, as it adds another way for the reader to visualise the processes involved. 
+
+I think that the tables you have produced are ideal, allowing the user to produce reliable samples. The paper also highlights how to produce clean samples of elliptical and spiral galaxies, which acts as a good example on how to apply cuts from GZ likelihoods. 
+
+As for adding scientific results, I think updating previous GZ2 results would is a good idea, and it shouldn't be to hard or time consuming. I doubt much more would be needed, as any GZ2 paper after this would cite this paper, as would any paper using this data, so I doubt adding a 'new' science result would increase the citation rate to much. In fact a new science result may just be lost within the paper.
+
+Here are a few thoughts of mine about the paper:
+
+Figure 3 - could you make the graphs larger? Maybe use a whole page for them? Also, a key as to what each coloured line represents would be helpful, especially on those with several answers! Just as a side, why does the bulge shape fraction graph span such a small redshift range?
+
+Galaxy Wars - I think it would be a shame to not include something somewhere about the Galaxy Wars. I myself do not know much about them or their intended purpose, but the data was taken as part of GZ2 and so maybe it should be mentioned/offered somewhere?
+
+Figure 5 - the y-axis only needs to go up to 1 doesn't it?
+
+GZ1 vs. GZ2 - for the hypothesis that experienced GZ users may classify something as elliptical to avoid several other questions I may argue the opposite. If an object is a bit more unusual or harder to classify an experienced user may take more time to try and classify it (I know I do after seeing several smooth galaxies in a row!). I think the pictures on the classification buttons from GZ1 are more simplistic, so its either elliptical, spiral or other (ignoring mergers for now), whereas the disk/features button may offer a more diluted response from users. I think you mention this idea a bit later.
+
+T-type comparison - I think it would be useful just to offer a sentence or two introducing what a T-type is and what the respective values represent as a whole. I have not used the RC3 catalogue and did not know without looking. I am aware that you do reference T-type values and what they specifically represent at points further on in the section too.
+
+Comparisons section - this maybe something you are going to put in the conclusions, so apologies, but will there be a summary as to what we can directly offer users, i.e. a clean elliptical galaxy sample, compared to ones which are harder to get clean samples, i.e. a sample of galaxies with nuclear rings? 
+
+So thats my thoughts so far, hope it is helpful!

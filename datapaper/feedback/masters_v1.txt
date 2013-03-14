@@ -1,0 +1,40 @@
+Hi Kyle,
+ Here are my comments on the data release paper. I'd just like to start by saying how great it is to see this coming along so well. You've clearly been working really hard on this. This paper has so much in it, and it's so necessary for GZ2 that we get it published. So I really want to thank you for taking on this huge task. 
+
+ Comments: 
+
+1. I don't think this paper needs a science result. I think it contains plenty of content as a catalogue paper and comparing to other classifications, and that it'd be better for you to write a short science paper based on the thing in GZ2 which interests you most to go along with it/soon after it rather than add a science section in here. 
+
+2. I think we need to be more careful about how we present comparisons with published classifications. They are not the truth any more than GZ2 is, so we should always bear that in mind with the language of the comparisons (particularly I felt with the NA10 T-types and discussion of spiral tightness/bulge size. I think what we've shown is that Nair did not use arm tightness in the T-typing).
+
+3. I don't like the use of "salaried astronomer". Can we go with "professionally trained astronomers", or even just "professional astronomer".
+
+4. Common useage has the early-late type split happening after S0 (or even Sa). For example ATLAS-3D say they observe only early-types, and include S0s and Sas. So can we agree early-type = E/S0/S0a, late-type=Sab and later. Sa is a bit ambiguous. It's OK to use "disk" to describe everything that's not an E (ie. S0 and later). 
+
+5. Galaxy Wars are mentioned but never explained. 
+
+6. I agree with Sugata that it would be nice to have an overview of science results already published from GZ2 classifications. Of course that's a bit self serving (sorry), but ignoring that I think it would also point out in this paper how important these classifications already are for the community. 
+
+7. The text needs a lot of cleaning up. But it's really a great start. :) 
+
+8. What is a "users consistency". You define consistency for each click, but then jump to discussing users. Is it just the mean consistency of all the clicks they've done? 
+
+9. I think there's an error in the magnitude limit (which I made also in my 2011 paper). For GZ2, the volume limit to z<0.085 is not Mr<-20.17 - that's the SDSS MGS number, but GZ2 has a brighter apparant magnitude limit than the MGS (r<17.0 not r<17.77), so it should actually be Mr<-20.94 I think (values of 5logh in the units sometimes mess this up). 
+
+10. We need to cite the SDSS MGS paper somewhere. Also would be nice to cite more thoroughly SDSS technical papers given this is so based on the imaging. I can help with that. 
+
+11. I think we need a bigger section comparing classifications from the S82 single depth and co-add (deeper) imaging - this is really important and relevant to what the standard GZ2 classifications are missing because the imaging is not deep. 
+
+12. We should make a plot comparing pbar values with the Hoyle et al. bar lengths to include somewhere near the EFIGI bar length comparisons (I will do this). 
+
+13. Can we discuss notation. I'm worried use of f_X for the vote fractions (for question X) may lead to confusion between that and the fraction of galaxies in the sample having a certain characteristic. Could we use v_X maybe? 
+
+14. We should include pictures of the buttons used in the website (this comes up a lot). They could be added to Table 2. Table 2. should be referred to in the Tables at the end. Also I think it might help to colour code the questions (both in Table 2 and Figure 1) by how far down the tree they are (e.g. attached white = asked of everything, green = below 1 question, turquoise = below 2 questions, blue = below 3 questions). 
+
+15. I think we should have some example images (maybe not as many as in the gallery) including in the text. Especially for the odd cases which disagree with published classifictions (blue elongated ellipticals classified as late-types by EFIGI spring to mind). The gallery (or some of it) could be added as an Appendix/online only content I think. 
+
+16. Could we make an online gallery for people to flick through as part of the data release? Maybe with a table to allow people to select on the vote fractions/sample they want? 
+
+ I have more specific comments I've scribbled on the text, but I think maybe this is enough for now as it covers all the big points. I'd be happy to help directly edit some of the text - if a section were assigned to me (with a deadline) that would be easiest for me. :) 
+
+ Karen.

@@ -29,7 +29,7 @@
 \newcommand{\aap}{A\&A}
 \newcommand{\araa}{ARA\&A}
 \newcommand{\pasp}{PASP}
-\newcommand{\fcp}{Fund. Cosmic Phys.}
+\newcommand{\fcp}{Fund. Cosm. Phys.}
 
 % Macros in the paper
 \newcommand{\dcoadd}{$\Delta_{coadd}$}
@@ -57,6 +57,7 @@
   Arfon M. Smith$^{2,7}$,
   Kevin R.V. Casteels$^{8}$,
   M. Jordan Raddick$^{9}$,
+  Sugata Kaviraj$^{2,10}$,
   Robert C. Nichol$^{4}$\\
   }\\
 $^{1}$University of Minnesota, USA \\
@@ -68,13 +69,14 @@ $^{6}$University of California San Diego, USA \\
 $^{7}$Adler Planetarium, USA \\
 $^{8}$University of Barcelona, Spain \\
 $^{9}$Johns Hopkins University, USA \\
+$^{10}$University of Hertfordshire, UK \\
 }
 
 \begin{document}
 
 \date{Accepted 1988 December 15. Received 1988 December 14; in original form 1988 October 11}
 
-\pagerange{\pageref{firstpage}--\pageref{lastpage}} \pubyear{2012}
+\pagerange{\pageref{firstpage}--\pageref{lastpage}} \pubyear{2013}
 
 \maketitle
 
@@ -178,11 +180,11 @@ Data for Galaxy~Zoo~2 was collected via a web-based interface. Users of the inte
 
 Classification of the galaxies proceeds via a multi-step tree. Each classification begins with a slightly modified version of the original Galaxy~Zoo task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact'' in the image. Subsequent questions depend on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this question will not be asked if they select either of the other two options. 
 
-\begin{figure}
-\includegraphics[angle=0,width=3.0in]{figures/interface.eps}
-\caption{{\it Top:} Front page of the web interface for Galaxy~Zoo~2, displaying Task~01. {\it Bottom:} Flowchart of the 11 classification tasks for GZ2, beginning at the top centre. 
+\begin{figure*}
+\includegraphics[angle=0,width=7.0in]{figures/flowchart.eps}
+\caption{Flowchart of the classification tasks and responses for GZ2, beginning at the top centre. Tasks are color-coded by their relative depths in the decision tree. Tasks outlined in brown are asked of every galaxy. Tasks outlined in green, blue, and purple are (respectively) one, two or three steps below branching points in the decision tree. Table~\ref{tbl-tree} gives a description of the responses that correspond to the icons shown here. 
 \label{fig-interface}}
-\end{figure}
+\end{figure*}
 
 The Galaxy~Zoo~2 tree has 11 classification tasks with a total of 37 possible responses (Table~\ref{tbl-tree}). A classifier selects only one option for each task, after which they are immediately taken to the next step in the tree. Task~01 is the only question answered for all objects in the sample. Once a classification was completed, an image of the next galaxy is automatically displayed and the user can begin on a new object. 
 

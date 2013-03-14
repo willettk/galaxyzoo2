@@ -1,0 +1,11 @@
+Hi Kyle,
+Regarding the Stripe 82 image generation:
+The first set of images were generated from the Stripe 82 corrected frames FITS files in g, r and i. Frames were (where necessary) stitched together using Montage (http://montage.ipac.caltech.edu) and converted to a colour image using a slightly modified version of the asinh stretch code from http://cosmo.nyu.edu/hogg/visualization/ (link contains reference paper), with parameters adjusted to try to replicate normal SDSS colour balance. We used the parameterisation of the stretch function f(x)=asinh(\alpha Q x)/Q where Q=3.5 and \alpha=0.06, with colour scaling [1.000,1.176,1.818] in g, r and i. Images are 424x424 pixels, scaled to 0.02*petror90_r arcseconds per pixel.
+
+The second set of images were generated from the first by desaturating the background, since the background noise was rather high and colour saturated in the initial set. Steven understands exactly what was done better than me (I still have the ruby script for this if needed as a reminder).
+
+Montage request an acknowledgement:
+This research made use of Montage, funded by the National Aeronautics and Space Administration's Earth Science Technology Office, Computation Technologies Project, under Cooperative Agreement Number NCC5-626 between NASA and the California Institute of Technology. Montage is maintained by the NASA/IPAC Infrared Science Archive.
+
+Hope that helps fill in a couple of the gaps anyway - let me know if anything needs clarifying further.
+

@@ -1,0 +1,6 @@
+Hi Kyle, I'm afraid it's likely I won't have time to read the GZ2 data release paper in the detail it deserves before next Friday's telecon (MPE is being subjected to its triannual review by the Max Planck Society this semester!). 
+But I have skimmed it. The particular comment I wanted to make is that in section 4.1 the numbers (50%, 0.5 and 0.8) are not justified. These should be justified from first principles both in an absolute and relative sense. Failing that, you should explain how different choices would change results.
+
+Speaking of results, I do agree that some science results in the paper would likely improve its impact somewhat, assuming it doesn't get longer. But only somewhat -- unless you have a very significant result the vast majority of the man citations this paper will get will be from people using the GZ2 data, not citing the science result. And there is a risk in making it too long. Once you've implemented the comments on what you have so far, it will probably be pushing 30pp. So personally I wouldn't push to add science.
+
+Mike
