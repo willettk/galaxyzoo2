@@ -2,6 +2,18 @@ GZ2 data release paper
 Summary of changes from first round of feedback
 Mar 14, 2013
 
+Global themes:
+
+- I have done a lot of work
+- Looks pretty good so far
+- Most people are OK with a data release paper only
+- Some votes for including more descriptions of past GZ2 science
+- Tighten up vocabulary and descriptions
+- Section 5 can be trimmed down somewhat
+- Check on the actual data and debiasing w/Brooke
+- no feedback from Steven or Chris yet.
+
+
 global s/r
 
 coadded or co-added
