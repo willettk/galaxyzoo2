@@ -11,7 +11,8 @@ Global themes:
 - Tighten up vocabulary and descriptions
 - Section 5 can be trimmed down somewhat
 - Check on the actual data and debiasing w/Brooke
-- no feedback from Steven or Chris yet.
+- no feedback from Chris yet.
+- improved the T-type mapping using a better linear combo. No input at all from the arms winding categories - interesting!
 
 
 global s/r
@@ -39,6 +40,28 @@ Jordan Raddick
 - What should users do about the rare objects with high variance in Stripe 82?
 - How do differences in coadded data affect use by potential users?
 - Suggestion: add section 4.4 with example cases on using data
+
+Lucy Fortson
+
+- disagree on date formatting; ISO-8601 is the gold standard.
+- why was coadd1 removed from the site at 18 votes? Preference for coadd2 with better noise characteristics?
+- what do the dashed lines mean in Figure 2 (consistency)?
+- check calculations in Eqns. 4-15; Eqns 13-15 look inverted.
+
+Mike Williams
+
+- check the figures on threshold and clean criterion (agreed)
+
+Karen Masters
+
+- no science is OK by her; support writing a short science paper ASAP
+- be careful when referring to NA10 or EFIGI as "truth"
+- early-type = E/S0/S0a, late-type = Sab and later?
+- add science results from GZ2: Masters, Hoyle, Simmons, Kaviraj. Others?
+- Absolute magnitude limit: -20.94 (KLM) vs -20.89 (KWW)?
+- bigger section comparing S82 single-depth and coadd
+- will make a p_bar plot for Hoyle comparisons to EFIGI
+- f_x -> v_X; vote fractions vs. fraction of galaxies with characteristic?
 
 
 

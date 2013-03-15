@@ -1,4 +1,4 @@
-\begin{thebibliography}{46}
+\begin{thebibliography}{50}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -119,6 +119,11 @@
 {Huertas-Company} M., {Rouan} D., {Tasca} L., {Soucail} G., {Le F{\`e}vre} O.,
   2008, \aap, 478, 971
 
+\bibitem[{{Kaviraj} {et~al}\mbox{.}(2012){Kaviraj}, {Cohen}, {Ellis},
+  {Peirani}, {Windhorst}, {O'Connell}, {Silk}, {Whitmore}, {Hathi}, {Ryan},
+  {Dopita}, {Frogel}, \& {Dekel}}]{kav12}
+{Kaviraj} S. {et~al.}, 2012, ArXiv e-prints
+
 \bibitem[{{Kormendy} \& {Bender}(2012)}]{kor12}
 {Kormendy} J., {Bender} R., 2012, \apjs, 198, 2
 
@@ -155,6 +160,11 @@
   {Dekel}, \& {Teyssier}}]{mar12}
 {Martig} M., {Bournaud} F., {Croton} D.~J., {Dekel} A., {Teyssier} R., 2012,
   \apj, 756, 26
+
+\bibitem[{{Masters} {et~al}\mbox{.}(2012){Masters}, {Nichol}, {Haynes}, {Keel},
+  {Lintott}, {Simmons}, {Skibba}, {Bamford}, {Giovanelli}, \&
+  {Schawinski}}]{mas12a}
+{Masters} K.~L. {et~al.}, 2012, \mnras, 424, 2180
 
 \bibitem[{{Masters} {et~al}\mbox{.}(2011){Masters}, {Nichol}, {Hoyle},
   {Lintott}, {Bamford}, {Edmondson}, {Fortson}, {Keel}, {Schawinski}, {Smith},
@@ -205,12 +215,26 @@
   {Sherman}, {Smith}, \& {Wolf-Chase}}]{sim12a}
 {Simpson} R.~J. {et~al.}, 2012, \mnras, 424, 2442
 
+\bibitem[{{Skibba} {et~al}\mbox{.}(2012){Skibba}, {Masters}, {Nichol},
+  {Zehavi}, {Hoyle}, {Edmondson}, {Bamford}, {Cardamone}, {Keel}, {Lintott}, \&
+  {Schawinski}}]{ski12}
+{Skibba} R.~A. {et~al.}, 2012, \mnras, 423, 1485
+
 \bibitem[{{Smith} {et~al}\mbox{.}(2011){Smith}, {Lynn}, {Sullivan}, {Lintott},
   {Nugent}, {Botyanszki}, {Kasliwal}, {Quimby}, {Bamford}, {Fortson},
   {Schawinski}, {Hook}, {Blake}, {Podsiadlowski}, {J{\"o}nsson}, {Gal-Yam},
   {Arcavi}, {Howell}, {Bloom}, {Jacobsen}, {Kulkarni}, {Law}, {Ofek}, \&
   {Walters}}]{smi11}
 {Smith} A.~M. {et~al.}, 2011, \mnras, 412, 1309
+
+\bibitem[{{Strauss} {et~al}\mbox{.}(2002){Strauss}, {Weinberg}, {Lupton},
+  {Narayanan}, {Annis}, {Bernardi}, {Blanton}, {Burles}, {Connolly},
+  {Dalcanton}, {Doi}, {Eisenstein}, {Frieman}, {Fukugita}, {Gunn},
+  {Ivezi{\'c}}, {Kent}, {Kim}, {Knapp}, {Kron}, {Munn}, {Newberg}, {Nichol},
+  {Okamura}, {Quinn}, {Richmond}, {Schlegel}, {Shimasaku}, {SubbaRao},
+  {Szalay}, {Vanden Berk}, {Vogeley}, {Yanny}, {Yasuda}, {York}, \&
+  {Zehavi}}]{str02}
+{Strauss} M.~A. {et~al.}, 2002, \aj, 124, 1810
 
 \bibitem[{{York} {et~al}\mbox{.}(2000){York}, {Adelman}, {Anderson},
   {Anderson}, {Annis}, {Bahcall}, {Bakken}, {Barkhouser}, {Bastian}, {Berman},

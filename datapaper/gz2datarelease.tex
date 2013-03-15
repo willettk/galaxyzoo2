@@ -104,18 +104,20 @@ Whereas traditional morphological classification relied on the careful inspectio
 
 The use of proxies for morphology such as colour, concentration index, spectral features, surface brightness profile, structural features, spectral energy distribution or some combination of these is not an adequate substitute; each proxy has an unknown biased relation with the morphological features under study. The complexity of the relationship between these variables is, rather, the main reason for requiring such a large set of classifications, as one can only isolate significant numbers of red, barred, bulgeless spirals in the field (to give one example) with a sufficiently comprehensive starting set. 
 
-Despite recent advances in automated morphological classification, driven in part by the availability of large training sets from the original Galaxy~Zoo \citep{ban10,hue11,dav13} XXX ADD MORE REFS XXX, the state of the art does not provide an adequate substitute for classification by eye. In particular, as \citet{lin11} note such efforts typically use proxies for morphology as their input, and so they suffer equally from the objections raised above to the use of morphological proxies. The release of the dataset associated with this paper will be of interest to those developing such machine learning and computer vision systems. 
+Despite recent advances in automated morphological classification, driven in part by the availability of large training sets from the original Galaxy~Zoo \citep{ban10,hue11,dav13}, the state of the art does not provide an adequate substitute for classification by eye. In particular, as \citet{lin11} note such efforts typically use proxies for morphology as their input, and so they suffer equally from the objections raised above to the use of morphological proxies. The release of the dataset associated with this paper will be of interest to those developing such machine learning and computer vision systems. 
 
 These results have been made possible by the participation in the Galaxy~Zoo project by hundreds of thousands of volunteer `citizen scientists'. The original Galaxy~Zoo demonstrated the utility of this method in producing both scientifically-useful catalogues and serendipitous discoveries (see \citet{lin11} for a review of Galaxy~Zoo~1 results). Since then, this method has been expanded beyond simple shape classifications to supernova identification \citep{smi11}, exoplanet discovery \citep{fis12,sch12} and a census of bubbles associated with star formation in the Milky~Way \citep{sim12a}, amongst many others. 
 
+Several results based on early Galaxy Zoo 2 data have already been published. \citet{mas11c,mas12a} use galactic bar classifications to show a clear increase in bar fraction for galaxies with redder colors, lower gas fractions, and more prominent bulges. \citet{hoy11} show that the bars themselves are both redder and longer in redder disk galaxies. \citet{ski12} have demonstrated that a significant correlation exists between barred and bulge-dominated galaxies at separations from 0.15--3~Mpc. \citet{kav12} used GZ2 to study early-type galaxies with visible dust lanes, while \citet{sim13} have discovered a population of AGN host galaxies with no bulge, studying how black holes can grow and accrete via secular processes. Finally, \citet{cas13} quantify morphological signatures of interaction (including mergers, spiral arms, and bars) for galaxy pairs in the SDSS. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%    Project description  %%%%%%%%%%%%%
+%%%%%%%%    Project description  %%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Project description} \label{sec-description}
 
 \subsection{Sample selection} \label{ssec-sample}
-The primary sample of objects classified for Galaxy~Zoo~2 comprised roughly the brightest 25\% of the resolved galaxies in the SDSS North Galactic Cap region. Our sample was restricted to the SDSS DR7 `Legacy' catalogue \citep{aba09}, and therefore excludes observations made by SDSS for other purposes, such as the SEGUE survey. 
+The primary sample of objects classified for Galaxy~Zoo~2 comprised roughly the brightest 25\% of the resolved galaxies in the SDSS North Galactic Cap region. Our sample was restricted to the SDSS DR7 `Legacy' catalogue \citep{aba09}, and therefore excludes observations made by SDSS for other purposes, such as the SEGUE survey. Spectroscopic targets came from the Main Galaxy Sample \citep{str02}.
 
 Several cuts were applied to the DR7 Legacy sample for selection in GZ2. The goal for these cuts was to include the nearest, brightest, and largest systems for which fine morphological features could be resolved and classified. We required a Petrosian magnitude brighter than 17.0 in the $r$-band (after Galactic extinction correction was applied), along with a $r$-band Petrosian radius greater than 3 arcsec. Galaxies which had a spectroscopic redshift in the DR7 catalogue outside the range $0.0005<z<0.25$ were removed; however, galaxies without reported redshifts were kept. Finally, objects which are flagged by the SDSS pipeline as \textsc{saturated}, \textsc{bright} or \textsc{blended} without an accompanying \textsc{nodeblend} flag were also excluded. The 245,609 galaxies satisfying these criteria are referred to as the ``original'' sample.  
 
@@ -359,7 +361,7 @@ Part of this effect is due to the nature of a luminosity-limited sample; high-re
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/gz2_type_fractions.eps}
-\caption{Type fractions for the classification tasks in GZ2. Solid (thin) lines show the weighted vote fractions, while the thick (dashed) lines show the debiased vote fractions that have been adjusted for classification bias. This is a magnitude-limited sample for \mr~$<-20.17$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the SDSS). 
+\caption{Type fractions for the classification tasks in GZ2. Solid (thin) lines show the weighted vote fractions, while the thick (dashed) lines show the debiased vote fractions that have been adjusted for classification bias. This is a magnitude-limited sample for \mr~$<-20.89$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the SDSS). 
 \label{fig-type_fractions}}
 \end{figure*}
 
@@ -367,7 +369,7 @@ Part of this effect is due to the nature of a luminosity-limited sample; high-re
 
 There are two major differences between the GZ1 and GZ2 data. First, GZ2 has a decision tree, rather than a single question and answer for each click on an image. This means that all tasks, with the exception of the first, depend on answers to previous tasks in the decision tree. For example, the bar question is only asked if the user classifies a galaxy as having ``features or disk'' and as ``not edge-on''. Thus, the value of the weighted vote fraction for this example task only addresses the total bar fraction {\em among face-on disk galaxies}, and not as a function of the general population. 
 
-Our approach is to examine only biases within the context of the individual classification tasks. The corrections used to debias each task are derived based only on galaxies with sufficient votes to characterize the likelihood of that feature. We employ a combination of thresholds on the weighted vote fraction for preceding tasks as well as a lower limit on the total number of votes for a galaxy to be used in deriving a correction (Table~\ref{tbl-thresholds}. While this threshold increases the number of noisy bins, it is critical for reproducing accurate baseline measurements of individual morphologies. The correction derived from well-classified galaxies is then applied to the vote fractions for {\em all} galaxies in the sample. 
+Our approach is to examine only biases within the context of the individual classification tasks. The corrections used to debias each task are derived based only on galaxies with sufficient votes to characterize the likelihood of that feature. We employ a combination of thresholds on the weighted vote fraction for preceding tasks as well as a lower limit on the total number of votes for a galaxy to be used in deriving a correction (Table~\ref{tbl-thresholds}). While this threshold increases the number of noisy bins, it is critical for reproducing accurate baseline measurements of individual morphologies. The correction derived from well-classified galaxies is then applied to the vote fractions for {\em all} galaxies in the sample. 
 
 The second major issue is that the adjustment of the GZ1 vote fractions assumed that the single task was essentially binary. Since almost every vote in GZ1 was either for ``elliptical'' or ``spiral'' (either anticlockwise or clockwise), they were able to use that ratio as the sole metric of the morphology. No systematic debiasing was done for the other GZ1 response options (``star/don't know'', ``merger'', or ``edge on/unclear''), and the method of adjusting the vote fractions assumes that these other options do not significantly affect the classification bias for the most popular responses. This is not possible for GZ2: most tasks have more than two possible responses and represent a continuum of relative feature strength, rather than a binary choice.
 
@@ -431,15 +433,15 @@ Since each unique pair of responses to a question will have a different local ba
 The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-baselines} for the first two responses in each task. To derive a correction for bins not covered at low redshift, we attempted to fit each baseline ratio with an analytic, smoothly-varying function. The baseline ratio for the ``smooth'' and ``features/disk'' responses to Task 01 is functionally very similar to the GZ1 relation \citep[Figure~A5 in ][]{bam09}, as expected. This ratio is reasonably well-fit with an analytic function of the form:
 
 \begin{equation}
-\frac{f_j}{f_i}[R_{50},M_R] = \frac{s_6}{1 + exp[(x_0 - M_R)/x_1]} + s_7
+\frac{f_j}{f_i}[R_{50},M_R] = \frac{s_6}{1 + exp[(\alpha - M_R)/\beta]} + s_7
 \label{eqn-sb}
 \end{equation}
 
 \noindent where:
 
 \begin{eqnarray}
-\alpha &=& s_2^{-\left(s_1 + s_8{R_{50}}^{s_9}\right)} + s_3 \\
-\beta  &=& s_4 + s_5(x_0 - s_3)
+\alpha &=& s_2\times\text{exp}[{-\left(s_1 + s_8{R_{50}}^{s_9}\right)}] + s_3, \\
+\beta  &=& s_4 + s_5(x_0 - s_3),
 \end{eqnarray}
 
 \noindent and where $\{s_1,s_2,s_3,s_4,s_5,s_6,s_7,s_8,s_9\}$ are minimized to fit the data. The only other task that had baseline ratios reasonably well fit by these parameters was Task~07 (rounded smooth galaxies). We adopted the same approach for this task and were able to fit the behavior of all three pairs of responses with the same functional form. 
@@ -549,7 +551,7 @@ Type fractions for both weighted and debiased vote fractions in normal-depth Str
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/gz2_stripe82_type_fractions.eps}
-\caption{Type fractions for five binary GZ2 tasks for the normal-depth Stripe~82 data. This is a magnitude-limited sample for \mr~$<-20.17$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the survey). 
+\caption{Type fractions for five binary GZ2 tasks for the normal-depth Stripe~82 data. This is a magnitude-limited sample for \mr~$<-20.89$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the survey). 
 \label{fig-type_fractions_s82}}
 \end{figure*}
 
@@ -756,7 +758,7 @@ Since Hubble types are based on the relative size of the bulge and the extent to
 
 \noindent Note that the $f_{just noticeable}$ is implicitly included in this equation since the vote fractions for Task~05 must sum to 1. Inclusion of any vote fractions for arms winding responses made no significant difference in the $r^2$ goodness-of-fit metric.
 
-This technique assumes that the difference in morphology is well-defined by mapping T-types to a linear scale, which is far from being justified. Figure~\ref{fig-eureqa} shows the distribution of the GZ-derived T-type from Equation~\ref{eqn-eureqa} compared to the ``true'' NA10 values. The large amounts of overlap between adjoining T-types show that this clearly does not serve as a clean discriminator. S0~galaxies in particular would mistakenly be judged as significantly later types (Sa) on average using only this metric. One could make a cut between the earliest (Sa) and latest (Sd) spiral types based only on the vote fractions. Alternatively, the relative numbers galaxies could be used as the weights to construct the {\em probability} of a given T-type. This has yet to be conclusively tested. 
+This technique assumes that the difference in morphology is well-defined by mapping T-types to a linear scale, which is far from being justified. Figure~\ref{fig-eureqa} shows the distribution of the GZ-derived T-type from Equation~\ref{eqn-eureqa} compared to the NA10 values. The large amounts of overlap between adjoining T-types show that this clearly does not serve as a clean discriminator. S0~galaxies in particular would mistakenly be judged as significantly later types (Sa) on average using only this metric. One could make a cut between the earliest (Sa) and latest (Sd) spiral types based only on the vote fractions. Alternatively, the relative numbers galaxies could be used as the weights to construct the {\em probability} of a given T-type. This has yet to be conclusively tested. 
 
 Finally, we note that \citet{sim13} identified a significant effect in which nuclear point sources, such as AGN, can mimic bulges in the GZ2 classifications. This has not yet been accounted for in this analysis, but could potentially be addressed by separating the sample into AGN and quiescent galaxies (via BPT line ratios) and looking for systematic differences between the two samples. 
 
