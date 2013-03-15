@@ -110,6 +110,8 @@ These results have been made possible by the participation in the Galaxy~Zoo pro
 
 Several results based on early Galaxy Zoo 2 data have already been published. \citet{mas11c,mas12a} use galactic bar classifications to show a clear increase in bar fraction for galaxies with redder colors, lower gas fractions, and more prominent bulges. \citet{hoy11} show that the bars themselves are both redder and longer in redder disk galaxies. \citet{ski12} have demonstrated that a significant correlation exists between barred and bulge-dominated galaxies at separations from 0.15--3~Mpc. \citet{kav12} used GZ2 to study early-type galaxies with visible dust lanes, while \citet{sim13} have discovered a population of AGN host galaxies with no bulge, studying how black holes can grow and accrete via secular processes. Finally, \citet{cas13} quantify morphological signatures of interaction (including mergers, spiral arms, and bars) for galaxy pairs in the SDSS. 
 
+This paper is organized as follows. Section~\ref{sec-description} describes the sample selection and method for collecting morphological classifications. Section~\ref{sec-datareduction} outlines the data reduction process, and Section~\ref{sec-catalog} describes the tables that comprise the public data release. Section~\ref{sec-comparison} is a detailed comparison of GZ2 to four additional morphological catalogs that were created with SDSS imaging. Section~\ref{sec-astronomy} presents morphologically-sorted colour-magnitude diagrams as an example of the science that can be done with GZ2. We end with a discussion of our results in Section~\ref{sec-conclusion}. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%    Project description  %%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,7 +363,7 @@ Part of this effect is due to the nature of a luminosity-limited sample; high-re
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/gz2_type_fractions.eps}
-\caption{Type fractions for the classification tasks in GZ2. Solid (thin) lines show the weighted vote fractions, while the thick (dashed) lines show the debiased vote fractions that have been adjusted for classification bias. This is a magnitude-limited sample for \mr~$<-20.89$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the SDSS). 
+\caption{Type fractions as a function of redshift for the classification tasks in GZ2. Solid (thin) lines show the weighted vote fractions, while the thick (dashed) lines show the debiased vote fractions that have been adjusted for classification bias. This is a magnitude-limited sample for \mr~$<-20.89$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the SDSS). 
 \label{fig-type_fractions}}
 \end{figure*}
 
@@ -433,7 +435,7 @@ Since each unique pair of responses to a question will have a different local ba
 The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-baselines} for the first two responses in each task. To derive a correction for bins not covered at low redshift, we attempted to fit each baseline ratio with an analytic, smoothly-varying function. The baseline ratio for the ``smooth'' and ``features/disk'' responses to Task 01 is functionally very similar to the GZ1 relation \citep[Figure~A5 in ][]{bam09}, as expected. This ratio is reasonably well-fit with an analytic function of the form:
 
 \begin{equation}
-\frac{f_j}{f_i}[R_{50},M_R] = \frac{s_6}{1 + exp[(\alpha - M_R)/\beta]} + s_7
+\frac{f_j}{f_i}[R_{50},M_r] = \frac{s_6}{1 + exp[(\alpha - M_r)/\beta]} + s_7
 \label{eqn-sb}
 \end{equation}
 
@@ -449,7 +451,7 @@ The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-ba
 None of the other tasks are well-fit by a function of the form in Equation~\ref{eqn-sb}; for these, we instead adopt a simpler fit where both \mr~and \rfifty~vary linearly:
 
 \begin{equation}
-\frac{f_j}{f_i}[R_{50},M_R] = t_1(R_{50} - t_2) + t_3(M_R - t_4) + t_5,
+\frac{f_j}{f_i}[R_{50},M_r] = t_1(R_{50} - t_2) + t_3(M_r - t_4) + t_5,
 \label{eqn-tilt}
 \end{equation}
 
@@ -462,8 +464,8 @@ None of the other tasks are well-fit by a function of the form in Equation~\ref{
 The success of this method is generally good for most GZ2 tasks and responses. Figure~\ref{fig-type_fractions} illustrates the comparison between the raw and debiased vote fractions. The debiased results ({\it thick lines}) are generally flat over a range of $0.01<z<0.085$, where $L^\star$ galaxies \citep[$M_r\sim-20.44$;][]{bla03a} fall below the magnitude limit of the survey and the bins are more poorly sampled. The debiased early- and late-type fractions of 0.45 and 0.55 agree with the GZ1 type fractions derived by \citet{bam09}. The bar fraction in disk galaxies is roughly 0.35, which is slightly higher than the value found by using thresholded GZ2 data in \citet{mas11c}.
 
 \begin{figure*}
-\includegraphics[angle=0,width=7.0in]{figures/gz2_bias_demo_task01.ps}
-\caption{GZ2 weighted vote fractions for Task 01 ({\it smooth, features/disk, or star/artifact?}) as a function of spectroscopic redshift. The left graph shows the fraction of galaxies for which a category exceeded a threshold of 0.8. Galaxies which had no answer above the threshold are labeled as ``unclassified''. The right shows the mean of the vote fractions, weighted by the total number of responses to the task for each galaxy. Data are shown for the GZ2 original + extra (thick solid), Stripe~82 normal-depth (thin dotted), and Stripe~82 co-add depth (thin solid) samples. Stripe~82 data is only for galaxies with $m_r < 17.0$, the same magnitude limit applied to the GZ2 main sample.  
+\includegraphics[angle=0,width=7.0in]{figures/gz2_bias_demo_task01.eps}
+\caption{GZ2 weighted vote fractions for Task 01 ({\it smooth, features/disk, or star/artifact?}) as a function of spectroscopic redshift. The left graph shows the fraction of galaxies for which the weighted vote fraction exceeded 0.8. Galaxies which had no answer above the threshold are labeled as ``unclassified''. The right shows the mean of the vote fractions, weighted by the total number of responses to the task for each galaxy. Data are shown for the GZ2 original + extra (thick solid), Stripe~82 normal-depth (thin dotted), and Stripe~82 co-add depth (thin solid) samples. Stripe~82 data is only for galaxies with $m_r < 17.0$, the same magnitude limit applied to the GZ2 main sample.  
 \label{fig-task01}}
 \end{figure*}
 
@@ -476,7 +478,6 @@ The success of this method is generally good for most GZ2 tasks and responses. F
 Other possible inclusions for catalog:
 \begin{itemize}
 	\item Metrics on classification confidence \citep[Table 04,][]{lin11}
-%	\item Galaxy Wars
 	\item \mr,\rfifty,$z$ bins for each galaxy
 	\item Voronoi tessellation bins
 	\item Matched SDSS metadata
@@ -613,9 +614,9 @@ The GZ1 interface did have one option that did not classify either early- or lat
 
 \citet[][hereafter NA10]{nai10} have published a catalog with morphological classifications of 14,034 galaxies from the SDSS DR4. Galaxies were selected from a redshift range of $0.01<z<0.1$, with an extinction-corrected apparent magnitude limit of $g<16$. The overlap with GZ2 is substantial; 12,480 galaxies are found in both catalogs. This comprises nearly all (89.9\%) of the NA10 catalog, but only 4.5\% of GZ2. The GZ2 sample is deeper ($m_r<17$), spans a wider redshift range ($0.0005<z<0.25$), and contains a more recent data release (DR7) than galaxies in NA10. The large intersection of the two samples makes this an excellent test case to compare morphological classifications from citizen scientists against those done by professional astronomers.  
 
-\citet{nai10} used classifications by a single professional (P. Nair) to quantify the galactic morphology. She determined RC3 T-types \citep{dev91} for the entire sample through visual inspection of monochrome $g$-band images, covering each source twice. There is no discussion on the procedure if T-types changed between her first and second classifications. 
+\citet{nai10} used classifications by a single professional (P. Nair) to quantify the galactic morphology. They determined RC3 T-types \citep[a numerical index of a galaxy's stage along the Hubble sequence;][]{dev91} for the entire sample through visual inspection of monochrome $g$-band images, covering each source twice. There is no discussion on their procedure if the perceived T-type changed between the first and second classification of an image. 
 
-In addition to the T-types, she also classified various ``fine structure'' morphological features in each galaxy. It is not stated how many times these classifications were performed. These include:
+In addition to the T-types, NA10 also classified various ``fine structure'' morphological features in each galaxy. It is not stated how many times these classifications were performed. These include:
 
 \begin{itemize}
 	\item bars (strong, weak, intermediate, ansae, ``peanut'', nuclear, and/or unsure)
@@ -766,7 +767,7 @@ Finally, we note that \citet{sim13} identified a significant effect in which nuc
 %
 %\begin{itemize}
 %	\item How like a given T-type is a galaxy?
-%	\item Take all GZ2 vote fractions, plus galaxy metadata ($z, R_{50}, m_R, \mu$)
+%	\item Take all GZ2 vote fractions, plus galaxy metadata ($z, R_{50}, m_r, \mu$)
 %	\item Run a PCA on NA10 classifications to see which GZ2 parameters are most important
 %	\item Apply it and get the likelihood of a particular galaxy from the ~20 axes
 %	\item This is the training set that is applied to the rest of Zoo2, accounting for evolution in the metadata properties on which the PCA can act.
@@ -896,8 +897,7 @@ Mention the volume classification of \citet{dev59}; recent developments by \cite
 %%%%%%%%    Astronomy       %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\section{Galaxy Wars}\label{sec_galaxywars}
-\section{Astronomy}\label{sec_astronomy}
+\section{Astronomy}\label{sec-astronomy}
 
 Statistical properties and demographics of galaxies to be placed here. At minimum, a table of the number of galaxies in each clean sample would be useful, plus a colour-magnitude diagram. Compare to early science results of EFIGI \citep{del11a} and NA10 \citep{nai10a,nai10b}
 
@@ -905,7 +905,7 @@ Statistical properties and demographics of galaxies to be placed here. At minimu
 %%%%%%%%    Conclusions       %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Conclusions}\label{sec_conclusions}
+\section{Conclusions}\label{sec-conclusion}
 
 %%%%%%%%%%%%
 %%% ACKNOWLEDGMENTS

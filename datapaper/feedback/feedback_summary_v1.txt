@@ -11,9 +11,11 @@ Global themes:
 - Tighten up vocabulary and descriptions
 - Section 5 can be trimmed down somewhat
 - Check on the actual data and debiasing w/Brooke
-- no feedback from Chris yet.
 - improved the T-type mapping using a better linear combo. No input at all from the arms winding categories - interesting!
 
+- KW, KLM, TM, CL, SB, LF, BS
+lots of debate on flags: consensus was to include thresholds/vote limits for flags USED TO DEFINE THE CORRECTION, but maybe not as an endorsed clean sample. 
+get Chris a version for commenting over the weekend
 
 global s/r
 
@@ -57,11 +59,23 @@ Karen Masters
 - no science is OK by her; support writing a short science paper ASAP
 - be careful when referring to NA10 or EFIGI as "truth"
 - early-type = E/S0/S0a, late-type = Sab and later?
-- add science results from GZ2: Masters, Hoyle, Simmons, Kaviraj. Others?
 - Absolute magnitude limit: -20.94 (KLM) vs -20.89 (KWW)?
 - bigger section comparing S82 single-depth and coadd
 - will make a p_bar plot for Hoyle comparisons to EFIGI
 - f_x -> v_X; vote fractions vs. fraction of galaxies with characteristic?
 
+Tom Melvin
 
+- very reasonable point that Figure 3 needs a legend. Not sure where to put it!
+- contrary viewpoint on GZ1 vs. GZ2 classification
+- suggests that we offer users an example of how to extract given objects (or alternatively, how to use likelihoods to do population studies)
 
+Ramin Skibba
+
+- suggests shortening Section 5, specifically the NA10 comparisons (reasonable)
+- respond on Voronoi tessellation question
+- "noticeable bulge" in Fig. 6 has more scatter because of the strong covariance(?) between the just noticeable and obvious questions. These overwhelmingly dominate the bulge prominence question, and are a general effect of the fact that this question really represents more of a continuum (relative strength) rather than a dichotomy.
+- bulge-disk composition? Simard et al, Lackner & Gunn
+- number of clean ellipticals vs. spirals in GZ1: genuine distribution of galaxies in the local universe?
+- yes: need to add a complete Casteels et al. section
+- thicken lines in IDL histogram plots (Figs 10-13)
