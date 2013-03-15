@@ -35,7 +35,7 @@ pro gz2_bulge_rows, ps=ps, stop=stop
 
 fitsdir = '~/Astronomy/Research/GalaxyZoo/fits/'
 csvdir = '~/Astronomy/Research/GalaxyZoo/csv/'
-figdir = '~/Astronomy/Research/GalaxyZoo/gz2dropbox/figures/'
+figdir = '~/Astronomy/Research/GalaxyZoo/datapaper/figures/'
 
 ; NA10 data
 
