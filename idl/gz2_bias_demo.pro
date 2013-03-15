@@ -30,21 +30,22 @@
 ;
 ; REVISION HISTORY
 ;       Written by K. Willett                Jun 12
+; Changed yrange to [0,1.0] - 2013-03-15
 ;-
 
 pro gz2_bias_demo, ps=ps, volumelimited=volumelimited, plotone = plotone
 
 timestart = systime(1)
 
-gz2dir = '~/Astronomy/Research/GalaxyZoo/'
+savdir = '~/Astronomy/Research/GalaxyZoo/sav/'
 fitsdir = '~/Astronomy/Research/GalaxyZoo/fits/'
-figsdir = '~/Astronomy/Research/GalaxyZoo/gz2dropbox/figures/'
+figsdir = '~/Astronomy/Research/GalaxyZoo/datapaper/figures/'
 gz2tablesamplefile = fitsdir+'gz2_table_sample_match_coadd2.fits'
 
 	;gz2 = mrdfits(gz2tablesamplefile, 1, /silent)
 	;save,gz2,filename=fitsdir+'gz2.sav'
 
-restore,gz2dir+'gz2.sav'
+restore,savdir+'gz2.sav'
 
 tagnames=tag_names(gz2)
 nt = n_elements(tagnames)
@@ -121,7 +122,7 @@ normal = gz2[where(strtrim(gz2.sample,2) eq 'stripe82'         and (gz2.petromag
 
 ; Two plots: thresholded likelihoods (try f > 0.8), and raw vote summation for all answers as a function of redshift. Repeat as function of surface brightness, physical size, and apparent magnitude
 
-yrange = [0,1.2]
+yrange = [0,1.0]
 
 delz=0.02
 
@@ -132,7 +133,7 @@ xrange = [-0.02,0.30]
 xvar_main = gz2main.redshift
 xvar_coadd2 = coadd2.redshift
 xvar_normal = normal.redshift
-xlabel = 'Redshift'
+xlabel = 'redshift'
 
 delr50 = 2
 r50arr = fillarr(delr50,0,15)
@@ -164,13 +165,21 @@ if keyword_set(ps) then begin
 
 	if keyword_set(plotone) then begin
 		plotname='gz2_bias_demo_task01'+vltitle+'.ps' 
-		encap=1
-	endif
-	plotname='gz2_bias_demo_alltasks'+vltitle+'.ps'
-	;plotname='gz2_bias_demo_alltasks_r50'+vltitle+'.ps'
-	;plotname='gz2_bias_demo_alltasks_rmag'+vltitle+'.ps'
+		encap = 1
+		xsize = 7
+		ysize = 3
+		title = ''
+	endif else begin
+		plotname='gz2_bias_demo_alltasks'+vltitle+'.ps'
+		;plotname='gz2_bias_demo_alltasks_r50'+vltitle+'.ps'
+		;plotname='gz2_bias_demo_alltasks_rmag'+vltitle+'.ps'
+		encap = 0
+		xsize = 7
+		ysize = 6
+		title = 'GZ2 Task 01'
+	endelse
 
-	ps_start, filename=figsdir+plotname, /color, /quiet, encap = encap
+	ps_start, filename=figsdir+plotname, /color, /quiet, encap = encap, xsize=xsize, ysize=ysize
 	cs=1.2
 	legendcs = 0.9
 	th=3
@@ -276,7 +285,7 @@ endelse
 	endfor
 	
 	!p.multi=[0,2,1]
-	cgplot,        zarr, a01_thresh, color='red', thick=thickline, xtitle=xlabel,ytitle='fraction', xr=xrange, /xstyle, yr=yrange, /ystyle, title='GZ2 Task 01', charsize = cs
+	cgplot,        zarr, a01_thresh, color='red', thick=thickline, xtitle=xlabel,ytitle='fraction', xr=xrange, /xstyle, yr=yrange, /ystyle, title=title, charsize = cs
 	cgplot, /over, zarr, a02_thresh, color='blue', thick=thickline
 	cgplot, /over, zarr, a03_thresh, color='green', thick=thickline
 	cgplot, /over, zarr, t01_unc_thresh, color='orange', thick=thickline
@@ -293,7 +302,7 @@ endelse
 	
 	al_legend,/top,/left,['Smooth','Features','Artifact','Unclassified'],color=['red','blue','green','orange'],psym=28, charsize = legendcs
 	
-	cgplot,        zarr, a01_raw, color='red', thick=thickline, xtitle=xlabel,ytitle='fraction', xr=xrange, /xstyle, yr=yrange, /ystyle, title='GZ2 Task 01', charsize = cs
+	cgplot,        zarr, a01_raw, color='red', thick=thickline, xtitle=xlabel,ytitle='fraction', xr=xrange, /xstyle, yr=yrange, /ystyle, title=title, charsize = cs
 	cgplot, /over, zarr, a02_raw, color='blue', thick=thickline
 	cgplot, /over, zarr, a03_raw, color='green', thick=thickline
 	
@@ -1638,7 +1647,5 @@ timeend = systime(1)
 print,''
 print,'Time elapsed: '+string(timeend-timestart,format='(f5.1)')+' sec.'
 print,''
-
-stop
 
 end
