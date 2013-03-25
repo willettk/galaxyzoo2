@@ -79,3 +79,8 @@ Ramin Skibba
 - number of clean ellipticals vs. spirals in GZ1: genuine distribution of galaxies in the local universe?
 - yes: need to add a complete Casteels et al. section
 - thicken lines in IDL histogram plots (Figs 10-13)
+
+Sugata Kaviraj
+
+- suggests more GZ1 results
+- references to the early/late type classifications of MOSES
