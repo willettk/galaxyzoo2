@@ -84,3 +84,20 @@ Sugata Kaviraj
 
 - suggests more GZ1 results
 - references to the early/late type classifications of MOSES
+
+Brooke Simmons
+
+- histogram of the number of classifications per galaxy for the main sample?
+- add more columns to Table 2? Subscript text, answer number
+- increase font size of Figure 3, add task numbers
+- does the fact that adjustment doesn't work between 0.085 and 0.25 say anything about the expected timescales for galaxy evolution? really good question.
+- change text on min. number of classifications, depending on new debiasing results
+- agree on subscript order for Eqns. 17-19; only done because it matches Steven's order
+- how well does a linear fit work for Tasks 01 and 07?
+- Figure 4: move legend to empty panel, bigger labels and add task numbers
+- do the differences between coadd1 and coadd2 data change as a function of apparent magnitude and/or surface brightness?
+- look at samples of galaxies for which GZ1 and GZ2 imaging disagrees. What's going on?
+- offer to look into GZ1 vs. GZ2 more carefully. Thanks!
+- good suggestion on gendered language
+- like the N-word remark
+- science part: plot SSFR vs. the bulge prominence?
