@@ -17,11 +17,12 @@ Global themes:
 lots of debate on flags: consensus was to include thresholds/vote limits for flags USED TO DEFINE THE CORRECTION, but maybe not as an endorsed clean sample. 
 get Chris a version for commenting over the weekend
 
-global s/r
+global s/r on:
 
-coadded or co-added
-questions/tasks
-answers/responses
+	coadded or co-added
+	questions/tasks
+	answers/responses
+	British-ise colour, center, etc.
 
 
 Kevin Schawinski
@@ -101,3 +102,8 @@ Brooke Simmons
 - good suggestion on gendered language
 - like the N-word remark
 - science part: plot SSFR vs. the bulge prominence?
+
+Steven Bamford
+
+- suggests changes in the paragraph that Edd provided on image creation; not sure which to use.
+
