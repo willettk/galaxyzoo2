@@ -106,4 +106,21 @@ Brooke Simmons
 Steven Bamford
 
 - suggests changes in the paragraph that Edd provided on image creation; not sure which to use.
+- clarify Equation 4 - what does barred kappa mean?
+- check luminosity range for barred galaxies compared to Masters at end of Sec. 3
+- Steven has (legitimate) concerns about flags.
+- concerned about S82 corrections applied from main sample!
+- change Figure 5 to start at z=0.01. Argument for not thresholding?
 
+- check galaxies with NA10 no-bar, GZ2 yes. Are they actually barred?
+- not clear on comment about comparing ansae/peanuts to the NA no-bar histogram
+- rewrite text in NA10 merger section. Prefer to use vote fractions vs. total number of votes, or multiply by previous cut!
+- for Figure 11 (NA10 rings), try f_odd * fring?
+- explain in all NA10 sections that we put a vote fraction + vote limit on previous questions.
+- are "dominant" bulges ellipticals with tidal tails?
+
+Kevin Casteels
+
+- offered to write a short section on angular separation bias. Welcome!
+- another section in 5.2.3
+- include table of thresholds used in previously published GZ2 papers?
