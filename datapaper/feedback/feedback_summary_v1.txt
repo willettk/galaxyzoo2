@@ -124,3 +124,11 @@ Kevin Casteels
 - offered to write a short section on angular separation bias. Welcome!
 - another section in 5.2.3
 - include table of thresholds used in previously published GZ2 papers?
+
+Chris Lintott
+
+- example images of the two sets of coadd images?
+- how many galaxies changed classifications for multiple? Ask SB. 
+- how was convergence tested for consistency?
+- shorten NA10 bar section; summarize Masters results in 1 paragraph.
+- It would be potentially useful to try combining the winding arms classifications to improve the NA10 40\% false positive rate; for example, by seeing if a high value for loose fraction + a low value for a tight fraction increased the fraction of Sc and Sd galaxies in the highest bins. 
