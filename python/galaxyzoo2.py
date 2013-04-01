@@ -5,6 +5,17 @@ reproduce the tables, figures, and data in Willett et al. (in prep). It
 relies on the aggregate GZ2 data tables created by Steven Bamford, as well
 as other metadata retrieved from the SDSS CasJobs server. 
 
+Required modules:
+
+standard:
+    numpy
+    matplotlib
+    astropy (or some version of pyfits)
+    astroML (optional)
+
+personalized:
+    cosmology (from SB)
+
 """
 
 import gc
@@ -31,7 +42,7 @@ fits_path_main = gz_path+'fits/'
 fits_path_task = fits_path_main+'tasks/'
 pkl_path = gz_path+'pickle/'
 plots_path = gz_path+'plots/'
-dropbox_figs_path = gz_path+'gz2dropbox/figures/'
+paper_figures_path = gz_path+'datapaper/figures/'
 
 # Locations of input FITS data files
 gz2table_data_file = fits_path_main+'gz2table.fits'
@@ -57,9 +68,12 @@ SBlim_size = np.arange(200) / 10.0
 gc.collect()
 plt.ion()
 
+new_vote_threshold = 20
+
 def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
                  magmin = -24, magmax = -16, magstep = 0.25,
-                 sizemin = 0, sizemax = 15, sizestep = 0.5):
+                 sizemin = 0, sizemax = 15, sizestep = 0.5,
+                 whichmethod='new'):
 
     """ Bins the galaxies in three dimensions: absolute magnitude,
         physical size, and redshift. Only bins galaxies with
@@ -135,7 +149,6 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
     absmag_padding = 0.0
     sb_padding = 0.0
 
-    taskcount_mask = gzdata_hasredshift[task_dict['task_name_count']] < task_dict['min_classifications']
     magnitude_mask = mr > (absmag_lim - absmag_padding)
     size_mask = r90_kpc < (3.0 * ang_scale)
     s82_maglim_mask = (gzdata_hasredshift['PETROMAG_R'] - gzdata_hasredshift['EXTINCTION_R']) > appmag_lim
@@ -148,30 +161,63 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
         2.5*np.log10(6.283185*(r50_kpc/ang_scale)**2)) > (SBlim_app - sb_padding)
     """
 
-    if task_dict['var_def'] not in ('task01','task06'):
-        if isinstance(task_dict['dependent_tasks'],tuple):
-            nprev = len((task_dict['dependent_tasks']))
-            arr = np.reshape(np.ravel([gzdata_hasredshift[task] for task in task_dict['dependent_tasks']]),(nprev,len(gzdata_hasredshift)))
-            probarr = np.product(arr,axis=0)
-        elif isinstance(task_dict['dependent_tasks'],str):
-            nprev = 1
-            probarr = gzdata_hasredshift[task_dict['dependent_tasks']]
 
-        taskprob_mask = (probarr <= 0.5**nprev)
-    else:
-        taskprob_mask = np.zeros(len(gzdata_hasredshift),bool)
 
-    totalmask = magnitude_mask | size_mask | taskcount_mask | taskprob_mask | s82_maglim_mask
 
-    totalmask = magnitude_mask | size_mask | taskcount_mask | taskprob_mask | s82_maglim_mask
+
+
+    # Old method -- 0.50 probability for each task, multiplied down the tree
+
+    if whichmethod is 'old':
+        if task_dict['var_def'] not in ('task01','task06'):
+            if isinstance(task_dict['dependent_tasks'],tuple):
+                nprev = len((task_dict['dependent_tasks']))
+                arr = np.reshape(np.ravel([gzdata_hasredshift[task] for task in task_dict['dependent_tasks']]),(nprev,len(gzdata_hasredshift)))
+                probarr = np.product(arr,axis=0)
+            elif isinstance(task_dict['dependent_tasks'],str):
+                nprev = 1
+                probarr = gzdata_hasredshift[task_dict['dependent_tasks']]
+
+            taskprob_mask = (probarr <= 0.5**nprev)
+        else:
+            taskprob_mask = np.zeros(len(gzdata_hasredshift),bool)
+
+        taskcount_mask = gzdata_hasredshift[task_dict['task_name_count']] < task_dict['min_classifications']
+
+        task_mask = taskcount_mask | taskprob_mask
+
+
+
+
+
+
+
+    # New method: number of votes for current task + vote fraction for previous dependent task
+    # from gz2_task_histograms.pro; developed with BDS, 25 Mar 2013
+    
+    if whichmethod is 'new':
+        if task_dict['var_def'] not in ('task01','task06'):
+            probarr_prevtask = gzdata_hasredshift[task_dict['dependent_tasks'][-1]] if isinstance(task_dict['dependent_tasks'],tuple) else gzdata_hasredshift[task_dict['dependent_tasks']]
+            votearr_thistask = gzdata_hasredshift[task_dict['task_name_count']]
+
+            taskprob_mask = (probarr_prevtask < task_dict['vf_prev'][str(new_vote_threshold)]) & (votearr_thistask < new_vote_threshold)
+        else:
+            votearr_thistask = gzdata_hasredshift[task_dict['task_name_count']]
+            taskprob_mask = votearr_thistask < new_vote_threshold
+
+        task_mask = taskprob_mask
+
+
+    totalmask = magnitude_mask | size_mask | task_mask | s82_maglim_mask
 
     print ' '
     print '%7i galaxies removed from sample due to absolute magnitude cutoff'%(np.sum(magnitude_mask.astype(int)))
     print '%7i galaxies removed from sample due to apparent magnitude cutoff'%(np.sum(s82_maglim_mask.astype(int)))
     print '%7i galaxies removed from sample due to angular size cutoff'%(np.sum(size_mask.astype(int)))
-    print '%7i galaxies removed from sample due to minimum number (%i) of classifications'%(np.sum(taskcount_mask.astype(int)),task_dict['min_classifications'])
     #print '%7i galaxies removed from sample due to surface brightness cutoff'%(np.sum(surfacebrightness_mask.astype(int)))
-    print '%7i galaxies removed from sample due to task probability cutoff'%(np.sum(taskprob_mask.astype(int)))
+    #print '%7i galaxies removed from sample due to minimum number (%i) of classifications'%(np.sum(taskcount_mask.astype(int)),task_dict['min_classifications'])
+    #print '%7i galaxies removed from sample due to task probability cutoff'%(np.sum(taskprob_mask.astype(int)))
+    print '%7i galaxies removed from sample due to task probability and vote cutoffs'%(np.sum(task_mask.astype(int)))
     print '%6.2f percent of the total (%i galaxies) is kept for %s' % ((1. - np.sum(totalmask.astype(float))/len(gzdata_hasredshift)) * 100., np.sum(np.logical_not(totalmask).astype(int)),task_dict['var_def'])
     print ' '
 
@@ -375,7 +421,7 @@ def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
     pickle.dump(counts_baseline_masked, open(pkl_path+'%s_r%s%s_local_counts_baseline_masked.pkl' % (var_def,vartop,varbot),'wb')) 
     pickle.dump(redshift_baseline_masked, open(pkl_path+'%s_r%s%s_local_redshift_baseline_masked.pkl' % (var_def,vartop,varbot),'wb')) 
 
-    return None
+    return ratio_baseline
 
 def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
 
@@ -434,7 +480,7 @@ def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
         im = ax.imshow(sigma_masked.T, interpolation='nearest', origin='lower')
         cb = plt.colorbar(im)
         ax.set_aspect('auto')
-        ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
+        ax.set_xlabel(r'$M_r [mag]$',fontsize=22)
         ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
         ax.set_title('%s baseline ratio sigma' % var_def,fontsize=22)
 
@@ -527,7 +573,7 @@ def plot_ratio_baseline(task_dict,
                        origin='lower'
                        )
         ax.set_title('%s/%s ' % (var_str[vartop],var_str[varbot])+titlenames[index])
-        ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
+        ax.set_xlabel(r'$M_r [mag]$',fontsize=22)
         ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
         ax.set_aspect('auto')
         rc(('xtick','ytick'), labelsize=12)
@@ -643,7 +689,7 @@ def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
     cb.set_label(r'$%s(N_{%s}/N_{%s})$' % 
                  (label_prefix,var_str[vartop],var_str[varbot]), 
                  fontsize=20)
-    fig.text(0.5,0.05,r'$M_R [mag]$',ha='center',fontsize=20)
+    fig.text(0.5,0.05,r'$M_r [mag]$',ha='center',fontsize=20)
     fig.text(0.05,0.5,r'$R_{50} [kpc]$',va='center', rotation='vertical',fontsize=20)
     fig.text(0.5,0.94,
              '%s ratio per redshift bin for GZ2' % task_dict['var_def'], 
@@ -1083,7 +1129,7 @@ def plot_ratio_baseline_fit(task_dict,
 
     # Set general axes properties
 
-    ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
+    ax.set_xlabel(r'$M_r [mag]$',fontsize=22)
     ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
     ax.set_title('Baseline ratio data + fit',fontsize=22)
     ax.set_aspect('auto')
@@ -1167,7 +1213,7 @@ def plot_ratio_function(p=np.array([-3.5, 1.9, -22.8, 0.3, 0.3, -4.4, 2.2, 1.1, 
         origin='lower')
     cb = plt.colorbar(im)
     ax.set_aspect('auto')
-    ax.set_xlabel(r'$M_R [mag]$',fontsize=22)
+    ax.set_xlabel(r'$M_r [mag]$',fontsize=22)
     ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
     ax.set_title('Ratio function',fontsize=22)
 
@@ -1249,7 +1295,7 @@ def get_task_dict(task):
       
       'min_galperbin' : int
           minimum number of galaxies in each (M,R,z) bin to be
-          included as well-sampled and fit with analytical function.
+          included as "well-sampled" and fit with analytical function.
 
       'direct' : numpy.array(dtype=bool)
           Where `True`, correction for a given pair of responses is
@@ -1275,6 +1321,11 @@ def get_task_dict(task):
           baseline morphology ratio and clean samples. Not a key for
           `smooth` or `odd` tasks.  
 
+      'vf_prev' : dict
+          Vote fraction threshold for previous dependent task in tree.
+          Not set for Tasks 01 or 06.
+          Keys to dictionary are number of votes, for previous task, 
+          as determined by find99.pro
 
     """
 
@@ -1295,7 +1346,7 @@ def get_task_dict(task):
                  'ratio_type' : 'log',
                  'min_prob': 0.8,
                  'min_classifications': 30, 
-                 'min_galperbin': 25, 
+                 'min_galperbin': 20, 
                  'direct' : np.ones((3,3),bool),
                  'funcname' : 'tilt'
                  }
@@ -1314,9 +1365,9 @@ def get_task_dict(task):
         task_dict['var_str'] = ('edgeon','notedgeon')
         task_dict['var_def'] = 'task02'
         task_dict['min_classifications'] = 15
-        task_dict['min_galperbin'] = 10
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction')
         task_dict['direct']   = np.zeros((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
+        task_dict['vf_prev'] = {'10':0.227,'20':0.430}
  
     if task is 'bar':
         task_dict['task_name_count'] = 't03_bar_total_weight'
@@ -1325,9 +1376,9 @@ def get_task_dict(task):
         task_dict['var_str'] = ('bar','nobar')
         task_dict['var_def'] = 'task03'
         task_dict['min_classifications'] = 10
-        task_dict['min_galperbin'] = 10
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction')
         task_dict['direct']   = np.zeros((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
+        task_dict['vf_prev'] = {'10':0.519,'20':0.715}
  
     if task is 'spiral':
         task_dict['task_name_count'] = 't04_spiral_total_weight'
@@ -1336,9 +1387,9 @@ def get_task_dict(task):
         task_dict['var_str'] = ('spiral','nospiral')
         task_dict['var_def'] = 'task04'
         task_dict['min_classifications'] = 10
-        task_dict['min_galperbin'] = 10
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction')
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
+        task_dict['vf_prev'] = {'10':0.519,'20':0.715}
  
     if task is 'odd':
         task_dict['task_name_count'] = 't06_odd_total_weight'
@@ -1366,6 +1417,7 @@ def get_task_dict(task):
         task_dict['direct'][3,0]   = True
         task_dict['direct'][2,3]   = True
         task_dict['direct'][3,2]   = True
+        task_dict['vf_prev'] = {'10':0.519,'20':0.715}
 
     if task is 'rounded':
         task_dict['task_name_count'] = 't07_rounded_total_weight'
@@ -1382,6 +1434,7 @@ def get_task_dict(task):
         task_dict['direct'][0,1] = False
         task_dict['direct'][0,2] = False
         task_dict['direct'][1,2] = False
+        task_dict['vf_prev'] = {'10':0.263,'20':0.469}
 
     if task is 'arms_winding':
         task_dict['task_name_count'] = 't10_arms_winding_total_weight'
@@ -1394,6 +1447,7 @@ def get_task_dict(task):
         task_dict['ratio_type'] = 'log'
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction','t04_spiral_a08_spiral_weighted_fraction')
         task_dict['direct']   = np.zeros((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
+        task_dict['vf_prev'] = {'10':0.402,'20':0.619}
 
     if task is 'arms_number':
         task_dict['task_name_count'] = 't11_arms_number_total_weight'
@@ -1407,7 +1461,6 @@ def get_task_dict(task):
         task_dict['var_def'] = 'task11'
         task_dict['ratio_type'] = 'log'
         task_dict['min_classifications'] = 5
-        task_dict['min_galperbin'] = 10
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction','t04_spiral_a08_spiral_weighted_fraction')
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
         task_dict['direct'][0,1] = False
@@ -1428,6 +1481,7 @@ def get_task_dict(task):
         task_dict['direct'][5,2] = False
         task_dict['direct'][5,3] = False
         task_dict['direct'][5,4] = False
+        task_dict['vf_prev'] = {'10':0.402,'20':0.619}
 
     if task is 'bulge_shape':
         task_dict['task_name_count'] = 't09_bulge_shape_total_weight'
@@ -1442,6 +1496,7 @@ def get_task_dict(task):
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
         task_dict['direct'][0,2] = False
         task_dict['direct'][2,0] = False
+        task_dict['vf_prev'] = {'10':0.326,'20':0.602}
 
     if task is 'odd_feature':
         task_dict['task_name_count'] = 't08_odd_feature_total_weight'
@@ -1456,9 +1511,9 @@ def get_task_dict(task):
         task_dict['var_def'] = 'task08'
         task_dict['min_prob'] = 0.5
         task_dict['min_classifications'] = 5
-        task_dict['min_galperbin'] = 10
         task_dict['dependent_tasks'] = ('t06_odd_a14_yes_weighted_fraction')
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
+        task_dict['vf_prev'] = {'10':0.223,'20':0.420}
 
     return task_dict
 
@@ -1531,9 +1586,14 @@ def run_task(task_dict,
         setdiff = np.concatenate((np.arange(vartop),np.arange(ntask - (vartop+1)) + (vartop+1) ))
         for idx2, varbot in enumerate(setdiff):
 
-            determine_ratio_baseline(task_dict,vartop,varbot)
+            rb = determine_ratio_baseline(task_dict,vartop,varbot)
             determine_ratio_baseline_sigma(task_dict,plot,vartop,varbot)
-            fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot)
+            if np.sum(rb > unknown_ratio) > 0:
+                fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot)
+            else:
+                assert task_dict['direct'][vartop,varbot], \
+                    "No non-blank cells in baseline ratio for %s, responses %i and %i - must set task_dict['direct'] = True" \
+                    % (task_dict['task_str'],vartop,varbot)
             determine_baseline_correction(task_dict,vartop,varbot)
 
             if plot:
@@ -1834,7 +1894,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     ax1.axhline(size_1arcsec, color='w', linestyle='dashed')
     ax1.axvline(absmag_lim,  color='w', linestyle='dashed')
     ax1.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
-    ax1.set_xlabel(r'$M_R [mag]$',fontsize=22)
+    ax1.set_xlabel(r'$M_r [mag]$',fontsize=22)
     plt.show()
     plt.draw()
 
@@ -1858,7 +1918,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
                      origin='lower')
     cb = plt.colorbar(im2)
     ax2.set_title('Baseline fit')
-    ax2.set_xlabel(r'$M_R [mag]$',fontsize=22)
+    ax2.set_xlabel(r'$M_r [mag]$',fontsize=22)
 
     zslice_opaque = ma.copy(zslice)
     zslice_opaque.mask = np.logical_not(zslice_opaque.mask)
@@ -1894,7 +1954,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     ax3.plot(SBlim_mag, SBlim_size,'w--')
     ax3.axhline(size_1arcsec, color='w', linestyle='dashed')
     ax3.axvline(absmag_lim,  color='w', linestyle='dashed')
-    ax3.set_xlabel(r'$M_R [mag]$',fontsize=22)
+    ax3.set_xlabel(r'$M_r [mag]$',fontsize=22)
     ax3.set_xlim(fit_extent[:2])
     ax3.set_ylim(fit_extent[2:])
     ax3.autoscale(False)
@@ -2236,8 +2296,6 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
         if -1 not in (zbin,mbin,sbin):
             applycorr = np.squeeze(allcorrmasked[:,:,zbin,mbin,sbin])
 
-            return applycorr
-
             # Check to see if any corrections exist for this bin
             if np.sum((np.isnan(applycorr)) & (applycorr == unknown_ratio)) == len(applycorr.ravel()):
                 unknowncorrcount += 1
@@ -2394,7 +2452,7 @@ def plot_galaxy_counts(task_dict,vmax=1000):
 
     return fig
 
-def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False):
+def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False, ploterrors=False):
 
     """ Plot the mean type fractions for all responses for each task
         as a function of redshift. Left plot shows all galaxies,
@@ -2418,6 +2476,9 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     stripe82 : bool
         When `True`, plot the results for the Stripe 82 spectroscopic sample
+
+    ploterrors : bool
+        When `True`, plot error bars on each type fraction
 
 
     Returns
@@ -2479,8 +2540,26 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     # Create the two samples
     
+    """
+    # Old method
     n_all = np.sum((task_counts > task_dict['min_classifications']) & corrgoodarr)
     n_maglim = np.sum((mr < maglimval) & (task_counts > task_dict['min_classifications']) & corrgoodarr)
+    """
+
+    # Begin new method
+
+    if task_dict['var_def'] not in ('task01','task06'):
+        probarr_prevtask = gzdata[task_dict['dependent_tasks'][-1]] if isinstance(task_dict['dependent_tasks'],tuple) else gzdata[task_dict['dependent_tasks']]
+        votearr_thistask = gzdata[task_dict['task_name_count']]
+        taskprob_good = np.logical_not((probarr_prevtask < task_dict['vf_prev'][str(new_vote_threshold)]) & (votearr_thistask < new_vote_threshold))
+    else:
+        votearr_thistask = gzdata[task_dict['task_name_count']]
+        taskprob_good = np.logical_not(votearr_thistask < new_vote_threshold)
+
+    n_all = np.sum(taskprob_good & corrgoodarr)
+    n_maglim = np.sum((mr < maglimval) & taskprob_good & corrgoodarr)
+
+    # End new method
 
     # Loop over redshift bin and find the type fractions at each slice
 
@@ -2489,7 +2568,8 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
         gals_in_bin = (redshift >= zbin) & \
                       (redshift < (zbin+zwidth)) & \
                       corrgoodarr & \
-                      (task_counts > task_dict['min_classifications'])
+                      taskprob_good
+                      #(task_counts > task_dict['min_classifications']) & \         Old method
 
         p_raw_typefrac[:,idx] = np.mean(p_raw[:,gals_in_bin],axis=1)
         p_adj_typefrac[:,idx] = np.mean(p_adj[:,gals_in_bin],axis=1)
@@ -2500,7 +2580,8 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
                       (redshift < (zbin+zwidth)) & \
                       (mr < maglimval) & \
                       corrgoodarr & \
-                      (task_counts > task_dict['min_classifications'])
+                      taskprob_good
+                      #(task_counts > task_dict['min_classifications']) & \         Old method
 
         p_raw_typefrac_maglim[:,idx] = np.mean(p_raw[:,gals_in_bin_maglim],axis=1)
         p_adj_typefrac_maglim[:,idx] = np.mean(p_adj[:,gals_in_bin_maglim],axis=1)
@@ -2536,10 +2617,11 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
         ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
         legend_adj_str.append('adj %s' % task_str)
 
-        #ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
-        #   color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
-        #ax1.errorbar(zplotbins, p_adj_typefrac[idx,:], yerr = p_adj_typefrac_err[idx,:], 
-        #   color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
+        if ploterrors:
+            ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
+               color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+            ax1.errorbar(zplotbins, p_adj_typefrac[idx,:], yerr = p_adj_typefrac_err[idx,:], 
+               color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
 
     plt.legend(legend_raw_str, 'upper left', shadow=True, fancybox=True, prop=font)
@@ -2563,15 +2645,14 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
         linecolor = colorarr.pop()
         ax2.plot(zplotbins, p_adj_typefrac_maglim[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
 
-        #ax2.errorbar(zplotbins, p_raw_typefrac_maglim[idx,:], yerr = p_raw_typefrac_err_maglim[idx,:], 
-        #   color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
-        #ax2.errorbar(zplotbins, p_adj_typefrac_maglim[idx,:], yerr = p_adj_typefrac_err_maglim[idx,:], 
-        #   color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
+        if ploterrors:
+            ax2.errorbar(zplotbins, p_raw_typefrac_maglim[idx,:], yerr = p_raw_typefrac_err_maglim[idx,:], 
+               color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+            ax2.errorbar(zplotbins, p_adj_typefrac_maglim[idx,:], yerr = p_adj_typefrac_err_maglim[idx,:], 
+               color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
-    #ax2.axvline(zlo, color='k', linestyle='--')
     ax2.axvline(zhi, color='k', linestyle='--')
 
-    #plt.legend(legend_raw_str + legend_adj_str, 'upper left', shadow=True, fancybox=True, prop=font)
     plt.legend(legend_raw_str, 'upper left', shadow=True, fancybox=True, prop=font)
 
     ax2.set_xlim(-0.01,0.25)
@@ -2663,14 +2744,16 @@ def plot_all_baselines(paperplot=False):
                        )
         ax.set_title(titlenames[idx])
         if idx in bottom_plot:
-            ax.set_xlabel(r'$M_R [mag]$',fontsize=16)
+            ax.set_xlabel(r'$M_r [mag]$',fontsize=16)
         if idx in left_plot:
             ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
         ax.set_aspect('auto')
         rc(('xtick','ytick'), labelsize=12)
+        """
         if paperplot or idx==10:
             cb = plt.colorbar(im,orientation='vertical')
             cb.set_label(r'$%s(N_{%s}/N_{%s})$' % (label_prefix,task_dict['var_str'][0],task_dict['var_str'][1]),fontsize=16)
+        """
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(np.mean(centers_redshift))- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(np.mean(centers_redshift)))**2))
         absmag_lim = appmag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
@@ -2682,12 +2765,14 @@ def plot_all_baselines(paperplot=False):
         ax.axhline(size_1arcsec, color='w', linestyle='dashed')
 
 
-    #fig.tight_layout()
-    fig.savefig(dropbox_figs_path+'gz2_baselines.eps', dpi=200)
+    fig.tight_layout()
+    cb = plt.colorbar(im,orientation='vertical')
+    cb.set_label(r'$%s(N_{%s}/N_{%s})$' % (label_prefix,task_dict['var_str'][0],task_dict['var_str'][1]),fontsize=16)
+    fig.savefig(paper_figures_path+'gz2_baselines.eps', dpi=200)
 
     return None
 
-def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=False):
+def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=False, axlabelsize=14, titlesize=16):
 
     """ Plot the type fractions as function of redshift for all 11 tasks in GZ2
 
@@ -2789,16 +2874,16 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=Fal
         ax1.set_xlim(-0.01,0.19)
         ax1.set_ylim(-0.01,1.01)
         if idx in bottom_plot:
-            ax1.set_xlabel('redshift')
+            ax1.set_xlabel('redshift',fontsize=axlabelsize)
         if idx in left_plot:
-            ax1.set_ylabel('fraction')
+            ax1.set_ylabel('fraction',fontsize=axlabelsize)
         ax1.set_aspect('auto')
-        ax1.set_title(titlenames[idx])
+        ax1.set_title(titlenames[idx],fontsize=titlesize)
         rc('xtick', labelsize=10)
         rc('ytick', labelsize=10)
 
     fig.tight_layout()
-    fig.savefig(dropbox_figs_path+'gz2_%stype_fractions.eps' % s82_str, dpi=200)
+    fig.savefig(paper_figures_path+'gz2_%stype_fractions.eps' % s82_str, dpi=200)
 
     return None
 
@@ -2868,7 +2953,7 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
                        origin='lower'
                        )
         ax.set_title(titlenames[idx])
-        ax.set_xlabel(r'$M_R [mag]$',fontsize=14)
+        ax.set_xlabel(r'$M_r [mag]$',fontsize=14)
         if idx is 0:
             ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
         ax.set_aspect('auto')
@@ -2925,7 +3010,7 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
         if idx is 0:
             ax2.set_ylabel('GZ2 vote fraction',fontsize=22)
 
-    fig.savefig(dropbox_figs_path+'gz2_posterplot_debiasing.png', dpi=200)
+    fig.savefig(paper_figures_path+'gz2_posterplot_debiasing.png', dpi=200)
 
     """
     # Fill the sixth and empty plot with the legend
@@ -3480,7 +3565,7 @@ def gz1_comparison():
     
     plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True)
 
-    fig.savefig(dropbox_figs_path+'gz1_gz2.eps', dpi=200)
+    fig.savefig(paper_figures_path+'gz1_gz2.eps', dpi=200)
 
     # Try Steven's "trumpet-style" plot
 
@@ -3515,7 +3600,7 @@ def gz1_comparison():
     ax3.set_xlim(-1,1)
     ax3.set_title('adj votes')
 
-    fig.savefig(dropbox_figs_path+'gz1_gz2_trumpet.eps', dpi=200)
+    fig.savefig(paper_figures_path+'gz1_gz2_trumpet.eps', dpi=200)
 
     gz1_el_clean_flag = (data['ELLIPTICAL'] == 1)
     gz1_el_clean_prob = (gz1_adj_el >= 0.8)
@@ -3757,6 +3842,9 @@ def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=
 
     # Set the flags for each tasks based on their individual paths and parameters
 
+    """
+    # Old method
+
     if stripe82:
         smooth['min_classifications'] = 10
         edgeon['min_classifications'] = 5
@@ -3781,6 +3869,26 @@ def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=
     goodt09 = (gzdata['t09_bulge_shape_total_weight'] >= bulge_shape['min_classifications']) & (gzdata[bulge_shape['dependent_tasks'][0]] >= 0.5) & (gzdata[bulge_shape['dependent_tasks'][1]] >= 0.5)
     goodt10 = (gzdata['t10_arms_winding_total_weight'] >= arms_winding['min_classifications']) & (gzdata[arms_winding['dependent_tasks'][0]] >= 0.5) & (gzdata[arms_winding['dependent_tasks'][1]] >= 0.5) & (gzdata[arms_winding['dependent_tasks'][2]] >= 0.5)
     goodt11 = (gzdata['t11_arms_number_total_weight'] >= arms_number['min_classifications']) & (gzdata[arms_number['dependent_tasks'][0]] >= 0.5) & (gzdata[arms_number['dependent_tasks'][1]] >= 0.5) & (gzdata[arms_number['dependent_tasks'][2]] >= 0.5)
+    """
+
+    # New method
+
+    if stripe82:
+        new_vote_threshold == 10
+    else:
+        pass
+
+    goodt01 = (gzdata['t01_smooth_or_features_total_weight'] >= new_vote_threshold)
+    goodt02 = (gzdata['t01_smooth_or_features_total_weight'] >= new_vote_threshold) & (gzdata[edgeon['dependent_tasks']] >= edgeon['vf_prev'][str(new_vote_threshold)])
+    goodt03 = (gzdata['t02_edgeon_total_weight'] >= bar['min_classifications']) & (gzdata[bar['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt04 = (gzdata['t02_edgeon_total_weight'] >= spiral['min_classifications']) & (gzdata[spiral['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt05 = (gzdata['t02_edgeon_total_weight'] >= bulge['min_classifications']) & (gzdata[bulge['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt06 = (gzdata['t06_odd_total_weight'] >= new_vote_threshold)
+    goodt07 = (gzdata['t01_smooth_or_features_total_weight'] >= new_vote_threshold) & (gzdata[rounded['dependent_tasks']] >= rounded['vf_prev'][str(new_vote_threshold)])
+    goodt08 = (gzdata['t06_odd_total_weight'] >= new_vote_threshold) & (gzdata[odd_feature['dependent_tasks']] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt09 = (gzdata['t02_edgeon_total_weight'] >= bulge_shape['min_classifications']) & (gzdata[bulge_shape['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt10 = (gzdata['t04_spiral_total_weight'] >= arms_winding['min_classifications']) & (gzdata[arms_winding['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt11 = (gzdata['t04_spiral_total_weight'] >= arms_number['min_classifications']) & (gzdata[arms_number['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
 
     cleanthresh_t01 = 0.8
     cleanthresh_t02 = 0.5
@@ -4390,8 +4498,6 @@ def which_flags(data,objid=588015508218577115):
                 print flag[:-5]
 
     return None
-
-
 
 def objlist(gzdata,response):
 
