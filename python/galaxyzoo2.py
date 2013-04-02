@@ -5,17 +5,6 @@ reproduce the tables, figures, and data in Willett et al. (in prep). It
 relies on the aggregate GZ2 data tables created by Steven Bamford, as well
 as other metadata retrieved from the SDSS CasJobs server. 
 
-Required modules:
-
-standard:
-    numpy
-    matplotlib
-    astropy (or some version of pyfits)
-    astroML (optional)
-
-personalized:
-    cosmology (from SB)
-
 """
 
 import gc
@@ -60,20 +49,25 @@ range_ratio = max_ratio - min_ratio
 unknown_ratio = -999
 no_correction_applied = unknown_ratio + 10
 eps = 0.000001
+
 SBlim_app = 23.0
-appmag_lim = 17.0
 SBlim_size = np.arange(200) / 10.0
+
+appmag_lim_main = 17.0
+appmag_lim_s82 = appmag_lim_main + 2.0
 
 # Collect memory and run plotting interactively
 gc.collect()
 plt.ion()
 
-new_vote_threshold = 20
+vt_stripe82 = 10
+vt_mainsample = 20
 
 def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
                  magmin = -24, magmax = -16, magstep = 0.25,
                  sizemin = 0, sizemax = 15, sizestep = 0.5,
-                 whichmethod='new'):
+                 stripe82 = False,
+                 whichmethod = 'new'):
 
     """ Bins the galaxies in three dimensions: absolute magnitude,
         physical size, and redshift. Only bins galaxies with
@@ -112,6 +106,11 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
     sizestep : float or integer
         Size interval [kpc] for binning galaxies
 
+    whichmethod : str
+        'old' is for the threshold method of individual vote fractions (not systematically chosen)
+        'new' uses the same threshold of 20 votes per task and selects vote fraction from
+            previous dependent question (preferred)
+
     Returns
     -------
     None
@@ -127,7 +126,18 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
     import subprocess
 
     tstart = time.time()
-    p = pyfits.open(gz2_maglim_data_file)
+
+    file_str = stripe82_str(stripe82)
+    if stripe82:
+        datafile = gz2_coadd2_data_file
+        mag_lim = appmag_lim_s82
+        vote_threshold = vt_stripe82
+    else:
+        datafile = gz2_maglim_data_file
+        mag_lim = appmag_lim_main
+        vote_threshold = vt_mainsample
+
+    p = pyfits.open(datafile)
     gzdata = p[1].data
     p.close()
 
@@ -143,7 +153,7 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
 
     dmod = cosmology.dmod_flat(redshift)
     ang_scale = cosmology.ang_scale_flat(redshift)
-    absmag_lim = appmag_lim - dmod
+    absmag_lim = mag_lim - dmod
     r90_kpc = r90 * ang_scale
 
     absmag_padding = 0.0
@@ -151,7 +161,7 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
 
     magnitude_mask = mr > (absmag_lim - absmag_padding)
     size_mask = r90_kpc < (3.0 * ang_scale)
-    s82_maglim_mask = (gzdata_hasredshift['PETROMAG_R'] - gzdata_hasredshift['EXTINCTION_R']) > appmag_lim
+    maglim_mask = (gzdata_hasredshift['PETROMAG_R'] - gzdata_hasredshift['EXTINCTION_R']) > mag_lim
 
     """
     Removed the surface brightness requirement - no selection algorithms for the GZ2 sample should depend
@@ -160,10 +170,6 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
     surfacebrightness_mask = (mr + dmod + \
         2.5*np.log10(6.283185*(r50_kpc/ang_scale)**2)) > (SBlim_app - sb_padding)
     """
-
-
-
-
 
 
     # Old method -- 0.50 probability for each task, multiplied down the tree
@@ -187,32 +193,28 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
         task_mask = taskcount_mask | taskprob_mask
 
 
-
-
-
-
-
     # New method: number of votes for current task + vote fraction for previous dependent task
     # from gz2_task_histograms.pro; developed with BDS, 25 Mar 2013
     
     if whichmethod is 'new':
+
         if task_dict['var_def'] not in ('task01','task06'):
             probarr_prevtask = gzdata_hasredshift[task_dict['dependent_tasks'][-1]] if isinstance(task_dict['dependent_tasks'],tuple) else gzdata_hasredshift[task_dict['dependent_tasks']]
             votearr_thistask = gzdata_hasredshift[task_dict['task_name_count']]
 
-            taskprob_mask = (probarr_prevtask < task_dict['vf_prev'][str(new_vote_threshold)]) & (votearr_thistask < new_vote_threshold)
+            taskprob_mask = (probarr_prevtask < task_dict['vf_prev'][str(vote_threshold)]) & (votearr_thistask < vote_threshold)
         else:
             votearr_thistask = gzdata_hasredshift[task_dict['task_name_count']]
-            taskprob_mask = votearr_thistask < new_vote_threshold
+            taskprob_mask = votearr_thistask < vote_threshold
 
         task_mask = taskprob_mask
 
 
-    totalmask = magnitude_mask | size_mask | task_mask | s82_maglim_mask
+    totalmask = magnitude_mask | size_mask | task_mask | maglim_mask
 
     print ' '
     print '%7i galaxies removed from sample due to absolute magnitude cutoff'%(np.sum(magnitude_mask.astype(int)))
-    print '%7i galaxies removed from sample due to apparent magnitude cutoff'%(np.sum(s82_maglim_mask.astype(int)))
+    print '%7i galaxies removed from sample due to apparent magnitude cutoff'%(np.sum(maglim_mask.astype(int)))
     print '%7i galaxies removed from sample due to angular size cutoff'%(np.sum(size_mask.astype(int)))
     #print '%7i galaxies removed from sample due to surface brightness cutoff'%(np.sum(surfacebrightness_mask.astype(int)))
     #print '%7i galaxies removed from sample due to minimum number (%i) of classifications'%(np.sum(taskcount_mask.astype(int)),task_dict['min_classifications'])
@@ -225,7 +227,7 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
 
     # Write the masked GZ2 data to a FITS file to be binned by IDL script
 
-    pyfits.writeto(fits_path_task+'%s_data_for_idl.fits' % task_dict['var_def'],
+    pyfits.writeto(fits_path_task+'%s_%sdata_for_idl.fits' % (task_dict['var_def'],file_str),
                    gzgood, clobber=True)    
 
     # Open both the root file and a temporary file to contain variables + IDL script
@@ -249,6 +251,7 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
     f2.write('sizestep = %6.3f \n' % sizestep)
     f2.write('task_names_wf = "%s" \n' % ', '.join(task_dict['task_names_wf']))
     f2.write('var_def = "%s" \n' % task_dict['var_def'])
+    f2.write('file_str = "%s" \n' % file_str)
 
     # Insert the rest of the IDL script
     f2.write(f1.read())
@@ -278,7 +281,7 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
 
     return None
 
-def get_bins(task_dict):
+def get_bins(task_dict,stripe82=False):
 
     """ Retrive the bin edges and centers from `bin_data_idl`
 
@@ -298,7 +301,9 @@ def get_bins(task_dict):
 
     """
 
-    idl_binned = pyfits.open(fits_path_task+'%s_idlbinned.fits' % (task_dict['var_def']))
+    file_str = stripe82_str(stripe82)
+
+    idl_binned = pyfits.open(fits_path_task+'%s_%sidlbinned.fits' % (task_dict['var_def'],file_str))
     bindata = idl_binned[1].data
 
     edges_redshift = np.squeeze(bindata['EDGES_REDSHIFT'])
@@ -310,7 +315,7 @@ def get_bins(task_dict):
 
     return centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size 
 
-def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
+def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1, stripe82 = False):
 
     """ Determine the morphology ratio baseline for a single
         GZ2 task. 
@@ -335,17 +340,19 @@ def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
 
     """
 
+    file_str = stripe82_str(stripe82)
+
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
 
     # Load the GZ2 sample data
 
-    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    p_allvar = pyfits.open(fits_path_task+'%s_%sidlbinned.fits' % (var_def,file_str))
     d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
     d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
     d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     p_allvar.close()
 
@@ -410,20 +417,20 @@ def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1):
 
     # Write the results to FITS files
 
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_ratio_baseline.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline.fits' % (var_def,vartop,varbot,file_str),
                    ratio_baseline, clobber=True)    
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_counts_baseline.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_counts_baseline.fits' % (var_def,vartop,varbot,file_str),
                    counts_baseline, clobber=True)    
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_redshift_baseline.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_redshift_baseline.fits' % (var_def,vartop,varbot,file_str),
                    redshift_baseline, clobber=True)    
 
-    pickle.dump(ratio_baseline_masked, open(pkl_path+'%s_r%s%s_local_ratio_baseline_masked.pkl' % (var_def,vartop,varbot),'wb')) 
-    pickle.dump(counts_baseline_masked, open(pkl_path+'%s_r%s%s_local_counts_baseline_masked.pkl' % (var_def,vartop,varbot),'wb')) 
-    pickle.dump(redshift_baseline_masked, open(pkl_path+'%s_r%s%s_local_redshift_baseline_masked.pkl' % (var_def,vartop,varbot),'wb')) 
+    pickle.dump(ratio_baseline_masked, open(pkl_path+'%s_r%s%s_%slocal_ratio_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'wb')) 
+    pickle.dump(counts_baseline_masked, open(pkl_path+'%s_r%s%s_%slocal_counts_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'wb')) 
+    pickle.dump(redshift_baseline_masked, open(pkl_path+'%s_r%s%s_%slocal_redshift_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'wb')) 
 
     return ratio_baseline
 
-def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
+def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1, stripe82=False):
 
 
     """ Determine the uncertainty in the morphology ratio baseline 
@@ -453,16 +460,18 @@ def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
 
     """
 
+    file_str = stripe82_str(stripe82)
+
     var_def = task_dict['var_def']
 
-    data = pyfits.getdata(fits_path_task+'%s_r%s%s_local_counts_baseline.fits' % (var_def,vartop,varbot))
+    data = pyfits.getdata(fits_path_task+'%s_r%s%s_%slocal_counts_baseline.fits' % (var_def,vartop,varbot,file_str))
     var1 = data[:,:,0].astype(np.float)
     var2 = data[:,:,1].astype(np.float)
     mask_var1 = var1 < 1
     mask_var2 = var2 < 1
     mask_all = np.logical_and(mask_var1, mask_var2)
     mask = np.logical_or(mask_var1, mask_var2)
-    ratio = pyfits.getdata(fits_path_task+'%s_r%s%s_local_ratio_baseline.fits' % (var_def,vartop,varbot))
+    ratio = pyfits.getdata(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline.fits' % (var_def,vartop,varbot,file_str))
     count_sum = (var1 + var2).astype(np.float)
     count_product = (var1 * var2).astype(np.float)
     np.putmask(count_product, mask, 1.0)
@@ -484,7 +493,7 @@ def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1):
         ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
         ax.set_title('%s baseline ratio sigma' % var_def,fontsize=22)
 
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_ratio_baseline_sigma.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_sigma.fits' % (var_def,vartop,varbot,file_str),
            sigma, clobber=True)    
 
     return None
@@ -493,8 +502,8 @@ def plot_ratio_baseline(task_dict,
                         unset_vrange = False,
                         ratio_vrange = (min_ratio,max_ratio),
                         plot_mag_lims=False,
-                        vartop=0, varbot=1
-                        ):
+                        vartop=0, varbot=1,
+                        stripe82 = False):
 
     """ Plot the morphology ratio baseline for a single
         GZ2 task. 
@@ -532,16 +541,23 @@ def plot_ratio_baseline(task_dict,
 
     """
 
+    file_str = stripe82_str(stripe82)
+
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
+
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
 
-    f_ratio = fits_path_task+'%s_r%s%s_local_ratio_baseline.fits' % (var_def,vartop,varbot)
+    f_ratio = fits_path_task+'%s_r%s%s_%slocal_ratio_baseline.fits' % (var_def,vartop,varbot,file_str)
     p_ratio = pyfits.open(f_ratio)
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
-    ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r%s%s_local_ratio_baseline_masked.pkl' % (var_def,vartop,varbot),'rb'))
-    counts_baseline_masked = pickle.load(open(pkl_path+'%s_r%s%s_local_counts_baseline_masked.pkl' % (var_def,vartop,varbot),'rb'))
+    ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r%s%s_%slocal_ratio_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'rb'))
+    counts_baseline_masked = pickle.load(open(pkl_path+'%s_r%s%s_%slocal_counts_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'rb'))
     sumcounts = np.sum(counts_baseline_masked, axis=2)
 
     if task_dict['ratio_type'] is 'linear':
@@ -581,9 +597,9 @@ def plot_ratio_baseline(task_dict,
         cb.set_label(labelnames[index],fontsize=16)
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(np.mean(centers_redshift))- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(np.mean(centers_redshift)))**2))
-        absmag_lim = appmag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
-        absmag_lim_loz = appmag_lim - cosmology.dmod_flat(0.0005)
-        absmag_lim_hiz = appmag_lim - cosmology.dmod_flat(0.25)
+        absmag_lim = mag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
+        absmag_lim_loz = mag_lim - cosmology.dmod_flat(0.0005)
+        absmag_lim_hiz = mag_lim - cosmology.dmod_flat(0.25)
         size_1arcsec = cosmology.ang_scale_flat(np.mean(centers_redshift))
         ax.autoscale(False)
         ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -596,12 +612,12 @@ def plot_ratio_baseline(task_dict,
         #plt.show()
         #plt.draw()
 
-    fig.savefig(plots_path+'%s_r%s%s_ratio_baseline.png' % (var_def,vartop,varbot), dpi=200)
+    fig.savefig(plots_path+'%s_r%s%s_%sratio_baseline.png' % (var_def,vartop,varbot,file_str), dpi=200)
     p_ratio.close()
 
     return ax
 
-def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
+def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1,stripe82 = False):
 
     """ Plot the morphology baseline at all redshift slices
         in the binned data. 
@@ -630,14 +646,20 @@ def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
 
     """
 
+    file_str = stripe82_str(stripe82)
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
+
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
 
     # Load the GZ2 sample data
 
-    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    p_allvar = pyfits.open(fits_path_task+'%s_%sidlbinned.fits' % (var_def,file_str))
     d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
-    centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     p_allvar.close()
 
@@ -677,7 +699,7 @@ def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
         ax.set_ylim(min(edges_size),max(edges_size))
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(z)- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(z))**2))
-        absmag_lim = appmag_lim - cosmology.dmod_flat(edges_redshift[idx])
+        absmag_lim = mag_lim - cosmology.dmod_flat(edges_redshift[idx])
         size_1arcsec = cosmology.ang_scale_flat(edges_redshift[idx])
         ax.autoscale(False)
         ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -695,7 +717,7 @@ def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1):
              '%s ratio per redshift bin for GZ2' % task_dict['var_def'], 
              fontsize=22, ha='center')
 
-    fig.savefig(plots_path+'%s_ratio_redshift.png' % task_dict['var_def'], dpi=200)
+    fig.savefig(plots_path+'%s_%sratio_redshift.png' % (task_dict['var_def'],file_str), dpi=200)
 
     return None
 
@@ -875,7 +897,7 @@ def ratio_minfunc(p, x, y, z, w, funcname):
     s = (w * r2).sum() / df                             # Chi-squared statistic
     return s
 
-def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vartop=0, varbot=1):
+def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vartop=0, varbot=1, stripe82 = False):
 
     """ Fit the morphology ratio with an analytic function
         and estimate the uncertainty in each bin. 
@@ -916,14 +938,16 @@ def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vart
 
     """
 
+    file_str = stripe82_str(stripe82)
+
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
     funcname = task_dict['funcname']
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
-    sigma = pyfits.getdata(fits_path_task+'%s_r%s%s_local_ratio_baseline_sigma.fits' % (var_def,vartop,varbot))
-    ratio = pyfits.getdata(fits_path_task+'%s_r%s%s_local_ratio_baseline.fits' % (var_def,vartop,varbot))
+    sigma = pyfits.getdata(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_sigma.fits' % (var_def,vartop,varbot,file_str))
+    ratio = pyfits.getdata(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline.fits' % (var_def,vartop,varbot,file_str))
     
     # Steven's and my initial parameters
 
@@ -956,6 +980,8 @@ def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vart
     chi2r = ratio_minfunc(p, centers_mag, centers_size, ratio, weights,funcname)
 
     print ' '
+    print 'Task %2s, responses %i and %i' % (var_def[-2:], vartop,varbot)
+    print ' '
     print 'Number of bootstrap iterations: %i' % nboot
     print 'param = %s' % p
     print 'param errors = %s' % perr
@@ -964,7 +990,7 @@ def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vart
     print ' '
 
     ratio_baseline_fit = ratio_function(p, centers_mag, centers_size, funcname)
-    pickle.dump((p, perr), file(pkl_path+'%s_r%s%s_ratio_baseline_fit.pkl' % (var_def,vartop,varbot), 'w'))
+    pickle.dump((p, perr), file(pkl_path+'%s_r%s%s_%sratio_baseline_fit.pkl' % (var_def,vartop,varbot,file_str), 'w'))
     res = ratio - ratio_baseline_fit
     normres = res/sigma
     np.putmask(normres, weights < 0.000001, unknown_ratio)
@@ -972,11 +998,11 @@ def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vart
     if plot:
         plot_ratio_function(p,centers_mag,centers_size, unset_vrange,funcname)
 
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_ratio_baseline_fit.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_fit.fits' % (var_def,vartop,varbot,file_str),
                    ratio_baseline_fit, clobber=True)    
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_ratio_baseline_fitres.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_fitres.fits' % (var_def,vartop,varbot,file_str),
                    res, clobber=True) 
-    pyfits.writeto(fits_path_task+'%s_r%s%s_local_ratio_baseline_fitnormres.fits' % (var_def,vartop,varbot),
+    pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_fitnormres.fits' % (var_def,vartop,varbot,file_str),
                    normres, clobber=True) 
 
     return None
@@ -989,7 +1015,8 @@ def plot_ratio_baseline_fit(task_dict,
                             plot_local_transparent = True,
                             kernel_size = 3, 
                             plot_contour=False,
-                            vartop=0,varbot=1
+                            vartop=0,varbot=1,
+                            stripe82=False
                             ):
 
     """ Plot the best fit to morphology ratio using parameters
@@ -1048,14 +1075,20 @@ def plot_ratio_baseline_fit(task_dict,
 
     from scipy.signal import convolve2d
 
+    file_str = stripe82_str(stripe82)
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
+
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
 
-    ratio_baseline_fit = pyfits.getdata(fits_path_task+'%s_r%s%s_local_ratio_baseline_fit.fits' % (var_def,vartop,varbot))
+    ratio_baseline_fit = pyfits.getdata(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_fit.fits' % (var_def,vartop,varbot,file_str))
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
-    ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r%s%s_local_ratio_baseline_masked.pkl' % (var_def,vartop,varbot),'rb'))
+    ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r%s%s_%slocal_ratio_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'rb'))
     ratio_baseline_fit_masked = ma.array(ratio_baseline_fit,mask=ratio_baseline_masked.mask)
 
     kernel = np.ones((kernel_size,kernel_size),dtype=int)
@@ -1065,7 +1098,7 @@ def plot_ratio_baseline_fit(task_dict,
 
     # Plot the best fit function as an opaque layer
 
-    pfit, pfit_err = pickle.load(file(pkl_path+'%s_r%s%s_ratio_baseline_fit.pkl' % (var_def,vartop,varbot), 'r'))
+    pfit, pfit_err = pickle.load(file(pkl_path+'%s_r%s%s_%sratio_baseline_fit.pkl' % (var_def,vartop,varbot,file_str), 'r'))
     if match_databins:
         magbinsplot,sizebinsplot = centers_mag, centers_size
     else:
@@ -1120,7 +1153,7 @@ def plot_ratio_baseline_fit(task_dict,
         zc.set_color('w')
  
     SBlim_mag = (SBlim_app - cosmology.dmod_flat(np.mean(centers_redshift))- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(np.mean(centers_redshift)))**2))
-    absmag_lim = appmag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
+    absmag_lim = mag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
     size_1arcsec = cosmology.ang_scale_flat(np.mean(centers_redshift))
     ax.autoscale(False)
     ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -1138,7 +1171,7 @@ def plot_ratio_baseline_fit(task_dict,
     #plt.show()
     #plt.draw()
 
-    fig.savefig(plots_path+'%s_r%s%s_ratio_baseline_fit.png' % (var_def,vartop,varbot), dpi=200)
+    fig.savefig(plots_path+'%s_r%s%s_%sratio_baseline_fit.png' % (var_def,vartop,varbot,file_str), dpi=200)
 
     return None
 
@@ -1521,7 +1554,8 @@ def run_task(task_dict,
              nboot = 1, 
              fitbins = 1000,
              plot = True, 
-             unset_vrange = True
+             unset_vrange = True,
+             stripe82 = False
              ):
     
     """ Run all the steps in reduction pipeline
@@ -1576,7 +1610,7 @@ def run_task(task_dict,
     # Execute all the tasks to bin data, find baseline morphology, fit the baseline, 
     # and adjust the raw vote fractions
 
-    bin_data_idl(task_dict)
+    bin_data_idl(task_dict,stripe82=stripe82)
 
     ntask = len(task_dict['task_names_wf'])
 
@@ -1586,28 +1620,28 @@ def run_task(task_dict,
         setdiff = np.concatenate((np.arange(vartop),np.arange(ntask - (vartop+1)) + (vartop+1) ))
         for idx2, varbot in enumerate(setdiff):
 
-            rb = determine_ratio_baseline(task_dict,vartop,varbot)
-            determine_ratio_baseline_sigma(task_dict,plot,vartop,varbot)
-            if np.sum(rb > unknown_ratio) > 0:
-                fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot)
-            else:
-                assert task_dict['direct'][vartop,varbot], \
-                    "No non-blank cells in baseline ratio for %s, responses %i and %i - must set task_dict['direct'] = True" \
-                    % (task_dict['task_str'],vartop,varbot)
-            determine_baseline_correction(task_dict,vartop,varbot)
+            rb = determine_ratio_baseline(task_dict,vartop,varbot,stripe82)
+            determine_ratio_baseline_sigma(task_dict,plot,vartop,varbot,stripe82)
+            if np.sum(rb > unknown_ratio) > 0 and task_dict['direct'][vartop,varbot] == False:
+                fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot,stripe82)
+                if plot:
+                    plot_ratio_baseline_fit(task_dict,fitbins,unset_vrange,vartop=vartop,varbot=varbot,stripe82=stripe82)
+            elif task_dict['direct'][vartop,varbot] == False:
+                    "No non-blank cells in baseline ratio for %s, responses %i and %i - setting task_dict['direct'] = True" % (task_dict['task_str'],vartop,varbot)
+                    task_dict['direct'][vartop,varbot] = True
+            determine_baseline_correction(task_dict,vartop,varbot,stripe82)
 
             if plot:
-                plot_ratio_baseline(task_dict,unset_vrange,vartop=vartop,varbot=varbot)
-                plot_ratio_baseline_fit(task_dict,fitbins,unset_vrange,vartop=vartop,varbot=varbot)
-                plot_ratio_baseline_redshift(task_dict,vartop,varbot)
-                plot_baseline_correction(task_dict,vartop=vartop,varbot=varbot)
+                plot_ratio_baseline(task_dict,unset_vrange,vartop=vartop,varbot=varbot,stripe82=stripe82)
+                plot_ratio_baseline_redshift(task_dict,vartop,varbot,stripe82=stripe82)
+                plot_baseline_correction(task_dict,vartop=vartop,varbot=varbot,stripe82=stripe82)
 
     # Remaining tasks that do not require looping over variable pairs
 
-    adjust_probabilities(task_dict)
+    adjust_probabilities(task_dict,stripe82=stripe82)
     if plot:
-        plot_galaxy_counts(task_dict)
-        plot_type_fractions(task_dict)
+        plot_galaxy_counts(task_dict,stripe82=stripe82)
+        plot_type_fractions(task_dict,stripe82=stripe82)
 
     warnings.resetwarnings()
 
@@ -1616,7 +1650,7 @@ def run_task(task_dict,
 
     return None
 
-def run_all_tasks():
+def run_all_tasks(stripe82=False):
 
     """ Runs full data pipeline for all tasks.
 
@@ -1643,14 +1677,14 @@ def run_all_tasks():
 
     for task in tasklist:
         td = get_task_dict(task)
-        run_task(td)
+        run_task(td,stripe82=stripe82)
 
     tend = time.time()
     print 'Time elapsed for run_all_tasks: %i seconds' % (tend - tstart)
 
     return None
 
-def determine_baseline_correction(task_dict, vartop = 0, varbot = 1):
+def determine_baseline_correction(task_dict, vartop = 0, varbot = 1, stripe82 = False):
 
     """ Determine the correction ratio baseline for a single pair of
         responses to a GZ2 task. 
@@ -1690,19 +1724,20 @@ def determine_baseline_correction(task_dict, vartop = 0, varbot = 1):
 
     # Load best fit data
 
+    file_str = stripe82_str(stripe82)
     var_def  = task_dict['var_def']
     var_str = task_dict['var_str']
 
-    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    p_allvar = pyfits.open(fits_path_task+'%s_%sidlbinned.fits' % (var_def,file_str))
     d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
     d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
     d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     p_allvar.close()
 
-    ratio_baseline_masked = pickle.load(file(pkl_path+'%s_r%s%s_local_ratio_baseline_masked.pkl' % (var_def,vartop,varbot),'rb')) 
+    ratio_baseline_masked = pickle.load(file(pkl_path+'%s_r%s%s_%slocal_ratio_baseline_masked.pkl' % (var_def,vartop,varbot,file_str),'rb')) 
 
     var1_cube = d_var1
     var2_cube = d_var2
@@ -1728,7 +1763,7 @@ def determine_baseline_correction(task_dict, vartop = 0, varbot = 1):
     if task_dict['direct'][vartop,varbot]:
         correction = ratio - ratio_baseline_masked
     else:
-        pfit_params, pfit_params_err = pickle.load(file(pkl_path+'%s_r%s%s_ratio_baseline_fit.pkl' % (var_def,vartop,varbot), 'r'))
+        pfit_params, pfit_params_err = pickle.load(file(pkl_path+'%s_r%s%s_%sratio_baseline_fit.pkl' % (var_def,vartop,varbot,file_str), 'r'))
         pfit = ratio_function(pfit_params, centers_mag, centers_size,task_dict['funcname'])
         correction = ratio - pfit
 
@@ -1738,7 +1773,7 @@ def determine_baseline_correction(task_dict, vartop = 0, varbot = 1):
 
     return correction, correction_masked, ratio_masked
 
-def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop=0,varbot=1):
+def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop=0,varbot=1,stripe82 = False):
 
     """ Plot the derived correction for a single pair of responses to a
         GZ2 task. 
@@ -1767,17 +1802,23 @@ def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop
 
     """
 
-    c,cmasked, ratio_masked = determine_baseline_correction(task_dict, vartop, varbot)
+    c,cmasked, ratio_masked = determine_baseline_correction(task_dict, vartop, varbot, stripe82)
+
+    file_str = stripe82_str(stripe82)
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
 
-    p_allvar = pyfits.open(fits_path_task+'%s_idlbinned.fits' % var_def)
+    p_allvar = pyfits.open(fits_path_task+'%s_%sidlbinned.fits' % (var_def,file_str))
     d_allvar = p_allvar[0].data.astype(float)                         # Data is pre-binned
     d_var1 = np.squeeze(d_allvar[vartop,:,:,:])
     d_var2 = np.squeeze(d_allvar[varbot,:,:,:])
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     p_allvar.close()
 
@@ -1798,7 +1839,7 @@ def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop
         ax.set_aspect('auto')
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(z)- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(z))**2))
-        absmag_lim = appmag_lim - cosmology.dmod_flat(z)
+        absmag_lim = mag_lim - cosmology.dmod_flat(z)
         size_1arcsec = cosmology.ang_scale_flat(z)
         ax.autoscale(False)
         ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -1811,7 +1852,7 @@ def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop
     cb.set_label('baseline correction')
     fig.text(0.5,0.95,'Baseline correction per redshift bin for %s' % var_def, fontsize=22, ha='center')
 
-    fig.savefig(plots_path+'%s_r%s%s_baseline_correction.png' % (var_def,vartop,varbot), dpi=200)
+    fig.savefig(plots_path+'%s_r%s%s_%sbaseline_correction.png' % (var_def,vartop,varbot,file_str), dpi=200)
 
     return None
 
@@ -1819,7 +1860,8 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
                                    ratio_vrange = (min_ratio,max_ratio),
                                    vartop = 0, varbot=1, 
                                    smoothfunc = False,
-                                   savefig=False):
+                                   savefig=False,
+                                   stripe82 = False):
 
     """ Plot the data, fit, and correction for a single pair of responses to a
         GZ2 task at a particular redshift.  
@@ -1857,12 +1899,18 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
 
     """
 
-    c,cmasked, ratio_masked = determine_baseline_correction(task_dict)
+    c,cmasked, ratio_masked = determine_baseline_correction(task_dict,vartop,varbot,stripe82)
+
+    file_str = stripe82_str(stripe82)
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
 
     var_def = task_dict['var_def']
     var_str = task_dict['var_str']
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     zstep = edges_redshift[1] - edges_redshift[0]
 
@@ -1887,7 +1935,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     cb.set_label('ratio')
 
     SBlim_mag = (SBlim_app - cosmology.dmod_flat(0.07)- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(0.07))**2))
-    absmag_lim = appmag_lim - cosmology.dmod_flat(0.07)
+    absmag_lim = mag_lim - cosmology.dmod_flat(0.07)
     size_1arcsec = cosmology.ang_scale_flat(0.07)
     ax1.autoscale(False)
     ax1.plot(SBlim_mag, SBlim_size,'w--')
@@ -1900,7 +1948,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
 
     # Function
 
-    pfit, pfit_err = pickle.load(file(pkl_path+'%s_r%s%s_ratio_baseline_fit.pkl' % (var_def,vartop,varbot), 'r'))
+    pfit, pfit_err = pickle.load(file(pkl_path+'%s_r%s%s_%sratio_baseline_fit.pkl' % (var_def,vartop,varbot,file_str), 'r'))
     if smoothfunc:
         fit = ratio_function(pfit, np.linspace(edges_mag[0],edges_mag[-1],1000),np.linspace(edges_size[0],edges_size[-1],1000),task_dict['funcname'])
     else:
@@ -1949,7 +1997,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     cb.set_label('baseline correction')
 
     SBlim_mag = (SBlim_app - cosmology.dmod_flat(0.07)- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(0.07))**2))
-    absmag_lim = appmag_lim - cosmology.dmod_flat(0.07)
+    absmag_lim = mag_lim - cosmology.dmod_flat(0.07)
     size_1arcsec = cosmology.ang_scale_flat(0.07)
     ax3.plot(SBlim_mag, SBlim_size,'w--')
     ax3.axhline(size_1arcsec, color='w', linestyle='dashed')
@@ -1961,7 +2009,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
     ax3.set_aspect('auto')
 
     if savefig:
-        fig.savefig(plots_path+'%s_r%s%s_baseline_correction_slice%03i.png' % (task_dict['var_def'],vartop,varbot,bslice), dpi=200)
+        fig.savefig(plots_path+'%s_r%s%s_%sbaseline_correction_slice%03i.png' % (task_dict['var_def'],vartop,varbot,file_str,bslice), dpi=200)
 
     return None
 
@@ -2212,9 +2260,9 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
 
     file_str = ''
     if stripe82:
-        p = pyfits.open(fits_path_task+'%s_data_for_idl_stripe82.fits' % task_dict['var_def'])
-        file_str = 'stripe82_'
-    if photoz:
+        file_str = 's82_'
+        p = pyfits.open(fits_path_task+'%s_%sdata_for_idl.fits' % (task_dict['var_def'],file_str))
+    elif photoz:
         p = pyfits.open(gz2_photoz_table_sample.fits)
         file_str = 'photoz_'
     else:
@@ -2226,7 +2274,7 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
 
     # Load in the bin sizes
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     # Take each galaxy, find which bin it corresponds to, adjust probability
 
@@ -2246,7 +2294,7 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
     magstep = edges_mag[1] - edges_mag[0]
     sizestep = edges_size[1] - edges_size[0]
 
-    corr_test, corrmasked_test, ratiomasked_test = determine_baseline_correction(task_dict, 0, 1)
+    corr_test, corrmasked_test, ratiomasked_test = determine_baseline_correction(task_dict, 0, 1, stripe82)
     cshape = corr_test.shape
 
     allcorr        = np.zeros((ntask,ntask-1,cshape[0],cshape[1],cshape[2]),dtype=float)
@@ -2258,7 +2306,7 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
     for idx1, var1 in enumerate(np.arange(ntask)):
         setdiff = np.concatenate((np.arange(var1),np.arange(ntask - (var1+1)) + (var1+1) ))
         for idx2, var2 in enumerate(setdiff):
-            corr, corrmasked, ratiomasked = determine_baseline_correction(task_dict, var1, var2)
+            corr, corrmasked, ratiomasked = determine_baseline_correction(task_dict, var1, var2, stripe82)
             allcorr[idx1,idx2,:,:,:] = corr
             allcorrmasked[idx1,idx2,:,:,:] = corrmasked
             allratiomasked[idx1,idx2,:,:,:] = ratiomasked
@@ -2360,11 +2408,13 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
     print '%7i galaxies had NaN corrections for all pairs of variables' % unknowncorrcount
     print '%7i galaxies had no non-zero corrections in any bin' % zerocorrcount
     print '%7i galaxies had finite corrections available' % corrcount
-    print 'Of those: '
-    print '   %4.1f percent of tasks were not adjusted because the raw vote fraction was 100 percent' % \
-        ((float(vfzerocount)/(corrcount * ntask)) * 100.)
-    print '   %4.1f percent of tasks had a non-zero correction applied' % \
-        ((float(vfnonzerocount)/(corrcount * ntask)) * 100.)
+    
+    if corrcount > 0:
+        print 'Of those: '
+        print '   %4.1f percent of tasks were not adjusted because the raw vote fraction was 100 percent' % \
+            ((float(vfzerocount)/(corrcount * ntask)) * 100.)
+        print '   %4.1f percent of tasks had a non-zero correction applied' % \
+            ((float(vfnonzerocount)/(corrcount * ntask)) * 100.)
     print ' '
     print '%7i total galaxies' % p_raw.shape[1]
     print ' '
@@ -2373,7 +2423,7 @@ def adjust_probabilities(task_dict, stripe82=False, photoz=False):
 
     return p_raw,p_adj
 
-def plot_galaxy_counts(task_dict,vmax=1000):
+def plot_galaxy_counts(task_dict,vmin=0,vmax=1000,stripe82=False):
 
     """ Plot 2D histogram of galaxy counts for binned GZ2 data
         for each task. 
@@ -2383,6 +2433,9 @@ def plot_galaxy_counts(task_dict,vmax=1000):
     task_dict : dict
         Dictionary specifying parameters for the reduction of each
         GZ2 task. Called from `get_task_dict`.
+
+    vmin : int or float
+        minimum range of the colormap
 
     vmax : int or float
         maximum range of the colormap
@@ -2397,13 +2450,22 @@ def plot_galaxy_counts(task_dict,vmax=1000):
 
     """
 
-    p = pyfits.open(gz2_full_data_file)
+    if stripe82:
+        p = pyfits.open(gz2_coadd2_data_file)
+        mag_lim = appmag_lim_s82
+        vote_threshold = vt_stripe82
+    else:
+        p = pyfits.open(gz2_full_data_file)
+        mag_lim = appmag_lim_main
+        vote_threshold = vt_mainsample
+
     gzall = p[1].data
     p.close()
 
-    gzdata = gzall[(gzall[task_dict['task_name_count']] > task_dict['min_classifications']) & np.isfinite(gzall['REDSHIFT'])]
+    gzdata = gzall[(gzall[task_dict['task_name_count']] > vote_threshold) & np.isfinite(gzall['REDSHIFT'])]
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    file_str = stripe82_str(stripe82)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
     zstep = centers_redshift[1] - centers_redshift[0]
     magmin,magmax = edges_mag.min(),edges_mag.max()
     sizemin,sizemax = edges_size.min(),edges_size.max()
@@ -2428,13 +2490,13 @@ def plot_galaxy_counts(task_dict,vmax=1000):
         ax = fig.add_subplot(6,4,idx+1)
         if h.ndim > 1:
             im = ax.imshow(hmask.T,extent=(magmin,magmax,sizemin,sizemax),
-                           vmin=0,vmax=vmax,
+                           vmin=vmin,vmax=vmax,
                            interpolation='nearest',origin='lower')
         #ax.set_title('%s < z < %s' % (z-zstep/2.,z+zstep/2.))
         ax.set_aspect('auto')
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(z)- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(z))**2))
-        absmag_lim = appmag_lim - cosmology.dmod_flat(z)
+        absmag_lim = mag_lim - cosmology.dmod_flat(z)
         size_1arcsec = cosmology.ang_scale_flat(z)
         ax.autoscale(False)
         ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -2448,7 +2510,7 @@ def plot_galaxy_counts(task_dict,vmax=1000):
     #plt.show()
     #plt.draw()
 
-    fig.savefig(plots_path+'%s_galaxy_counts.png' % task_dict['var_def'], dpi=200)
+    fig.savefig(plots_path+'%s_%sgalaxy_counts.png' % (task_dict['var_def'],file_str), dpi=200)
 
     return fig
 
@@ -2493,17 +2555,20 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     # Load data 
 
+    file_str = stripe82_str(stripe82)
+    p = pyfits.open(fits_path_task+'%s_%sdata_for_idl.fits' % (task_dict['var_def'],file_str))
+
     if stripe82:
-        s82_str = 'stripe82_'
-        p = pyfits.open(gz2_stripe82_data_file)
+        vote_threshold = vt_stripe82
+        mag_lim = appmag_lim_s82
     else:
-        s82_str = ''
-        p = pyfits.open(fits_path_task+'%s_data_for_idl.fits' % task_dict['var_def'])
+        vote_threshold = vt_mainsample
+        mag_lim = appmag_lim_main
 
     gzdata = p[1].data
     p.close()
 
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
     redshift = gzdata['REDSHIFT']
     mr = gzdata['PETROMAG_MR']
@@ -2513,8 +2578,8 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     ntask = len(task_dict['var_str'])
 
-    p_both = pickle.load(open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'],s82_str),'rb')) 
-    corrgoodarr = pickle.load(open(pkl_path+'%s_%scorrgoodarr.pkl' % (task_dict['var_def'],s82_str),'rb')) 
+    p_both = pickle.load(open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'],file_str),'rb')) 
+    corrgoodarr = pickle.load(open(pkl_path+'%s_%scorrgoodarr.pkl' % (task_dict['var_def'],file_str),'rb')) 
     p_raw = np.squeeze(p_both[0,:,:])
     p_adj = np.squeeze(p_both[1,:,:])
 
@@ -2536,7 +2601,7 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
     Take the mean of the raw likelihoods for each galaxy per redshift bin
     """
 
-    maglimval = appmag_lim - cosmology.dmod_flat(zhi)
+    maglimval = mag_lim - cosmology.dmod_flat(zhi)
 
     # Create the two samples
     
@@ -2551,10 +2616,10 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
     if task_dict['var_def'] not in ('task01','task06'):
         probarr_prevtask = gzdata[task_dict['dependent_tasks'][-1]] if isinstance(task_dict['dependent_tasks'],tuple) else gzdata[task_dict['dependent_tasks']]
         votearr_thistask = gzdata[task_dict['task_name_count']]
-        taskprob_good = np.logical_not((probarr_prevtask < task_dict['vf_prev'][str(new_vote_threshold)]) & (votearr_thistask < new_vote_threshold))
+        taskprob_good = np.logical_not((probarr_prevtask < task_dict['vf_prev'][str(vote_threshold)]) & (votearr_thistask < vote_threshold))
     else:
         votearr_thistask = gzdata[task_dict['task_name_count']]
-        taskprob_good = np.logical_not(votearr_thistask < new_vote_threshold)
+        taskprob_good = np.logical_not(votearr_thistask < vote_threshold)
 
     n_all = np.sum(taskprob_good & corrgoodarr)
     n_maglim = np.sum((mr < maglimval) & taskprob_good & corrgoodarr)
@@ -2588,10 +2653,10 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
         p_raw_typefrac_err_maglim[:,idx] = np.std(p_raw[:,gals_in_bin_maglim],axis=1)
         p_adj_typefrac_err_maglim[:,idx] = np.std(p_adj[:,gals_in_bin_maglim],axis=1)
 
-    pickle.dump(p_raw_typefrac,        open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],s82_str),'wb')) 
-    pickle.dump(p_adj_typefrac,        open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],s82_str),'wb')) 
-    pickle.dump(p_raw_typefrac_maglim, open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'wb')) 
-    pickle.dump(p_adj_typefrac_maglim, open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'wb')) 
+    pickle.dump(p_raw_typefrac,        open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],file_str),'wb')) 
+    pickle.dump(p_adj_typefrac,        open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],file_str),'wb')) 
+    pickle.dump(p_raw_typefrac_maglim, open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],file_str),'wb')) 
+    pickle.dump(p_adj_typefrac_maglim, open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],file_str),'wb')) 
 
     # Plot results
 
@@ -2662,11 +2727,11 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
     ax2.set_title(r'$M_r < %4.2f$' % maglimval)
     ax2.text(0.15,1.0,'%i galaxies' % n_maglim)
 
-    fig.savefig(plots_path+'%s_%stype_fractions_new.png' % (task_dict['var_def'],s82_str), dpi=200)
+    fig.savefig(plots_path+'%s_%stype_fractions_new.png' % (task_dict['var_def'],file_str), dpi=200)
 
     return None
 
-def plot_all_baselines(paperplot=False):
+def plot_all_baselines(paperplot=False,stripe82=False):
 
     """ Plot the baseline morphology ratios for all 11 tasks in GZ2
 
@@ -2709,6 +2774,12 @@ def plot_all_baselines(paperplot=False):
     left_plot = (0,4,8)
     bottom_plot = (8,9,10,11)
 
+    file_str = stripe82_str(stripe82)
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
+
     if paperplot:
         tasklist,titlenames = tasklist[:4],titlenames[:4]
         nx_plot, ny_plot = 2,2
@@ -2719,9 +2790,9 @@ def plot_all_baselines(paperplot=False):
 
         var_def = task_dict['var_def']
 
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
-        ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r01_local_ratio_baseline_masked.pkl' % var_def,'rb'))
+        ratio_baseline_masked = pickle.load(open(pkl_path+'%s_r01_%slocal_ratio_baseline_masked.pkl' % (var_def,file_str),'rb'))
 
         if task_dict['ratio_type'] is 'linear':
             label_prefix = ''
@@ -2756,9 +2827,9 @@ def plot_all_baselines(paperplot=False):
         """
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(np.mean(centers_redshift))- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(np.mean(centers_redshift)))**2))
-        absmag_lim = appmag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
-        absmag_lim_loz = appmag_lim - cosmology.dmod_flat(0.0005)
-        absmag_lim_hiz = appmag_lim - cosmology.dmod_flat(0.25)
+        absmag_lim = mag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
+        absmag_lim_loz = mag_lim - cosmology.dmod_flat(0.0005)
+        absmag_lim_hiz = mag_lim - cosmology.dmod_flat(0.25)
         size_1arcsec = cosmology.ang_scale_flat(np.mean(centers_redshift))
         ax.autoscale(False)
         ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -2768,7 +2839,7 @@ def plot_all_baselines(paperplot=False):
     fig.tight_layout()
     cb = plt.colorbar(im,orientation='vertical')
     cb.set_label(r'$%s(N_{%s}/N_{%s})$' % (label_prefix,task_dict['var_str'][0],task_dict['var_str'][1]),fontsize=16)
-    fig.savefig(paper_figures_path+'gz2_baselines.eps', dpi=200)
+    fig.savefig(paper_figures_path+'gz2_%sbaselines.eps' % file_str, dpi=200)
 
     return None
 
@@ -2825,29 +2896,34 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=Fal
     left_plot = (0,4,8)
     bottom_plot = (8,9,10,11)
 
+    file_str = stripe82_str(stripe82)
+
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
+
     if paperplot:
         tasklist,titlenames = tasklist[:4],titlenames[:4]
         nx_plot, ny_plot = 2,2
         left_plot = (0,2)
         bottom_plot = (2,3)
 
-    s82_str = 'stripe82_' if stripe82 else ''
-
     for idx,task_dict in enumerate(tasklist):
 
         var_def = task_dict['var_def']
         ntask = len(task_dict['var_str'])
 
-        p_raw_typefrac = pickle.load(open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],s82_str),'rb')) 
-        p_adj_typefrac = pickle.load(open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],s82_str),'rb')) 
-        p_raw_typefrac_maglim = pickle.load(open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'rb')) 
-        p_adj_typefrac_maglim = pickle.load(open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],s82_str),'rb')) 
+        p_raw_typefrac = pickle.load(open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],file_str),'rb')) 
+        p_adj_typefrac = pickle.load(open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],file_str),'rb')) 
+        p_raw_typefrac_maglim = pickle.load(open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],file_str),'rb')) 
+        p_adj_typefrac_maglim = pickle.load(open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],file_str),'rb')) 
 
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
         zwidth = 0.02
         zplotbins = np.arange(max(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
-        maglimval = appmag_lim - cosmology.dmod_flat(zhi)
+        maglimval = mag_lim - cosmology.dmod_flat(zhi)
 
         ax1 = fig.add_subplot(nx_plot,ny_plot,idx+1,aspect=1)
         font = FontProperties()
@@ -2883,7 +2959,7 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, paperplot=Fal
         rc('ytick', labelsize=10)
 
     fig.tight_layout()
-    fig.savefig(paper_figures_path+'gz2_%stype_fractions.eps' % s82_str, dpi=200)
+    fig.savefig(paper_figures_path+'gz2_%stype_fractions.eps' % file_str, dpi=200)
 
     return None
 
@@ -2926,12 +3002,17 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
 
     tasklist = (smooth,edgeon,bar,spiral)
 
+    if stripe82:
+        mag_lim = appmag_lim_s82
+    else:
+        mag_lim = appmag_lim_main
+
     for idx,task_dict in enumerate(tasklist):
 
         var_def = task_dict['var_def']
         var1_str,var2_str = task_dict['var_str']
 
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
         ratio_baseline_masked = pickle.load(open(pkl_path+'%s_local_ratio_baseline_masked.pkl' % var_def,'rb'))
 
@@ -2964,9 +3045,9 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
         plt.xticks(np.arange(edges_mag[0],edges_mag[-1],2))
 
         SBlim_mag = (SBlim_app - cosmology.dmod_flat(np.mean(centers_redshift))- 2.5*np.log10(6.283185*(SBlim_size/cosmology.ang_scale_flat(np.mean(centers_redshift)))**2))
-        absmag_lim = appmag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
-        absmag_lim_loz = appmag_lim - cosmology.dmod_flat(0.0005)
-        absmag_lim_hiz = appmag_lim - cosmology.dmod_flat(0.25)
+        absmag_lim = mag_lim - cosmology.dmod_flat(np.mean(centers_redshift))
+        absmag_lim_loz = mag_lim - cosmology.dmod_flat(0.0005)
+        absmag_lim_hiz = mag_lim - cosmology.dmod_flat(0.25)
         size_1arcsec = cosmology.ang_scale_flat(np.mean(centers_redshift))
         ax.autoscale(False)
         ax.plot(SBlim_mag, SBlim_size,'w--')
@@ -2976,20 +3057,18 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
         var1_str = task_dict['var_str'][0]
         var2_str = task_dict['var_str'][1]
 
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
         zwidth = 0.02
         zplotbins = np.arange(edges_redshift[0],edges_redshift[-1],zwidth)
-        maglimval = appmag_lim - cosmology.dmod_flat(zlimval)
+        maglimval = mag_lim - cosmology.dmod_flat(zlimval)
 
-        s82_str = ''
-        if stripe82:
-            s82_str = 'stripe82_'
+        file_str = stripe82_str(stripe82)
 
-        p_el_raw_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'rb')) 
-        p_sp_raw_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'rb')) 
-        p_el_adj_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,s82_str),'rb')) 
-        p_sp_adj_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,s82_str),'rb')) 
+        p_el_raw_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var1_str,file_str),'rb')) 
+        p_sp_raw_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sraw_typefrac_maglim.pkl' % (var_def,var2_str,file_str),'rb')) 
+        p_el_adj_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var1_str,file_str),'rb')) 
+        p_sp_adj_typefrac_maglim = pickle.load(file(pkl_path+'%s_%s_%sadj_typefrac_maglim.pkl' % (var_def,var2_str,file_str),'rb')) 
 
         ax2 = fig.add_subplot(2,4,idx+1 + 4)
         font = FontProperties()
@@ -3010,7 +3089,7 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
         if idx is 0:
             ax2.set_ylabel('GZ2 vote fraction',fontsize=22)
 
-    fig.savefig(paper_figures_path+'gz2_posterplot_debiasing.png', dpi=200)
+    fig.savefig(paper_figures_path+'gz2_%sposterplot_debiasing.png' % file_str, dpi=200)
 
     """
     # Fill the sixth and empty plot with the legend
@@ -3031,7 +3110,7 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False):
 
     return None
 
-def poster_table():
+def poster_table(stripe82=False):
 
     """ Return combination of debiased and raw vote fractions for
         GZ2 data used on 2013 AAS poster (now deprecated).
@@ -3052,6 +3131,7 @@ def poster_table():
 
     """
 
+    file_str = stripe82_str(stripe82)
     taskstrings=('smooth','edgeon','bar','spiral','odd')
     smooth = get_task_dict('smooth')
     edgeon = get_task_dict('edgeon')
@@ -3073,9 +3153,9 @@ def poster_table():
         var_def = task_dict['var_def']
         var1_str,var2_str = task_dict['var_str']
         
-        p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_adj.pkl' % (var_def,var1_str),'rb')) 
-        p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_adj.pkl' % (var_def,var2_str),'rb')) 
-        corrarr         = pickle.load(open(pkl_path+'%s_corrarr.pkl' % (var_def),'rb')) 
+        p_el_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var1_str,file_str),'rb')) 
+        p_sp_adj_values = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % (var_def,var2_str,file_str),'rb')) 
+        corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (var_def,file_str),'rb')) 
         task_counts = gzdata_withz[task_dict['task_name_count']]
         
         corrgood1 = corrarr > unknown_ratio
@@ -3086,15 +3166,15 @@ def poster_table():
         r50_kpc = gzdata_withz['PETROR50_R_KPC']
         
         if var_def is 'task02':
-            corrarr2 = pickle.load(open(pkl_path+'%s_corrarr.pkl' % ('task01'),'rb')) 
+            corrarr2 = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % ('task01',file_str),'rb')) 
             corrgood2 = corrarr2 > unknown_ratio
             corrgood = corrgood1 | corrgood2
-            dep_task_wf = pickle.load(open(pkl_path+'%s_%s_adj.pkl' % ('task01','sp'),'rb'))[corrgood]
+            dep_task_wf = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % ('task01','sp',file_str),'rb'))[corrgood]
         if var_def in ('task03','task04'):
-            corrarr2 = pickle.load(open(pkl_path+'%s_corrarr.pkl' % ('task02'),'rb')) 
+            corrarr2 = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % ('task02',file_str),'rb')) 
             corrgood2 = corrarr2 > unknown_ratio
             corrgood = corrgood1 | corrgood2
-            dep_task_wf = pickle.load(open(pkl_path+'%s_%s_adj.pkl' % ('task02','notedgeon'),'rb'))[corrgood]
+            dep_task_wf = pickle.load(open(pkl_path+'%s_%s_%sadj.pkl' % ('task02','notedgeon',file_str),'rb'))[corrgood]
 
         p_el_adj_values = p_el_adj_values[corrgood]
         p_sp_adj_values = p_sp_adj_values[corrgood]
@@ -3154,7 +3234,7 @@ def poster_table():
 
     return None
 
-def confidence_measures(task_dict):
+def confidence_measures(task_dict,stripe82=False):
 
     """ Compute the confidence measures for GZ2 from Lintott et al. (2011). Not functional.
 
@@ -3173,12 +3253,13 @@ def confidence_measures(task_dict):
 
     """
 
+    file_str = stripe82_str(stripe82)
 
     var_def = task_dict['var_def']
-    centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+    centers_redshift, centers_mag, centers_size, edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
-    corrarr         = pickle.load(open(pkl_path+'%s_corrarr.pkl' % (var_def),'rb')) 
-    corrbinarr      = pickle.load(open(pkl_path+'%s_corrbinarr.pkl' % (var_def),'rb')) 
+    corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (var_def,file_str),'rb')) 
+    corrbinarr      = pickle.load(open(pkl_path+'%s_%scorrbinarr.pkl' % (var_def,file_str),'rb')) 
     corrgood = corrarr > unknown_ratio
 
     good_corr     = corrarr[corrgood]
@@ -3199,7 +3280,7 @@ def confidence_measures(task_dict):
 
     return deltap, sigmap 
 
-def plot_confidence_measures(task_dict):
+def plot_confidence_measures(task_dict,stripe82=False):
 
     """ Plot the confidence measures for GZ2 from Lintott et al. (2011). Not functional.
 
@@ -3218,7 +3299,7 @@ def plot_confidence_measures(task_dict):
 
     """
 
-    corrarr         = pickle.load(open(pkl_path+'%s_corrarr.pkl' % (task_dict['var_def']),'rb')) 
+    corrarr         = pickle.load(open(pkl_path+'%s_%scorrarr.pkl' % (task_dict['var_def'],file_str),'rb')) 
     """
     deltap, sigmap = confidence_measures(task_dict)
     """
@@ -3345,7 +3426,7 @@ def save_adjusted_probabilities(photoz=False,stripe82=False):
 
         # Loop over all tasks
 
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict)
+        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict,stripe82)
 
         # Take each galaxy, find which bin it corresponds to, adjust probability
 
@@ -3356,7 +3437,7 @@ def save_adjusted_probabilities(photoz=False,stripe82=False):
         magstep = edges_mag[1] - edges_mag[0]
         sizestep = edges_size[1] - edges_size[0]
 
-        corr_test, corrmasked_test, ratiomasked_test = determine_baseline_correction(task_dict, 0, 1)
+        corr_test, corrmasked_test, ratiomasked_test = determine_baseline_correction(task_dict, 0, 1, stripe82)
         cshape = corr_test.shape
 
         allcorr        = np.zeros((ntask,ntask-1,cshape[0],cshape[1],cshape[2]),dtype=float)
@@ -3368,7 +3449,7 @@ def save_adjusted_probabilities(photoz=False,stripe82=False):
         for idx1, var1 in enumerate(np.arange(ntask)):
             setdiff = np.concatenate((np.arange(var1),np.arange(ntask - (var1+1)) + (var1+1) ))
             for idx2, var2 in enumerate(setdiff):
-                corr, corrmasked, ratiomasked = determine_baseline_correction(task_dict, var1, var2)
+                corr, corrmasked, ratiomasked = determine_baseline_correction(task_dict, var1, var2, stripe82)
                 allcorr[idx1,idx2,:,:,:] = corr
                 allcorrmasked[idx1,idx2,:,:,:] = corrmasked
                 allratiomasked[idx1,idx2,:,:,:] = ratiomasked
@@ -3874,21 +3955,21 @@ def make_tables(makefits=True,stripe82=False,photoz=False,latex=False,imagelist=
     # New method
 
     if stripe82:
-        new_vote_threshold == 10
+        vote_threshold = vt_stripe82
     else:
-        pass
+        vote_threshold = vt_mainsample
 
-    goodt01 = (gzdata['t01_smooth_or_features_total_weight'] >= new_vote_threshold)
-    goodt02 = (gzdata['t01_smooth_or_features_total_weight'] >= new_vote_threshold) & (gzdata[edgeon['dependent_tasks']] >= edgeon['vf_prev'][str(new_vote_threshold)])
-    goodt03 = (gzdata['t02_edgeon_total_weight'] >= bar['min_classifications']) & (gzdata[bar['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
-    goodt04 = (gzdata['t02_edgeon_total_weight'] >= spiral['min_classifications']) & (gzdata[spiral['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
-    goodt05 = (gzdata['t02_edgeon_total_weight'] >= bulge['min_classifications']) & (gzdata[bulge['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
-    goodt06 = (gzdata['t06_odd_total_weight'] >= new_vote_threshold)
-    goodt07 = (gzdata['t01_smooth_or_features_total_weight'] >= new_vote_threshold) & (gzdata[rounded['dependent_tasks']] >= rounded['vf_prev'][str(new_vote_threshold)])
-    goodt08 = (gzdata['t06_odd_total_weight'] >= new_vote_threshold) & (gzdata[odd_feature['dependent_tasks']] >= odd_feature['vf_prev'][str(new_vote_threshold)])
-    goodt09 = (gzdata['t02_edgeon_total_weight'] >= bulge_shape['min_classifications']) & (gzdata[bulge_shape['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
-    goodt10 = (gzdata['t04_spiral_total_weight'] >= arms_winding['min_classifications']) & (gzdata[arms_winding['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
-    goodt11 = (gzdata['t04_spiral_total_weight'] >= arms_number['min_classifications']) & (gzdata[arms_number['dependent_tasks'][-1]] >= odd_feature['vf_prev'][str(new_vote_threshold)])
+    goodt01 = (gzdata['t01_smooth_or_features_total_weight'] >= vote_threshold)
+    goodt02 = (gzdata['t01_smooth_or_features_total_weight'] >= vote_threshold) & (gzdata[edgeon['dependent_tasks']] >= edgeon['vf_prev'][str(vote_threshold)])
+    goodt03 = (gzdata['t02_edgeon_total_weight'] >= bar['min_classifications']) & (gzdata[bar['dependent_tasks'][-1]] >= bar['vf_prev'][str(vote_threshold)])
+    goodt04 = (gzdata['t02_edgeon_total_weight'] >= spiral['min_classifications']) & (gzdata[spiral['dependent_tasks'][-1]] >= spiral['vf_prev'][str(vote_threshold)])
+    goodt05 = (gzdata['t02_edgeon_total_weight'] >= bulge['min_classifications']) & (gzdata[bulge['dependent_tasks'][-1]] >= bulge['vf_prev'][str(vote_threshold)])
+    goodt06 = (gzdata['t06_odd_total_weight'] >= vote_threshold)
+    goodt07 = (gzdata['t01_smooth_or_features_total_weight'] >= vote_threshold) & (gzdata[rounded['dependent_tasks']] >= rounded['vf_prev'][str(vote_threshold)])
+    goodt08 = (gzdata['t06_odd_total_weight'] >= odd_features['min_classifications']) & (gzdata[odd_feature['dependent_tasks']] >= odd_feature['vf_prev'][str(vote_threshold)])
+    goodt09 = (gzdata['t02_edgeon_total_weight'] >= bulge_shape['min_classifications']) & (gzdata[bulge_shape['dependent_tasks'][-1]] >= bulge_shape['vf_prev'][str(vote_threshold)])
+    goodt10 = (gzdata['t04_spiral_total_weight'] >= arms_winding['min_classifications']) & (gzdata[arms_winding['dependent_tasks'][-1]] >= arms_winding['vf_prev'][str(vote_threshold)])
+    goodt11 = (gzdata['t04_spiral_total_weight'] >= arms_number['min_classifications']) & (gzdata[arms_number['dependent_tasks'][-1]] >= arms_number['vf_prev'][str(vote_threshold)])
 
     cleanthresh_t01 = 0.8
     cleanthresh_t02 = 0.5
@@ -4542,3 +4623,11 @@ def objlist(gzdata,response):
     print ' '
 
     return None
+
+def stripe82_str(arg):
+
+    if arg:
+        return 's82_'
+    else:
+        return ''
+
