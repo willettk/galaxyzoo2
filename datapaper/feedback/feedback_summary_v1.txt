@@ -20,10 +20,10 @@ get Chris a version for commenting over the weekend
 global s/r on:
 
 	coadded or co-added
-	questions/tasks
-	answers/responses
-	British-ise colour, center, etc.
+	questions/tasks, answers/responses
+	British-ise colour, centre, etc.
 
+At end of all the comparison sections: put a recommendation for cutoffs, if possible.
 
 Kevin Schawinski
 
@@ -132,3 +132,4 @@ Chris Lintott
 - how was convergence tested for consistency?
 - shorten NA10 bar section; summarize Masters results in 1 paragraph.
 - It would be potentially useful to try combining the winding arms classifications to improve the NA10 40\% false positive rate; for example, by seeing if a high value for loose fraction + a low value for a tight fraction increased the fraction of Sc and Sd galaxies in the highest bins. 
+
