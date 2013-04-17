@@ -1,0 +1,45 @@
+Hi Chris,
+
+
+
+On 28 March 2013 06:50, Chris Lintott <cjl@astro.ox.ac.uk> wrote:
+Hiya
+
+I've sent a pull request from my fork of the repo, which will hopefully make it easy for you to include those of my comments that you find useful and ignore the rest - let me know if I should have done something different.
+
+Thanks for the comments - changes have been accepted. I like the github/version control way of collaborating on a paper - this the first time I've tried it, but there are lots of advantages. 
+ 
+A couple of more major comments :
+
+- I think it's definitely getting there, and reads pretty well in most places. I'd echo Steven's point about needing a little more clarity during the comparison sections about what is being compared to what, but I think that's a minor point that would be easy enough to fix. I also underline what he said about not doing more comparisons just for the sake of clarity.
+
+		Agreed - I'm trying to toe the line between being thorough and being overly long. The latter is to be avoided both because we want this paper to be actually read, but also because we shouldn't be picking over small differences between methods if they don't have scientific value. 
+
+- I was a little disturbed by the comparison with GZ1 (p10,11) - this is a lot worse than I'd ever imagined it could be. It's not helped by the fact that I find figure 8 quite hard to read (where are the straight lines referred to in the caption?). It's not clear that anything can be done about this, but still - we should be very careful about how we write about this as it could easily sound like we're dismissing the whole thing. I think this can be achieved by taking the paragraph beginning 'Results from comparing…' and making that the conclusion of the section. 
+
+		Apologies - the caption for that figure is incorrect (my error). I'll move the paragraph to the end of the section, as you suggest. I agree - we don't want to imply that the data from either survey is unreliable (if true) - I think it really reflects the fact that we asked a different question in GZ2. Will work on the best way of phrasing this, and seeing if I can make accompanying figures any clearer.
+
+- There were several places in the comparison sections where you're making a judgement about why a discrepancy exists, and i wondered if you'd eyeballed any of the galaxies. This might especially help us distinguish between those where Nair are right and the categories where we are. Examples I picked out are : Bars included in NA and missing in our sample (to confirm they're less obvious), Galaxies with spiral structure by NA10 which are missing from our sample (p16) and the spiral discrepancies between EFIGI and our sample. If you sent a few objids around the list it would be interesting to see what people made of it. 
+
+		I have not done nearly enough eyeballing of images, but several others picked up on the same issue. I'll make some small samples and send them around.  
+
+- In section 5.2, I think we're missing out by not starting with the description of T-types (currently section 5.2.4) and then moving on to bars and rings and all the special cases. It's the most important, and one of the most positive sections. I'd be happy to make this change if you tell me you agree with it.
+
+		Fine by me - the current order of sections is chronological as I worked on them, rather than being specifically laid out. I'll move the section earlier.  
+
+- The end of 5.4 feels a little stretched to me. I would happily loose figures 20-22 and the paragraphs beginning 'Figure 20…' and 'Splitting the morphology…'. I suppose the comparison is interesting, but as the HC probabilities are so coarsely grained I think doing things in this much detail is overkill. I could be convinced otherwise, but if so it would be good to add sentences explaining why this is interesting (in part, because we're unpicking t-types, right?)
+
+		OK. I'll trim it down - since they don't do very detailed comparisons, you're right that we don't need to focus on it very much. The most interesting result (other than T-type matching) would be an examination of whether the presence of fine features (a bar would be the most obvious case) affect the image recognition algorithm of HC. The rest of the text can be condensed - it's really most appropriate to compare with GZ1, which has already been done. 
+
+ 
+
+- That's it - this is good work, and we should try and get it out ASAP.
+
+		Thanks, Chris - I appreciate that. Absolutely agree with ASAP - there have been several papers (Oh et al. 2012, Alonso et al. 2013) in the last year looking at populations and morphology, all of which are using other, smaller catalogs (with uncertain likelihoods). I want GZ2 to be a major part of this discussion. 
+
+Cheers
+
+Chris
+
+- best,
+Kyle

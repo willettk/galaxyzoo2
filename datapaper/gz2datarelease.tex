@@ -310,7 +310,7 @@ In a small percentage of cases, an individual user may classify the same object 
 
 \subsection{Consistency and invididual user weighting}\label{ssec-consistency}
 
-The next step in reducing the data is to remove the influence of unreliable users. To do so we applied an iterative weighting scheme, similar to that used for GZ1, but adjusted to account for questions for which more than two answers are possible. First, we calculated the vote fraction ($f_r = n_{r}/n_{task}$) for every response to every task for every object, weighting each user's vote equally. Here, $n_r$ is the number of votes for a given response and $n_{task}$ is the total number of votes for that task. Each vote from each individual users is then compared to the vote fraction to calculate their consistency $\kappa$:
+The next step in reducing the data is to remove the influence of unreliable users. To do so we applied an iterative weighting scheme, similar to that used for GZ1, but adjusted to account for questions for which more than two answers are possible. First, we calculated the vote fraction ($f_r = n_{r}/n_{task}$) for every response to every task for every object, weighting each user's vote equally. Here, $n_r$ is the number of votes for a given response and $n_{task}$ is the total number of votes for that task. Each vote is compared to the vote fraction to calculate a user's consistency $\kappa$:
 
 \begin{equation}
 \kappa = \frac{1}{N_r}\sum_i{\kappa_i},
@@ -344,7 +344,7 @@ For example, if a question has three possible responses, and the galaxy correspo
 Each user was assigned a consistency ($\bar{\kappa}$) by taking the mean consistency of every response. From the distribution of results for the initial iteration of $\kappa$ (Figure~\ref{fig-consistency}), we chose a weighting function that down-weighted users in the tail of low consistency:
 
 \begin{equation}
-w = \max \left(1.0,(\bar{\kappa} / 0.6)^{8.5} \right)
+w = \min \left(1.0,(\bar{\kappa} / 0.6)^{8.5} \right)
 \label{eqn-weight}
 \end{equation}
 
@@ -362,7 +362,7 @@ Part of the observed trends in type fractions at high redshifts is due to the na
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/gz2_type_fractions.eps}
-\caption{Type fractions as a function of redshift for the classification tasks in GZ2. Solid (thin) lines show the vote fractions, while the thick (dashed) lines show the debiased vote fractions adjusted for classification bias. This is a luminosity-limited sample for \mr~$<-20.89$. Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the SDSS). 
+\caption{Type fractions as a function of redshift for the classification tasks in GZ2. Solid (thin) lines show the vote fractions, while the thick (dashed) lines show the debiased vote fractions adjusted for classification bias. This is a luminosity-limited sample for \mr~$<-20.89$. The data for each task is plotted only for galaxies with enough votes to characterize the response distribution (Table~\ref{tbl-thresholds}). Vertical dashed lines show the redshift at $z=0.01$ (the lower limit of the correction) and $z=0.085$ (the redshift at which the absolute magnitude limit reaches the sensitivity of the SDSS). 
 \label{fig-type_fractions}}
 \end{figure*}
 
@@ -512,9 +512,6 @@ The success of this method is generally good for most GZ2 tasks and responses. F
 Other possible inclusions for catalogue:
 \begin{itemize}
 	\item Metrics on classification confidence \citep[Table 04,][]{lin11} {\it (not generated yet)}
-	\item \mr,\rfifty,$z$ bins for each galaxy {\it (can be recovered from text description)}
-	\item Voronoi tessellation bins {\it (not used)}
-	\item Matched SDSS metadata {\it (most votes are for no)}
 \end{itemize}
 
 \subsection{Main sample}\label{ssec-catalogue_main}
@@ -590,13 +587,13 @@ The comparison of the coadd1 and coadd2 data sets (which only differ in their tr
 
 Three tables of GZ2 morphological data are presented for the Stripe~82 galaxies. Table~\ref{tbl-stripe82_normal} gives classifications for Stripe~82 normal-depth images with spectroscopic redshifts. Galaxies in this table with $m_r < 17.0$ also appear in Table~\ref{tbl-mainclass}; however, the corrections for classification bias here are derived based only on Stripe~82 data, and so debiased likelihoods and flags may be slightly different. 
 
-Tables~\ref{tbl-stripe82_coadd1} and \ref{tbl-stripe82_coadd2} contains classification data for the Stripe~82 galaxies with co-added images and spectroscopic redshifts. Debiased probabilities and flags are derived from separately from each coadded data set. Since both the number of galaxies and the average number of classifications per galaxy are a small fraction of that in the main sample, though, the corrections encompass a smaller range of tasks and phase space in (\mr,\rfifty,\redshift). The deeper images and improved seeing, however, means that the effect of classification bias is lessened at lower redshifts; the raw vote fractions may thus be more suitable for some science cases using the coadded images. 
+Tables~\ref{tbl-stripe82_coadd1} and \ref{tbl-stripe82_coadd2} contains classification data for the Stripe~82 galaxies with co-added images and spectroscopic redshifts. Debiased probabilities and flags are derived from separately from each coadded data set. Since both the number of galaxies and the average number of classifications per galaxy are a small fraction of that in the main sample, though, the corrections encompass a smaller range of tasks and phase space in (\mr,\rfifty,\redshift). The increased exposure time and improved seeing, however, means that the effect of classification bias is lessened at lower redshifts; the raw vote fractions may thus be more suitable for some science cases using the coadded images. 
 
 \subsection{Additional data}\label{ssec-metadata}
 
 Although not reproduced in this paper, the repository at \url{http://data.galaxyzoo.org} contains pre-matched tables containing SDSS metadata for the spectroscopic galaxies in the GZ2 main sample. These tables contains some of the most commonly used DR7 parameters including SDSS exposure information, position, photometry, size, and redshift. These are provided as a resource for members of the community who wish to compare the morphogical data against external parameters. 
 
-Tables~\ref{tbl-mainclass}--\ref{tbl-stripe82_coadd2} can also be accessed from CasJobs in the SDSS Data Release~10, expected to be available as of Jul~2013. 
+Tables~\ref{tbl-mainclass}--\ref{tbl-stripe82_coadd2} can also be accessed from CasJobs in the SDSS Data Release~10, expected to be available in Jul~2013. 
 
 \subsection{Using the classification data}\label{ssec-usingdata}
 
@@ -629,7 +626,7 @@ There are 83,956 galaxies identified as clean spirals in GZ1. The agreement with
 
 \begin{figure}
 \includegraphics[angle=0,width=3.3in]{figures/gz1_gz2_trumpet.eps}
-\caption{Differences in the vote fractions for galaxies in both the Galaxy~Zoo~1 (GZ1) and Galaxy~Zoo~2 (GZ2) projects. Left: Distribution of the differences in the raw vote fractions. Dashed lines show data for all galaxies, while solid lines are for the subset in which $f_{el}$ or $f_{sp} > 0.8$ in both samples. Right: same plot, but using the debiased vote fractions for both samples. 
+\caption{Comparison of spiral galaxies using classifications for ``combined spiral'' (GZ1) and ``features or disk'' (GZ2). Left: raw vote fractions. At intermediate values ($f_{sp}\sim0.5$), GZ1 users are more likely to classify galaxies as spiral compared to GZ2. Right: debiased vote fractions. At intermediate values, GZ1 and GZ2 classifications are consistent with each other; however, there is an increased scatter in the vote fractions near $f_{sp}\simeq0$ and $f_{sp}\simeq1$. 
 \label{fig-trumpet}}
 \end{figure}
 
@@ -790,7 +787,7 @@ Overall, we see a clear trend for looser GZ2 spiral arms to correspond with late
 
 \begin{figure}
 \includegraphics[angle=0,width=3.3in]{figures/eureqa.eps}
-\caption{Bulge vs. spiral vote fractions from GZ2. Galaxies are colour-coded by their morphologies in EFIGI ({\it top}) and NA10 ({\it bottom}). Data are for galaxies with at least 10 classifications for both Task~05 (bulge dominance) and Task~10 (spiral structure) in GZ2. 
+\caption{Predicted T-type classifications as fit by symbolic regression to the GZ2 data. Galaxies are colour-coded by their morphologies as identified by NA10. The top panel shows the histogram of predicted T-type based on Equation~\ref{eqn-eureqa}. The bottom shows the predicted T-types plotted against their NA10 values. Galaxies shown are only those with sufficient answers to characterize the arms winding and arms number GZ2 tasks, which selects heavily for late-type galaxies. This explains the lack of ellipticals in the plot, but highlights the fact that S0 galaxies do not agree well with the linear sequence. This supports the ``parallel-sequence'' model of \citet{van76} and revised by \citet{kor12}. 
 \label{fig-eureqa}}
 \end{figure}
 
@@ -849,7 +846,7 @@ EFIGI results were compared in detail to NA10 in \citet{bai11}. Only $\sim10\%$ 
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/efigi_bars.eps}
-\caption{EFIGI bar length classifications compared to their GZ2 vote fractions for the presence of a bar. Data on the left are for the 3,354 galaxies in both samples; the subset of 2,099 face-on galaxies is on the right. The dashed line is not a fit to the data, but is the one-to-one correlation. 
+\caption{EFIGI bar length classifications compared to their GZ2 vote fractions for the presence of a bar. Data on the left are for the 3,354 galaxies in both samples; the subset of 2,099 face-on galaxies is on the right. 
 \label{fig-efigi_bars}}
 \end{figure*}
 
@@ -869,7 +866,7 @@ The overall fraction of barred galaxies in EFIGI is 42\% (1439/3354); this is es
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/efigi_arm_curvature.eps}
-\caption{EFIGI arm curvature classifications compared to their GZ2 vote fractions for the presence of a bar. Data on the left are for the 3,411 galaxies in both samples; the subset of 2,099 not edge-on galaxies is on the right. Dashed lines on the top and bottom pairs of plots show the one-to-one correlation, a Gaussian with $\mu=0.5$ and $\sigma=0.25$, and the one-to-one anti-correlation, respectively. 
+\caption{EFIGI arm curvature classifications compared to their GZ2 vote fractions for the presence of a bar. Data on the left are for the 3,411 galaxies in both samples; the subset of 2,099 not edge-on galaxies is on the right.  
 \label{fig-efigi_arms}}
 \end{figure*}
 
