@@ -74,7 +74,7 @@ s82_dict = {'normal':{'file':gz2_stripe82_data_file,'str':'s82_normal_','maglim'
 def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
                  magmin = -24, magmax = -16, magstep = 0.25,
                  sizemin = 0, sizemax = 15, sizestep = 0.5,
-                 stripe82 = False, depth = 'coadd2', 
+                 stripe82 = False, depth = 'normal', 
                  whichmethod = 'new'):
 
     """ Bins the galaxies in three dimensions: absolute magnitude,
@@ -290,7 +290,7 @@ def bin_data_idl(task_dict, zmin = 0.00, zmax = 0.26, zstep = 0.01,
 
     return None
 
-def get_bins(task_dict,stripe82=False,depth='coadd2'):
+def get_bins(task_dict,stripe82=False,depth='normal'):
 
     """ Retrive the bin edges and centers from `bin_data_idl`
 
@@ -327,7 +327,7 @@ def get_bins(task_dict,stripe82=False,depth='coadd2'):
 
     return centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size 
 
-def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1, stripe82 = False, depth='coadd2'):
+def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1, stripe82 = False, depth='normal'):
 
     """ Determine the morphology ratio baseline for a single
         GZ2 task. 
@@ -445,7 +445,7 @@ def determine_ratio_baseline(task_dict, vartop = 0, varbot = 1, stripe82 = False
 
     return ratio_baseline
 
-def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1, stripe82=False, depth='coadd2'):
+def determine_ratio_baseline_sigma(task_dict, plot=False, vartop=0, varbot=1, stripe82=False, depth='normal'):
 
 
     """ Determine the uncertainty in the morphology ratio baseline 
@@ -521,7 +521,7 @@ def plot_ratio_baseline(task_dict,
                         ratio_vrange = (min_ratio,max_ratio),
                         plot_mag_lims=False,
                         vartop=0, varbot=1,
-                        stripe82 = False, depth='coadd2'):
+                        stripe82 = False, depth='normal'):
 
     """ Plot the morphology ratio baseline for a single
         GZ2 task. 
@@ -635,7 +635,7 @@ def plot_ratio_baseline(task_dict,
 
     return ax
 
-def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1,stripe82 = False,depth='coadd2'):
+def plot_ratio_baseline_redshift(task_dict,vartop=0,varbot=1,stripe82 = False,depth='normal'):
 
     """ Plot the morphology baseline at all redshift slices
         in the binned data. 
@@ -916,7 +916,7 @@ def ratio_minfunc(p, x, y, z, w, funcname):
     s = (w * r2).sum() / df                             # Chi-squared statistic
     return s
 
-def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vartop=0, varbot=1, stripe82 = False, depth='coadd2'):
+def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vartop=0, varbot=1, stripe82 = False, depth='normal'):
 
     """ Fit the morphology ratio with an analytic function
         and estimate the uncertainty in each bin. 
@@ -1027,7 +1027,7 @@ def fit_ratio_baseline(task_dict, nboot=50, plot=False, unset_vrange=False, vart
     pyfits.writeto(fits_path_task+'%s_r%s%s_%slocal_ratio_baseline_fitnormres.fits' % (var_def,vartop,varbot,file_str),
                    normres, clobber=True) 
 
-    return None
+    return ratio_baseline_fit
 
 def plot_ratio_baseline_fit(task_dict, 
                             fitbins=1000, 
@@ -1038,7 +1038,7 @@ def plot_ratio_baseline_fit(task_dict,
                             kernel_size = 3, 
                             plot_contour=False,
                             vartop=0,varbot=1,
-                            stripe82=False, depth='coadd2'
+                            stripe82=False, depth='normal'
                             ):
 
     """ Plot the best fit to morphology ratio using parameters
@@ -1579,7 +1579,7 @@ def run_task(task_dict,
              plot = True, 
              unset_vrange = True,
              stripe82 = False,
-             depth='coadd2'
+             depth='normal'
              ):
     
     """ Run all the steps in reduction pipeline
@@ -1646,7 +1646,8 @@ def run_task(task_dict,
 
             rb = determine_ratio_baseline(task_dict,vartop,varbot,stripe82,depth)
             determine_ratio_baseline_sigma(task_dict,plot,vartop,varbot,stripe82,depth)
-            if np.sum(rb > unknown_ratio) > 0 and task_dict['direct'][vartop,varbot] == False:
+            # 10 bins assumed as a low minimum to achieve a fit
+            if np.sum(rb > unknown_ratio) > 10 and task_dict['direct'][vartop,varbot] == False:
                 fit_ratio_baseline(task_dict,nboot,plot,unset_vrange,vartop,varbot,stripe82,depth)
                 if plot:
                     plot_ratio_baseline_fit(task_dict,fitbins,unset_vrange,vartop=vartop,varbot=varbot,stripe82=stripe82,depth=depth)
@@ -1679,7 +1680,7 @@ def run_all_tasks(nboot = 1,
                   plot = True, 
                   unset_vrange = True,
                   stripe82 = False,
-                  depth='coadd2'
+                  depth='normal'
                   ):
     """ Runs full data pipeline for all tasks.
 
@@ -1708,14 +1709,12 @@ def run_all_tasks(nboot = 1,
         td = get_task_dict(task)
         run_task(td,nboot,fitbins,plot,unset_vrange,stripe82,depth)
 
-    save_adjusted_probabilities(stripe82,depth)
-
     tend = time.time()
     print 'Time elapsed for run_all_tasks: %i seconds' % (tend - tstart)
 
     return None
 
-def determine_baseline_correction(task_dict, vartop = 0, varbot = 1, stripe82 = False, depth='coadd2'):
+def determine_baseline_correction(task_dict, vartop = 0, varbot = 1, stripe82 = False, depth='normal'):
 
     """ Determine the correction ratio baseline for a single pair of
         responses to a GZ2 task. 
@@ -1814,7 +1813,7 @@ def determine_baseline_correction(task_dict, vartop = 0, varbot = 1, stripe82 = 
 
     return correction, correction_masked, ratio_masked
 
-def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop=0,varbot=1,stripe82 = False,depth='coadd2'):
+def plot_baseline_correction(task_dict,ratio_vrange=(min_ratio,max_ratio),vartop=0,varbot=1,stripe82 = False,depth='normal'):
 
     """ Plot the derived correction for a single pair of responses to a
         GZ2 task. 
@@ -1903,7 +1902,7 @@ def plot_baseline_correction_slice(task_dict, bslice=5,
                                    vartop = 0, varbot=1, 
                                    smoothfunc = False,
                                    savefig=False,
-                                   stripe82 = False, depth='coadd2'):
+                                   stripe82 = False, depth='normal'):
 
     """ Plot the data, fit, and correction for a single pair of responses to a
         GZ2 task at a particular redshift.  
@@ -2263,7 +2262,7 @@ def p_adj_new(f, corr):
 
     return p_adj
 
-def adjust_probabilities(task_dict, stripe82=False, depth='coadd2', photoz=False):
+def adjust_probabilities(task_dict, stripe82=False, depth='normal', photoz=False):
 
     """ Adjust vote fractions for all responses to a task
         based on the derived corrections. 
@@ -2299,38 +2298,40 @@ def adjust_probabilities(task_dict, stripe82=False, depth='coadd2', photoz=False
 
     timestart2 = time.time()
 
-    # Load in the raw probabilities from the GZ2 catalog
+    # Load in all raw probabilities
 
     if stripe82:
         file_str = s82_dict[depth]['str']
-        p = pyfits.open(fits_path_task+'%s_%sdata_for_idl.fits' % (task_dict['var_def'],file_str))
+        p = pyfits.open(s82_dict[depth]['file'])
     elif photoz:
         p = pyfits.open(gz2_photoz_data_file)
         file_str = 'photoz_'
     else:
-        p = pyfits.open(fits_path_task+'%s_data_for_idl.fits' % task_dict['var_def'])
+        p = pyfits.open(gz2_maglim_data_file)
         file_str = ''
 
-    gzdata = p[1].data
+    gzdata_all = p[1].data
     p.close()
 
-    # Load in the bin sizes
-
-    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict, stripe82, depth)
-
-    # Take each galaxy, find which bin it corresponds to, adjust probability
+    # Restrict to galaxies with redshifts
 
     if photoz:
+        gzdata = gzdata_all
         redshift = gzdata['photoz']
         mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
         r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
     else:
+        gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
         redshift = gzdata['REDSHIFT']
         mr = gzdata['PETROMAG_MR']
         r50_kpc = gzdata['PETROR50_R_KPC']
 
     ntask = len(task_dict['task_names_wf'])
     ngals = len(redshift)
+
+    # Load in the bin sizes
+
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict, stripe82, depth)
 
     zstep = edges_redshift[1] - edges_redshift[0]
     magstep = edges_mag[1] - edges_mag[0]
@@ -2343,7 +2344,7 @@ def adjust_probabilities(task_dict, stripe82=False, depth='coadd2', photoz=False
     allcorrmasked  = np.zeros_like(allcorr)
     allratiomasked = np.zeros_like(allcorr)
 
-    # Loop over combinations of tasks
+    # Loop over combinations of tasks and retrieve corrections
 
     for idx1, var1 in enumerate(np.arange(ntask)):
         setdiff = np.concatenate((np.arange(var1),np.arange(ntask - (var1+1)) + (var1+1) ))
@@ -2429,17 +2430,15 @@ def adjust_probabilities(task_dict, stripe82=False, depth='coadd2', photoz=False
 
                 p_adj[:,idx] = p_temp
           
-        else: # if galaxy does not appear in the correction area. Shouldn't happen.
+        else: # if galaxy does not appear in the correction area. Should only happen if the galaxy doesn't have a redshift.
             outsidebinscount += 1
             p_adj[:,idx] = f
+
             '''
             corrarr[:,idx] = unknown_ratio
             corrbinarr[:,:,idx] = unknown_ratio
             '''
 
-    p_both = np.array((p_raw,p_adj))
-
-    pickle.dump(p_both, open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'], file_str),'wb')) 
     pickle.dump(corrarr, open(pkl_path+'%s_%scorrarr.pkl' % (task_dict['var_def'], file_str),'wb')) 
     pickle.dump(corrbinarr, open(pkl_path+'%s_%scorrbinarr.pkl' % (task_dict['var_def'], file_str),'wb')) 
     pickle.dump(corrgoodarr, open(pkl_path+'%s_%scorrgoodarr.pkl' % (task_dict['var_def'], file_str),'wb')) 
@@ -2463,9 +2462,12 @@ def adjust_probabilities(task_dict, stripe82=False, depth='coadd2', photoz=False
     print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
     print ' '
 
+    pickle.dump(p_raw, open(pkl_path+'%s_%sraw_probabilities.pkl' % (task_dict['var_def'], file_str),'wb')) 
+    pickle.dump(p_adj, open(pkl_path+'%s_%sadj_probabilities.pkl' % (task_dict['var_def'], file_str),'wb')) 
+
     return p_raw,p_adj
 
-def plot_galaxy_counts(task_dict,vmin=0,vmax=1000,stripe82=False,depth='coadd2'):
+def plot_galaxy_counts(task_dict,vmin=0,vmax=1000,stripe82=False,depth='normal'):
 
     """ Plot 2D histogram of galaxy counts for binned GZ2 data
         for each task. 
@@ -2557,7 +2559,7 @@ def plot_galaxy_counts(task_dict,vmin=0,vmax=1000,stripe82=False,depth='coadd2')
 
     return fig
 
-def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False, depth='coadd2', ploterrors=False):
+def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False, depth='normal', ploterrors=False, photoz=False):
 
     """ Plot the mean type fractions for all responses for each task
         as a function of redshift. Left plot shows all galaxies,
@@ -2600,32 +2602,45 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     if stripe82:
         file_str = s82_dict[depth]['str']
+        p = pyfits.open(s82_dict[depth]['file'])
         vote_threshold = s82_dict[depth]['vt']
         mag_lim = s82_dict[depth]['maglim']
-    else:
+    elif photoz:
+        p = pyfits.open(gz2_photoz_data_file)
+        file_str = 'photoz_'
         vote_threshold = vt_mainsample
         mag_lim = appmag_lim_main
+    else:
+        p = pyfits.open(gz2_maglim_data_file)
         file_str = ''
+        vote_threshold = vt_mainsample
+        mag_lim = appmag_lim_main
 
-    p = pyfits.open(fits_path_task+'%s_%sdata_for_idl.fits' % (task_dict['var_def'],file_str))
-
-    gzdata = p[1].data
+    gzdata_all = p[1].data
     p.close()
+
+    if photoz:
+        gzdata = gzdata_all
+        redshift = gzdata['photoz']
+        mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
+        r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
+    else:
+        gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
+        redshift = gzdata['REDSHIFT']
+        mr = gzdata['PETROMAG_MR']
+        r50_kpc = gzdata['PETROR50_R_KPC']
 
     centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict, stripe82, depth)
 
-    redshift = gzdata['REDSHIFT']
-    mr = gzdata['PETROMAG_MR']
     task_counts = gzdata[task_dict['task_name_count']]
 
     zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
 
     ntask = len(task_dict['var_str'])
 
-    p_both = pickle.load(open(pkl_path+'%s_%sp_adj.pkl' % (task_dict['var_def'],file_str),'rb')) 
     corrgoodarr = pickle.load(open(pkl_path+'%s_%scorrgoodarr.pkl' % (task_dict['var_def'],file_str),'rb')) 
-    p_raw = np.squeeze(p_both[0,:,:])
-    p_adj = np.squeeze(p_both[1,:,:])
+    p_raw = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % (task_dict['var_def'],file_str),'rb')) 
+    p_adj = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % (task_dict['var_def'],file_str),'rb')) 
 
     assert len(gzdata) == p_adj.shape[1], \
         'Size of metadata (%i) does not match the adjusted probabilities (%i)' % (len(gzdata),p_adj.shape[1])
@@ -2660,10 +2675,10 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
     if task_dict['var_def'] not in ('task01','task06'):
         probarr_prevtask = gzdata[task_dict['dependent_tasks'][-1]] if isinstance(task_dict['dependent_tasks'],tuple) else gzdata[task_dict['dependent_tasks']]
         votearr_thistask = gzdata[task_dict['task_name_count']]
-        taskprob_good = np.logical_not((probarr_prevtask < task_dict['vf_prev'][str(vote_threshold)]) & (votearr_thistask < vote_threshold))
+        taskprob_good = (probarr_prevtask >= task_dict['vf_prev'][str(vote_threshold)]) & (votearr_thistask >= vote_threshold)
     else:
         votearr_thistask = gzdata[task_dict['task_name_count']]
-        taskprob_good = np.logical_not(votearr_thistask < vote_threshold)
+        taskprob_good = votearr_thistask >= vote_threshold
 
     """
     n_all = np.sum(taskprob_good & corrgoodarr)
@@ -2779,7 +2794,7 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     return None
 
-def plot_all_baselines(paperplot=False,stripe82=False,depth='coadd2'):
+def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
 
     """ Plot the baseline morphology ratios for all 11 tasks in GZ2
 
@@ -2892,7 +2907,7 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='coadd2'):
 
     return None
 
-def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='coadd2', paperplot=False, axlabelsize=14, titlesize=16):
+def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal', paperplot=False, axlabelsize=14, titlesize=16):
 
     """ Plot the type fractions as function of redshift for all 11 tasks in GZ2
 
@@ -3013,7 +3028,7 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='coadd2
 
     return None
 
-def posterplot_debiasing(zlimval=0.085,stripe82=False, depth='coadd2'):
+def posterplot_debiasing(zlimval=0.085,stripe82=False, depth='normal'):
 
     """ Plot the type fractions for five binary tasks in GZ2. 
 
@@ -3160,7 +3175,7 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False, depth='coadd2'):
 
     return None
 
-def poster_table(stripe82=False, depth='coadd2'):
+def poster_table(stripe82=False, depth='normal'):
 
     """ Return combination of debiased and raw vote fractions for
         GZ2 data used on 2013 AAS poster (now deprecated).
@@ -3288,7 +3303,7 @@ def poster_table(stripe82=False, depth='coadd2'):
 
     return None
 
-def confidence_measures(task_dict,stripe82=False, depth='coadd2'):
+def confidence_measures(task_dict,stripe82=False, depth='normal'):
 
     """ Compute the confidence measures for GZ2 from Lintott et al. (2011). Not functional.
 
@@ -3337,7 +3352,7 @@ def confidence_measures(task_dict,stripe82=False, depth='coadd2'):
 
     return deltap, sigmap 
 
-def plot_confidence_measures(task_dict,stripe82=False,depth='coadd2'):
+def plot_confidence_measures(task_dict,stripe82=False,depth='normal'):
 
     """ Plot the confidence measures for GZ2 from Lintott et al. (2011). Not functional.
 
@@ -3379,254 +3394,6 @@ def plot_confidence_measures(task_dict,stripe82=False,depth='coadd2'):
     #plt.show()
 
     return None 
-
-def save_adjusted_probabilities(stripe82=False, depth='coadd2',photoz=False):
-
-    """ Adjust and save the vote fractions for all tasks and responses.
-
-    Parameters
-    ----------
-
-    stripe82 : bool
-        When `True`, adjust probabilities for spectroscopic Stripe 82 data.
-
-    photoz : bool
-        When `True`, adjust probabilities for main sample data with
-        photometric redshifts.
-
-    Returns
-    -------
-    allprobs : numpy.array
-        (N x M) array of raw vote fractions for task, where N is the number
-        of galaxies in the sample and M = (total number of responses) * 2. 
-        Includes separate columns for raw and adjusted vote fractions. 
-
-        Data is also saved to a pickle file.
-
-
-    Notes
-    -------
-    Default settings run the analysis on the spectroscopic main-sample data. 
-
-    This could be better constructed by making `allprobs` a N x M x 2 array,
-    so that the odd column numbering makes sense. Alternatively, make it a 
-    dictionary or FITS object. 
-
-    """
-
-    # Load in the raw probabilities for all GZ2 galaxies with redshifts
-
-    if stripe82:
-
-        file_str = s82_dict[depth]['str']
-
-        p = pyfits.open(s82_dict[depth]['file'])
-        gzdata_all = p[1].data
-        p.close()
-
-        if photoz:
-            """
-            DOES NOT WORK - the PhotoZ table in the Stripe82 database is not populated.
-            Use photo-Z from the DR7 table that match the original objIDs.
-            Skipped for the moment.
-            gzdata = gzdata_all[np.logical_not(np.isfinite(gzdata_all['REDSHIFT']))]
-            redshift = gzdata['photoz']
-            mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
-            r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
-
-            file_str = 'photoz_'
-            """
-        else:
-            gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
-            redshift = gzdata['REDSHIFT']
-            mr = gzdata['PETROMAG_MR']
-            r50_kpc = gzdata['PETROR50_R_KPC']
-
-    else:
-        if photoz:
-            p = pyfits.open(gz2_photoz_data_file)
-            gzdata = p[1].data
-            p.close()
-
-            redshift = gzdata['photoz']
-            mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
-            r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
-
-            file_str = 'photoz_'
-        else:
-            p = pyfits.open(gz2_maglim_data_file)
-            gzdata_all = p[1].data
-            p.close()
-
-            gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
-            redshift = gzdata['REDSHIFT']
-            mr = gzdata['PETROMAG_MR']
-            r50_kpc = gzdata['PETROR50_R_KPC']
-
-            file_str = ''
-
-
-    smooth = get_task_dict('smooth')
-    edgeon = get_task_dict('edgeon')
-    bar = get_task_dict('bar')
-    spiral = get_task_dict('spiral')
-    odd = get_task_dict('odd')
-    odd_feature = get_task_dict('odd_feature')
-    arms_winding = get_task_dict('arms_winding')
-    arms_number = get_task_dict('arms_number')
-    bulge = get_task_dict('bulge')
-    bulge_shape = get_task_dict('bulge_shape')
-    rounded = get_task_dict('rounded')
-
-    tasklist = (smooth,edgeon,bar,spiral,odd,odd_feature,arms_winding,arms_number,bulge,bulge_shape,rounded)
-
-    allprobs = np.zeros((1,len(gzdata)))
-    allprobs[0,:] = np.arange(len(gzdata))
-
-    for task_dict in tasklist:
-
-        timestart2 = time.time()
-
-        # Loop over all tasks
-
-        centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict, stripe82, depth)
-
-        # Take each galaxy, find which bin it corresponds to, adjust probability
-
-        ntask = len(task_dict['task_names_wf'])
-        ngals = len(redshift)
-
-        zstep = edges_redshift[1] - edges_redshift[0]
-        magstep = edges_mag[1] - edges_mag[0]
-        sizestep = edges_size[1] - edges_size[0]
-
-        corr_test, corrmasked_test, ratiomasked_test = determine_baseline_correction(task_dict, 0, 1, stripe82, depth)
-        cshape = corr_test.shape
-
-        allcorr        = np.zeros((ntask,ntask-1,cshape[0],cshape[1],cshape[2]),dtype=float)
-        allcorrmasked  = np.zeros_like(allcorr)
-        allratiomasked = np.zeros_like(allcorr)
-
-        # Loop over combinations of tasks
-
-        for idx1, var1 in enumerate(np.arange(ntask)):
-            setdiff = np.concatenate((np.arange(var1),np.arange(ntask - (var1+1)) + (var1+1) ))
-            for idx2, var2 in enumerate(setdiff):
-                corr, corrmasked, ratiomasked = determine_baseline_correction(task_dict, var1, var2, stripe82, depth)
-                allcorr[idx1,idx2,:,:,:] = corr
-                allcorrmasked[idx1,idx2,:,:,:] = corrmasked
-                allratiomasked[idx1,idx2,:,:,:] = ratiomasked
-
-        p_raw = np.zeros((ntask,ngals),dtype=float)
-        for idx,task in enumerate(task_dict['task_names_wf']):
-            p_raw[idx,:] = gzdata[task]
-
-        p_task_counts = gzdata[task_dict['task_name_count']]
-
-        # Start adjusting
-
-        p_adj = np.zeros((ntask,ngals),dtype=float)
-        corrarr = np.zeros((ntask-1,ntask-1,ngals),dtype=float) + unknown_ratio
-        corrbinarr = np.zeros((3,ntask-1,ntask-1,ngals),dtype=int) + unknown_ratio
-        corrgoodarr = np.zeros(ngals,dtype=bool)
-
-        outsidebinscount = 0
-        corrcount = 0
-        zerocorrcount = 0
-        unknowncorrcount = 0
-        vfzerocount = 0
-        vfnonzerocount = 0
-
-        # Loop over all galaxies in the GZ catalog with redshifts
-
-        for idx, (z_temp,m_temp,s_temp) in enumerate(zip(redshift,mr,r50_kpc)):
-
-            f = p_raw[:,idx]
-            p_temp = np.zeros_like(f)
-            zbin = np.abs(z_temp >= edges_redshift).argmin() - 1
-            mbin = np.abs(m_temp >= edges_mag).argmin() - 1
-            sbin = np.abs(s_temp >= edges_size).argmin() - 1
-
-            if -1 not in (zbin,sbin,mbin):
-                applycorr = np.squeeze(allcorrmasked[:,:,zbin,mbin,sbin])
-
-                # Check to see if any corrections exist for this bin
-                if np.sum((np.isnan(applycorr)) & (applycorr == unknown_ratio)) == len(applycorr.ravel()):
-                    unknowncorrcount += 1
-                    p_temp = f
-                else:
-
-                    # Bins with masked corrections or NaN set to none
-
-                    applycorr[applycorr == unknown_ratio] = 0.
-                    applycorr[np.isnan(applycorr)] = 0.
-
-                    # Check if any corrections are left to be applied
-
-                    if np.sum(applycorr) == 0.:
-                        zerocorrcount +=1
-                        p_temp = f
-                        '''
-                        corrarr[:,idx] = unknown_ratio
-                        corrbinarr[:,:,idx] = unknown_ratio
-                        '''
-                    else:
-
-                        # Apply corrections to vote fractions
-
-                        corrcount += 1
-                        corrgoodarr[idx] = True
-                        for fidx, votefrac in enumerate(f):
-                            votefracs = np.array(list(chain.from_iterable(([votefrac], f[:fidx], f[fidx+1:]))))
-                            ac = applycorr[fidx,:] if applycorr.ndim > 1 else np.array(applycorr[fidx])
-                            if votefracs[0] == 0.:
-                                vfzerocount += 1
-                                p_temp[fidx] = votefracs[0]
-                            else:
-                                vfnonzerocount += 1
-                                p_temp[fidx] = p_adj_new(votefracs,ac)
-
-                            #corrarr[fidx,:,idx] = applycorr[fidx,:]
-                            #corrbinarr[:,fidx,:,idx] = np.resize(np.array((zbin,mbin,sbin)),(3,3))
-
-                    p_adj[:,idx] = p_temp
-              
-            else: # if galaxy does not appear in the correction area. Shouldn't happen.
-                outsidebinscount += 1
-                p_adj[:,idx] = f
-                '''
-                corrarr[:,idx] = unknown_ratio
-                corrbinarr[:,:,idx] = unknown_ratio
-                '''
-
-        p_both = np.array((p_raw,p_adj))
-
-        timeend2 = time.time()
-        print ' '
-        print 'For %s: %s' % (task_dict['var_def'],file_str)
-        print ' '
-        print '%7i galaxies had correction bins outside the binned volume' % outsidebinscount
-        print '%7i galaxies had NaN corrections for all pairs of variables' % unknowncorrcount
-        print '%7i galaxies had no non-zero corrections in any bin' % zerocorrcount
-        print '%7i galaxies had finite corrections available' % corrcount
-        print 'Of those: '
-        if corrcount > 0:
-            print '   %4.1f percent of tasks were not adjusted because the raw vote fraction was 100 percent' % \
-                ((float(vfzerocount)/(corrcount * ntask)) * 100.)
-            print '   %4.1f percent of tasks had a non-zero correction applied' % \
-                ((float(vfnonzerocount)/(corrcount * ntask)) * 100.)
-        print ' '
-        print '%7i total galaxies' % p_raw.shape[1]
-        print ' '
-        print 'Time elapsed to adjust probabilities: %i seconds' % (timeend2 - timestart2)
-        print ' '
-
-        allprobs = np.append(allprobs,p_raw,axis=0)
-        allprobs = np.append(allprobs,p_adj,axis=0)
-
-    pickle.dump(allprobs,open(pkl_path+'save_%sadjusted_probabilities.pkl' % file_str,'wb'))
-
-    return allprobs
 
 def gz1_comparison():
 
@@ -3829,7 +3596,7 @@ def gz1_comparison():
 
     return None
 
-def make_tables(makefits=True,stripe82=False, depth='coadd2', photoz=False,latex=False,imagelist=False):
+def make_tables(makefits=True,stripe82=False, depth='normal', photoz=False,latex=False,imagelist=False):
 
     """ Make final GZ2 data products in FITS format. 
 
@@ -3879,7 +3646,7 @@ def make_tables(makefits=True,stripe82=False, depth='coadd2', photoz=False,latex
 
     else:
         if photoz:
-            p = pyfits.open(fits_path_main+'gz2_photoz_table_sample.fits')
+            p = pyfits.open(gz2_photoz_data_file)
             gzdata = p[1].data
             p.close()
 
@@ -3896,85 +3663,137 @@ def make_tables(makefits=True,stripe82=False, depth='coadd2', photoz=False,latex
             file_str = ''
             vote_threshold = vt_mainsample
     
-    allprobs = pickle.load(open(pkl_path+'save_%sadjusted_probabilities.pkl' % file_str,'rb')) 
+    
+    raw_t01 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task01',file_str),'rb')) 
+    adj_t01 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task01',file_str),'rb')) 
+    raw_t02 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task02',file_str),'rb')) 
+    adj_t02 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task02',file_str),'rb')) 
+    raw_t03 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task03',file_str),'rb')) 
+    adj_t03 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task03',file_str),'rb')) 
+    raw_t04 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task04',file_str),'rb')) 
+    adj_t04 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task04',file_str),'rb')) 
+    raw_t05 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task05',file_str),'rb')) 
+    adj_t05 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task05',file_str),'rb')) 
+    raw_t06 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task06',file_str),'rb')) 
+    adj_t06 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task06',file_str),'rb')) 
+    raw_t07 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task07',file_str),'rb')) 
+    adj_t07 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task07',file_str),'rb')) 
+    raw_t08 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task08',file_str),'rb')) 
+    adj_t08 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task08',file_str),'rb')) 
+    raw_t09 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task09',file_str),'rb')) 
+    adj_t09 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task09',file_str),'rb')) 
+    raw_t10 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task10',file_str),'rb')) 
+    adj_t10 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task10',file_str),'rb')) 
+    raw_t11 = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % ('task11',file_str),'rb')) 
+    adj_t11 = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % ('task11',file_str),'rb')) 
 
-    assert len(gzdata) == allprobs.shape[1], \
+    assert len(gzdata) == raw_t01.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t02.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t03.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t04.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t05.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t06.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t07.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t08.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t09.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t10.shape[1], \
+        'Length of original file must be the same as that of adjusted probabilities'
+    assert len(gzdata) == raw_t11.shape[1], \
         'Length of original file must be the same as that of adjusted probabilities'
 
-    raw_t01_a01 = allprobs[ 1,:]
-    raw_t01_a02 = allprobs[ 2,:]
-    raw_t01_a03 = allprobs[ 3,:]
-    adj_t01_a01 = allprobs[ 4,:]
-    adj_t01_a02 = allprobs[ 5,:]
-    adj_t01_a03 = allprobs[ 6,:]
-    raw_t02_a04 = allprobs[ 7,:]
-    raw_t02_a05 = allprobs[ 8,:]
-    adj_t02_a04 = allprobs[ 9,:]
-    adj_t02_a05 = allprobs[10,:]
-    raw_t03_a06 = allprobs[11,:]
-    raw_t03_a07 = allprobs[12,:]
-    adj_t03_a06 = allprobs[13,:]
-    adj_t03_a07 = allprobs[14,:]
-    raw_t04_a08 = allprobs[15,:]
-    raw_t04_a09 = allprobs[16,:]
-    adj_t04_a08 = allprobs[17,:]
-    adj_t04_a09 = allprobs[18,:]
-    raw_t06_a14 = allprobs[19,:]
-    raw_t06_a15 = allprobs[20,:]
-    adj_t06_a14 = allprobs[21,:]
-    adj_t06_a15 = allprobs[22,:]
-    raw_t08_a19 = allprobs[23,:]
-    raw_t08_a20 = allprobs[24,:]
-    raw_t08_a21 = allprobs[25,:]
-    raw_t08_a22 = allprobs[26,:]
-    raw_t08_a23 = allprobs[27,:]
-    raw_t08_a24 = allprobs[28,:]
-    raw_t08_a38 = allprobs[29,:]
-    adj_t08_a19 = allprobs[30,:]
-    adj_t08_a20 = allprobs[31,:]
-    adj_t08_a21 = allprobs[32,:]
-    adj_t08_a22 = allprobs[33,:]
-    adj_t08_a23 = allprobs[34,:]
-    adj_t08_a24 = allprobs[35,:]
-    adj_t08_a38 = allprobs[36,:]
-    raw_t10_a28 = allprobs[37,:]
-    raw_t10_a29 = allprobs[38,:]
-    raw_t10_a30 = allprobs[39,:]
-    adj_t10_a28 = allprobs[40,:]
-    adj_t10_a29 = allprobs[41,:]
-    adj_t10_a30 = allprobs[42,:]
-    raw_t11_a31 = allprobs[43,:]
-    raw_t11_a32 = allprobs[44,:]
-    raw_t11_a33 = allprobs[45,:]
-    raw_t11_a34 = allprobs[46,:]
-    raw_t11_a36 = allprobs[47,:]
-    raw_t11_a37 = allprobs[48,:]
-    adj_t11_a31 = allprobs[49,:]
-    adj_t11_a32 = allprobs[50,:]
-    adj_t11_a33 = allprobs[51,:]
-    adj_t11_a34 = allprobs[52,:]
-    adj_t11_a36 = allprobs[53,:]
-    adj_t11_a37 = allprobs[54,:]
-    raw_t05_a10 = allprobs[55,:]
-    raw_t05_a11 = allprobs[56,:]
-    raw_t05_a12 = allprobs[57,:]
-    raw_t05_a13 = allprobs[58,:]
-    adj_t05_a10 = allprobs[59,:]
-    adj_t05_a11 = allprobs[60,:]
-    adj_t05_a12 = allprobs[61,:]
-    adj_t05_a13 = allprobs[62,:]
-    raw_t09_a25 = allprobs[63,:]
-    raw_t09_a26 = allprobs[64,:]
-    raw_t09_a27 = allprobs[65,:]
-    adj_t09_a25 = allprobs[66,:]
-    adj_t09_a26 = allprobs[67,:]
-    adj_t09_a27 = allprobs[68,:]
-    raw_t07_a16 = allprobs[69,:]
-    raw_t07_a17 = allprobs[70,:]
-    raw_t07_a18 = allprobs[71,:]
-    adj_t07_a16 = allprobs[72,:]
-    adj_t07_a17 = allprobs[73,:]
-    adj_t07_a18 = allprobs[74,:]
+    raw_t01_a01 = raw_t01[0,:]
+    raw_t01_a02 = raw_t01[1,:]
+    raw_t01_a03 = raw_t01[2,:]
+    adj_t01_a01 = adj_t01[0,:]
+    adj_t01_a02 = adj_t01[1,:]
+    adj_t01_a03 = adj_t01[2,:]
+
+    raw_t02_a04 = raw_t02[0,:]
+    raw_t02_a05 = raw_t02[1,:]
+    adj_t02_a04 = adj_t02[0,:]
+    adj_t02_a05 = adj_t02[1,:]
+
+    raw_t03_a06 = raw_t03[0,:]
+    raw_t03_a07 = raw_t03[1,:]
+    adj_t03_a06 = adj_t03[0,:]
+    adj_t03_a07 = adj_t03[1,:]
+
+    raw_t04_a08 = raw_t04[0,:]
+    raw_t04_a09 = raw_t04[1,:]
+    adj_t04_a08 = adj_t04[0,:]
+    adj_t04_a09 = adj_t04[1,:]
+
+    raw_t05_a10 = raw_t05[0,:]
+    raw_t05_a11 = raw_t05[1,:]
+    raw_t05_a12 = raw_t05[2,:]
+    raw_t05_a13 = raw_t05[3,:]
+    adj_t05_a10 = adj_t05[0,:]
+    adj_t05_a11 = adj_t05[1,:]
+    adj_t05_a12 = adj_t05[2,:]
+    adj_t05_a13 = adj_t05[3,:]
+
+    raw_t06_a14 = raw_t06[0,:]
+    raw_t06_a15 = raw_t06[1,:]
+    adj_t06_a14 = adj_t06[0,:]
+    adj_t06_a15 = adj_t06[1,:]
+
+    raw_t07_a16 = raw_t07[0,:]
+    raw_t07_a17 = raw_t07[1,:]
+    raw_t07_a18 = raw_t07[2,:]
+    adj_t07_a16 = adj_t07[0,:]
+    adj_t07_a17 = adj_t07[1,:]
+    adj_t07_a18 = adj_t07[2,:]
+
+    raw_t08_a19 = raw_t08[0,:]
+    raw_t08_a20 = raw_t08[1,:]
+    raw_t08_a21 = raw_t08[2,:]
+    raw_t08_a22 = raw_t08[3,:]
+    raw_t08_a23 = raw_t08[4,:]
+    raw_t08_a24 = raw_t08[5,:]
+    raw_t08_a38 = raw_t08[6,:]
+    adj_t08_a19 = adj_t08[0,:]
+    adj_t08_a20 = adj_t08[1,:]
+    adj_t08_a21 = adj_t08[2,:]
+    adj_t08_a22 = adj_t08[3,:]
+    adj_t08_a23 = adj_t08[4,:]
+    adj_t08_a24 = adj_t08[5,:]
+    adj_t08_a38 = adj_t08[6,:]
+
+    raw_t09_a25 = raw_t09[0,:]
+    raw_t09_a26 = raw_t09[1,:]
+    raw_t09_a27 = raw_t09[2,:]
+    adj_t09_a25 = adj_t09[0,:]
+    adj_t09_a26 = adj_t09[1,:]
+    adj_t09_a27 = adj_t09[2,:]
+
+    raw_t10_a28 = raw_t10[0,:]
+    raw_t10_a29 = raw_t10[1,:]
+    raw_t10_a30 = raw_t10[2,:]
+    adj_t10_a28 = adj_t10[0,:]
+    adj_t10_a29 = adj_t10[1,:]
+    adj_t10_a30 = adj_t10[2,:]
+
+    raw_t11_a31 = raw_t11[0,:]
+    raw_t11_a32 = raw_t11[1,:]
+    raw_t11_a33 = raw_t11[2,:]
+    raw_t11_a34 = raw_t11[3,:]
+    raw_t11_a36 = raw_t11[4,:]
+    raw_t11_a37 = raw_t11[5,:]
+    adj_t11_a31 = adj_t11[0,:]
+    adj_t11_a32 = adj_t11[1,:]
+    adj_t11_a33 = adj_t11[2,:]
+    adj_t11_a34 = adj_t11[3,:]
+    adj_t11_a36 = adj_t11[4,:]
+    adj_t11_a37 = adj_t11[5,:]
 
     smooth = get_task_dict('smooth')
     edgeon = get_task_dict('edgeon')
@@ -4045,43 +3864,43 @@ def make_tables(makefits=True,stripe82=False, depth='coadd2', photoz=False,latex
     cleanthresh_t10 = 0.8
     cleanthresh_t11 = 0.8
 
-    flag_t01_a01 = ((allprobs[ 4,:] >= cleanthresh_t01) & goodt01).astype(int)
-    flag_t01_a02 = ((allprobs[ 5,:] >= cleanthresh_t01) & goodt01).astype(int)
-    flag_t01_a03 = ((allprobs[ 6,:] >= cleanthresh_t01) & goodt01).astype(int)
-    flag_t02_a04 = ((allprobs[ 9,:] >= cleanthresh_t02) & goodt02).astype(int)
-    flag_t02_a05 = ((allprobs[10,:] >= cleanthresh_t02) & goodt02).astype(int)
-    flag_t03_a06 = ((allprobs[13,:] >= cleanthresh_t03) & goodt03).astype(int)
-    flag_t03_a07 = ((allprobs[14,:] >= cleanthresh_t03) & goodt03).astype(int)
-    flag_t04_a08 = ((allprobs[17,:] >= cleanthresh_t04) & goodt04).astype(int)
-    flag_t04_a09 = ((allprobs[18,:] >= cleanthresh_t04) & goodt04).astype(int)
-    flag_t06_a14 = ((allprobs[21,:] >= cleanthresh_t06) & goodt06).astype(int)
-    flag_t06_a15 = ((allprobs[22,:] >= cleanthresh_t06) & goodt06).astype(int)
-    flag_t08_a19 = ((allprobs[30,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t08_a20 = ((allprobs[31,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t08_a21 = ((allprobs[32,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t08_a22 = ((allprobs[33,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t08_a23 = ((allprobs[34,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t08_a24 = ((allprobs[35,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t08_a38 = ((allprobs[36,:] >= cleanthresh_t08) & goodt08).astype(int)
-    flag_t10_a28 = ((allprobs[40,:] >= cleanthresh_t10) & goodt10).astype(int)
-    flag_t10_a29 = ((allprobs[41,:] >= cleanthresh_t10) & goodt10).astype(int)
-    flag_t10_a30 = ((allprobs[42,:] >= cleanthresh_t10) & goodt10).astype(int)
-    flag_t11_a31 = ((allprobs[49,:] >= cleanthresh_t11) & goodt11).astype(int)
-    flag_t11_a32 = ((allprobs[50,:] >= cleanthresh_t11) & goodt11).astype(int)
-    flag_t11_a33 = ((allprobs[51,:] >= cleanthresh_t11) & goodt11).astype(int)
-    flag_t11_a34 = ((allprobs[52,:] >= cleanthresh_t11) & goodt11).astype(int)
-    flag_t11_a36 = ((allprobs[53,:] >= cleanthresh_t11) & goodt11).astype(int)
-    flag_t11_a37 = ((allprobs[54,:] >= cleanthresh_t11) & goodt11).astype(int)
-    flag_t05_a10 = ((allprobs[59,:] >= cleanthresh_t05) & goodt05).astype(int)
-    flag_t05_a11 = ((allprobs[60,:] >= cleanthresh_t05) & goodt05).astype(int)
-    flag_t05_a12 = ((allprobs[61,:] >= cleanthresh_t05) & goodt05).astype(int)
-    flag_t05_a13 = ((allprobs[62,:] >= cleanthresh_t05) & goodt05).astype(int)
-    flag_t09_a25 = ((allprobs[66,:] >= cleanthresh_t09) & goodt09).astype(int)
-    flag_t09_a26 = ((allprobs[67,:] >= cleanthresh_t09) & goodt09).astype(int)
-    flag_t09_a27 = ((allprobs[68,:] >= cleanthresh_t09) & goodt09).astype(int)
-    flag_t07_a16 = ((allprobs[72,:] >= cleanthresh_t07) & goodt07).astype(int)
-    flag_t07_a17 = ((allprobs[73,:] >= cleanthresh_t07) & goodt07).astype(int)
-    flag_t07_a18 = ((allprobs[74,:] >= cleanthresh_t07) & goodt07).astype(int)
+    flag_t01_a01 = ((adj_t01_a01 >= cleanthresh_t01) & goodt01).astype(int)
+    flag_t01_a02 = ((adj_t01_a02 >= cleanthresh_t01) & goodt01).astype(int)
+    flag_t01_a03 = ((adj_t01_a03 >= cleanthresh_t01) & goodt01).astype(int)
+    flag_t02_a04 = ((adj_t02_a04 >= cleanthresh_t02) & goodt02).astype(int)
+    flag_t02_a05 = ((adj_t02_a05 >= cleanthresh_t02) & goodt02).astype(int)
+    flag_t03_a06 = ((adj_t03_a06 >= cleanthresh_t03) & goodt03).astype(int)
+    flag_t03_a07 = ((adj_t03_a07 >= cleanthresh_t03) & goodt03).astype(int)
+    flag_t04_a08 = ((adj_t04_a08 >= cleanthresh_t04) & goodt04).astype(int)
+    flag_t04_a09 = ((adj_t04_a09 >= cleanthresh_t04) & goodt04).astype(int)
+    flag_t05_a10 = ((adj_t05_a10 >= cleanthresh_t05) & goodt05).astype(int)
+    flag_t05_a11 = ((adj_t05_a11 >= cleanthresh_t05) & goodt05).astype(int)
+    flag_t05_a12 = ((adj_t05_a12 >= cleanthresh_t05) & goodt05).astype(int)
+    flag_t05_a13 = ((adj_t05_a13 >= cleanthresh_t05) & goodt05).astype(int)
+    flag_t06_a14 = ((adj_t06_a14 >= cleanthresh_t06) & goodt06).astype(int)
+    flag_t06_a15 = ((adj_t06_a15 >= cleanthresh_t06) & goodt06).astype(int)
+    flag_t08_a19 = ((adj_t08_a19 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t08_a20 = ((adj_t08_a20 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t07_a16 = ((adj_t07_a16 >= cleanthresh_t07) & goodt07).astype(int)
+    flag_t07_a17 = ((adj_t07_a17 >= cleanthresh_t07) & goodt07).astype(int)
+    flag_t07_a18 = ((adj_t07_a18 >= cleanthresh_t07) & goodt07).astype(int)
+    flag_t08_a21 = ((adj_t08_a21 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t08_a22 = ((adj_t08_a22 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t08_a23 = ((adj_t08_a23 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t08_a24 = ((adj_t08_a24 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t08_a38 = ((adj_t08_a38 >= cleanthresh_t08) & goodt08).astype(int)
+    flag_t09_a25 = ((adj_t09_a25 >= cleanthresh_t09) & goodt09).astype(int)
+    flag_t09_a26 = ((adj_t09_a26 >= cleanthresh_t09) & goodt09).astype(int)
+    flag_t09_a27 = ((adj_t09_a27 >= cleanthresh_t09) & goodt09).astype(int)
+    flag_t10_a28 = ((adj_t10_a28 >= cleanthresh_t10) & goodt10).astype(int)
+    flag_t10_a29 = ((adj_t10_a29 >= cleanthresh_t10) & goodt10).astype(int)
+    flag_t10_a30 = ((adj_t10_a30 >= cleanthresh_t10) & goodt10).astype(int)
+    flag_t11_a31 = ((adj_t11_a31 >= cleanthresh_t11) & goodt11).astype(int)
+    flag_t11_a32 = ((adj_t11_a32 >= cleanthresh_t11) & goodt11).astype(int)
+    flag_t11_a33 = ((adj_t11_a33 >= cleanthresh_t11) & goodt11).astype(int)
+    flag_t11_a34 = ((adj_t11_a34 >= cleanthresh_t11) & goodt11).astype(int)
+    flag_t11_a36 = ((adj_t11_a36 >= cleanthresh_t11) & goodt11).astype(int)
+    flag_t11_a37 = ((adj_t11_a37 >= cleanthresh_t11) & goodt11).astype(int)
 
     
     if makefits:
@@ -4095,235 +3914,235 @@ def make_tables(makefits=True,stripe82=False, depth='coadd2', photoz=False,latex
         col_n_votes = pyfits.Column(name = 'total_votes', format='I4', array=gzdata['total_count'])
 
         col_t01_a01_ct = pyfits.Column(name='t01_smooth_or_features_a01_smooth_count',                             format='I4', array = gzdata['t01_smooth_or_features_a01_smooth_count'])
-        col_t01_a01_wc = pyfits.Column(name='t01_smooth_or_features_a01_smooth_weight',                            format='I4', array = gzdata['t01_smooth_or_features_a01_smooth_count'])
-        col_t01_a01_fr = pyfits.Column(name='t01_smooth_or_features_a01_smooth_fraction',                          format='E5.3', array = gzdata['t01_smooth_or_features_a01_smooth_weighted_fraction'])
+        col_t01_a01_wc = pyfits.Column(name='t01_smooth_or_features_a01_smooth_weight',                            format='E5.3', array = gzdata['t01_smooth_or_features_a01_smooth_weight'])
+        col_t01_a01_fr = pyfits.Column(name='t01_smooth_or_features_a01_smooth_fraction',                          format='E5.3', array = gzdata['t01_smooth_or_features_a01_smooth_fraction'])
         col_t01_a01_wf = pyfits.Column(name='t01_smooth_or_features_a01_smooth_weighted_fraction',                 format='E5.3', array = gzdata['t01_smooth_or_features_a01_smooth_weighted_fraction'])
         col_t01_a01_db = pyfits.Column(name='t01_smooth_or_features_a01_smooth_debiased',                          format='E5.3', array = adj_t01_a01)
         col_t01_a01_fl = pyfits.Column(name='t01_smooth_or_features_a01_smooth_flag',                              format='I4', array = flag_t01_a01)
         col_t01_a02_ct = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_count',                   format='I4', array = gzdata['t01_smooth_or_features_a02_features_or_disk_count'])
-        col_t01_a02_wc = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_weight',                  format='I4', array = gzdata['t01_smooth_or_features_a02_features_or_disk_count'])
-        col_t01_a02_fr = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_fraction',                format='E5.3', array = gzdata['t01_smooth_or_features_a02_features_or_disk_weighted_fraction'])
+        col_t01_a02_wc = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_weight',                  format='E5.3', array = gzdata['t01_smooth_or_features_a02_features_or_disk_weight'])
+        col_t01_a02_fr = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_fraction',                format='E5.3', array = gzdata['t01_smooth_or_features_a02_features_or_disk_fraction'])
         col_t01_a02_wf = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_weighted_fraction',       format='E5.3', array = gzdata['t01_smooth_or_features_a02_features_or_disk_weighted_fraction'])
         col_t01_a02_db = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_debiased',                format='E5.3', array = adj_t01_a02)
         col_t01_a02_fl = pyfits.Column(name='t01_smooth_or_features_a02_features_or_disk_flag',                    format='I4', array = flag_t01_a02)
         col_t01_a03_ct = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_count',                   format='I4', array = gzdata['t01_smooth_or_features_a03_star_or_artifact_count'])
-        col_t01_a03_wc = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_weight',                  format='I4', array = gzdata['t01_smooth_or_features_a03_star_or_artifact_count'])
-        col_t01_a03_fr = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_fraction',                format='E5.3', array = gzdata['t01_smooth_or_features_a03_star_or_artifact_weighted_fraction'])
+        col_t01_a03_wc = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_weight',                  format='E5.3', array = gzdata['t01_smooth_or_features_a03_star_or_artifact_weight'])
+        col_t01_a03_fr = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_fraction',                format='E5.3', array = gzdata['t01_smooth_or_features_a03_star_or_artifact_fraction'])
         col_t01_a03_wf = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_weighted_fraction',       format='E5.3', array = gzdata['t01_smooth_or_features_a03_star_or_artifact_weighted_fraction'])
         col_t01_a03_db = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_debiased',                format='E5.3', array = adj_t01_a03)
         col_t01_a03_fl = pyfits.Column(name='t01_smooth_or_features_a03_star_or_artifact_flag',                    format='I4', array = flag_t01_a03)
 
         col_t02_a04_ct = pyfits.Column(name='t02_edgeon_a04_yes_count',                   format='I4', array = gzdata['t02_edgeon_a04_yes_count'])
-        col_t02_a04_wc = pyfits.Column(name='t02_edgeon_a04_yes_weight',                  format='I4', array = gzdata['t02_edgeon_a04_yes_count'])
-        col_t02_a04_fr = pyfits.Column(name='t02_edgeon_a04_yes_fraction',                format='E5.3', array = gzdata['t02_edgeon_a04_yes_weighted_fraction'])
+        col_t02_a04_wc = pyfits.Column(name='t02_edgeon_a04_yes_weight',                  format='E5.3', array = gzdata['t02_edgeon_a04_yes_weight'])
+        col_t02_a04_fr = pyfits.Column(name='t02_edgeon_a04_yes_fraction',                format='E5.3', array = gzdata['t02_edgeon_a04_yes_fraction'])
         col_t02_a04_wf = pyfits.Column(name='t02_edgeon_a04_yes_weighted_fraction',       format='E5.3', array = gzdata['t02_edgeon_a04_yes_weighted_fraction'])
         col_t02_a04_db = pyfits.Column(name='t02_edgeon_a04_yes_debiased',                format='E5.3', array = adj_t02_a04)
         col_t02_a04_fl = pyfits.Column(name='t02_edgeon_a04_yes_flag',                    format='I4', array = flag_t02_a04)
         col_t02_a05_ct = pyfits.Column(name='t02_edgeon_a05_no_count',                    format='I4', array = gzdata['t02_edgeon_a05_no_count'])
-        col_t02_a05_wc = pyfits.Column(name='t02_edgeon_a05_no_weight',                   format='I4', array = gzdata['t02_edgeon_a05_no_count'])
-        col_t02_a05_fr = pyfits.Column(name='t02_edgeon_a05_no_fraction',                 format='E5.3', array = gzdata['t02_edgeon_a05_no_weighted_fraction'])
+        col_t02_a05_wc = pyfits.Column(name='t02_edgeon_a05_no_weight',                   format='E5.3', array = gzdata['t02_edgeon_a05_no_weight'])
+        col_t02_a05_fr = pyfits.Column(name='t02_edgeon_a05_no_fraction',                 format='E5.3', array = gzdata['t02_edgeon_a05_no_fraction'])
         col_t02_a05_wf = pyfits.Column(name='t02_edgeon_a05_no_weighted_fraction',        format='E5.3', array = gzdata['t02_edgeon_a05_no_weighted_fraction'])
         col_t02_a05_db = pyfits.Column(name='t02_edgeon_a05_no_debiased',                 format='E5.3', array = adj_t02_a05)
         col_t02_a05_fl = pyfits.Column(name='t02_edgeon_a05_no_flag',                     format='I4', array = flag_t02_a05)
 
         col_t03_a06_ct = pyfits.Column(name='t03_bar_a06_bar_count',                      format='I4', array = gzdata['t03_bar_a06_bar_count'])
-        col_t03_a06_wc = pyfits.Column(name='t03_bar_a06_bar_weight',                     format='I4', array = gzdata['t03_bar_a06_bar_count'])
-        col_t03_a06_fr = pyfits.Column(name='t03_bar_a06_bar_fraction',                   format='E5.3', array = gzdata['t03_bar_a06_bar_weighted_fraction'])
+        col_t03_a06_wc = pyfits.Column(name='t03_bar_a06_bar_weight',                     format='E5.3', array = gzdata['t03_bar_a06_bar_weight'])
+        col_t03_a06_fr = pyfits.Column(name='t03_bar_a06_bar_fraction',                   format='E5.3', array = gzdata['t03_bar_a06_bar_fraction'])
         col_t03_a06_wf = pyfits.Column(name='t03_bar_a06_bar_weighted_fraction',          format='E5.3', array = gzdata['t03_bar_a06_bar_weighted_fraction'])
         col_t03_a06_db = pyfits.Column(name='t03_bar_a06_bar_debiased',                   format='E5.3', array = adj_t03_a06)
         col_t03_a06_fl = pyfits.Column(name='t03_bar_a06_bar_flag',                       format='I4', array = flag_t03_a06)
         col_t03_a07_ct = pyfits.Column(name='t03_bar_a07_no_bar_count',                   format='I4', array = gzdata['t03_bar_a07_no_bar_count'])
-        col_t03_a07_wc = pyfits.Column(name='t03_bar_a07_no_bar_weight',                  format='I4', array = gzdata['t03_bar_a07_no_bar_count'])
-        col_t03_a07_fr = pyfits.Column(name='t03_bar_a07_no_bar_fraction',                format='E5.3', array = gzdata['t03_bar_a07_no_bar_weighted_fraction'])
+        col_t03_a07_wc = pyfits.Column(name='t03_bar_a07_no_bar_weight',                  format='E5.3', array = gzdata['t03_bar_a07_no_bar_weight'])
+        col_t03_a07_fr = pyfits.Column(name='t03_bar_a07_no_bar_fraction',                format='E5.3', array = gzdata['t03_bar_a07_no_bar_fraction'])
         col_t03_a07_wf = pyfits.Column(name='t03_bar_a07_no_bar_weighted_fraction',       format='E5.3', array = gzdata['t03_bar_a07_no_bar_weighted_fraction'])
         col_t03_a07_db = pyfits.Column(name='t03_bar_a07_no_bar_debiased',                format='E5.3', array = adj_t03_a07)
         col_t03_a07_fl = pyfits.Column(name='t03_bar_a07_no_bar_flag',                    format='I4', array = flag_t03_a07)
 
         col_t04_a08_ct = pyfits.Column(name='t04_spiral_a08_spiral_count',                    format='I4', array = gzdata['t04_spiral_a08_spiral_count'])
-        col_t04_a08_wc = pyfits.Column(name='t04_spiral_a08_spiral_weight',                   format='I4', array = gzdata['t04_spiral_a08_spiral_count'])
-        col_t04_a08_fr = pyfits.Column(name='t04_spiral_a08_spiral_fraction',                 format='E5.3', array = gzdata['t04_spiral_a08_spiral_weighted_fraction'])
+        col_t04_a08_wc = pyfits.Column(name='t04_spiral_a08_spiral_weight',                   format='E5.3', array = gzdata['t04_spiral_a08_spiral_weight'])
+        col_t04_a08_fr = pyfits.Column(name='t04_spiral_a08_spiral_fraction',                 format='E5.3', array = gzdata['t04_spiral_a08_spiral_fraction'])
         col_t04_a08_wf = pyfits.Column(name='t04_spiral_a08_spiral_weighted_fraction',        format='E5.3', array = gzdata['t04_spiral_a08_spiral_weighted_fraction'])
         col_t04_a08_db = pyfits.Column(name='t04_spiral_a08_spiral_debiased',                 format='E5.3', array =     adj_t04_a08)
         col_t04_a08_fl = pyfits.Column(name='t04_spiral_a08_spiral_flag',                     format='I4', array =    flag_t04_a08)
         col_t04_a09_ct = pyfits.Column(name='t04_spiral_a09_no_spiral_count',                 format='I4', array = gzdata['t04_spiral_a09_no_spiral_count'])
-        col_t04_a09_wc = pyfits.Column(name='t04_spiral_a09_no_spiral_weight',                format='I4', array = gzdata['t04_spiral_a09_no_spiral_count'])
-        col_t04_a09_fr = pyfits.Column(name='t04_spiral_a09_no_spiral_fraction',              format='E5.3', array = gzdata['t04_spiral_a09_no_spiral_weighted_fraction'])
+        col_t04_a09_wc = pyfits.Column(name='t04_spiral_a09_no_spiral_weight',                format='E5.3', array = gzdata['t04_spiral_a09_no_spiral_weight'])
+        col_t04_a09_fr = pyfits.Column(name='t04_spiral_a09_no_spiral_fraction',              format='E5.3', array = gzdata['t04_spiral_a09_no_spiral_fraction'])
         col_t04_a09_wf = pyfits.Column(name='t04_spiral_a09_no_spiral_weighted_fraction',     format='E5.3', array = gzdata['t04_spiral_a09_no_spiral_weighted_fraction'])
         col_t04_a09_db = pyfits.Column(name='t04_spiral_a09_no_spiral_debiased',              format='E5.3', array =     adj_t04_a09)
         col_t04_a09_fl = pyfits.Column(name='t04_spiral_a09_no_spiral_flag',                  format='I4', array =    flag_t04_a09)
 
         col_t05_a10_ct = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_count',                    format='I4', array = gzdata['t05_bulge_prominence_a10_no_bulge_count'])
-        col_t05_a10_wc = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_weight',                   format='I4', array = gzdata['t05_bulge_prominence_a10_no_bulge_count'])
-        col_t05_a10_fr = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_fraction',                 format='E5.3', array = gzdata['t05_bulge_prominence_a10_no_bulge_weighted_fraction'])
+        col_t05_a10_wc = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_weight',                   format='E5.3', array = gzdata['t05_bulge_prominence_a10_no_bulge_weight'])
+        col_t05_a10_fr = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_fraction',                 format='E5.3', array = gzdata['t05_bulge_prominence_a10_no_bulge_fraction'])
         col_t05_a10_wf = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_weighted_fraction',        format='E5.3', array = gzdata['t05_bulge_prominence_a10_no_bulge_weighted_fraction'])
         col_t05_a10_db = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_debiased',                 format='E5.3', array =     adj_t05_a10)
         col_t05_a10_fl = pyfits.Column(name='t05_bulge_prominence_a10_no_bulge_flag',                     format='I4', array =    flag_t05_a10)
         col_t05_a11_ct = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_count',             format='I4', array = gzdata['t05_bulge_prominence_a11_just_noticeable_count'])
-        col_t05_a11_wc = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_weight',            format='I4', array = gzdata['t05_bulge_prominence_a11_just_noticeable_count'])
-        col_t05_a11_fr = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_fraction',          format='E5.3', array = gzdata['t05_bulge_prominence_a11_just_noticeable_weighted_fraction'])
+        col_t05_a11_wc = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_weight',            format='E5.3', array = gzdata['t05_bulge_prominence_a11_just_noticeable_weight'])
+        col_t05_a11_fr = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_fraction',          format='E5.3', array = gzdata['t05_bulge_prominence_a11_just_noticeable_fraction'])
         col_t05_a11_wf = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_weighted_fraction', format='E5.3', array = gzdata['t05_bulge_prominence_a11_just_noticeable_weighted_fraction'])
         col_t05_a11_db = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_debiased',          format='E5.3', array =     adj_t05_a11)
         col_t05_a11_fl = pyfits.Column(name='t05_bulge_prominence_a11_just_noticeable_flag',              format='I4', array =    flag_t05_a11)
         col_t05_a12_ct = pyfits.Column(name='t05_bulge_prominence_a12_obvious_count',                     format='I4', array = gzdata['t05_bulge_prominence_a12_obvious_count'])
-        col_t05_a12_wc = pyfits.Column(name='t05_bulge_prominence_a12_obvious_weight',                    format='I4', array = gzdata['t05_bulge_prominence_a12_obvious_count'])
-        col_t05_a12_fr = pyfits.Column(name='t05_bulge_prominence_a12_obvious_fraction',                  format='E5.3', array = gzdata['t05_bulge_prominence_a12_obvious_weighted_fraction'])
+        col_t05_a12_wc = pyfits.Column(name='t05_bulge_prominence_a12_obvious_weight',                    format='E5.3', array = gzdata['t05_bulge_prominence_a12_obvious_weight'])
+        col_t05_a12_fr = pyfits.Column(name='t05_bulge_prominence_a12_obvious_fraction',                  format='E5.3', array = gzdata['t05_bulge_prominence_a12_obvious_fraction'])
         col_t05_a12_wf = pyfits.Column(name='t05_bulge_prominence_a12_obvious_weighted_fraction',         format='E5.3', array = gzdata['t05_bulge_prominence_a12_obvious_weighted_fraction'])
         col_t05_a12_db = pyfits.Column(name='t05_bulge_prominence_a12_obvious_debiased',                  format='E5.3', array =     adj_t05_a12)
         col_t05_a12_fl = pyfits.Column(name='t05_bulge_prominence_a12_obvious_flag',                      format='I4', array =    flag_t05_a12)
         col_t05_a13_ct = pyfits.Column(name='t05_bulge_prominence_a13_dominant_count',                    format='I4', array = gzdata['t05_bulge_prominence_a13_dominant_count'])
-        col_t05_a13_wc = pyfits.Column(name='t05_bulge_prominence_a13_dominant_weight',                   format='I4', array = gzdata['t05_bulge_prominence_a13_dominant_count'])
-        col_t05_a13_fr = pyfits.Column(name='t05_bulge_prominence_a13_dominant_fraction',                 format='E5.3', array = gzdata['t05_bulge_prominence_a13_dominant_weighted_fraction'])
+        col_t05_a13_wc = pyfits.Column(name='t05_bulge_prominence_a13_dominant_weight',                   format='E5.3', array = gzdata['t05_bulge_prominence_a13_dominant_weight'])
+        col_t05_a13_fr = pyfits.Column(name='t05_bulge_prominence_a13_dominant_fraction',                 format='E5.3', array = gzdata['t05_bulge_prominence_a13_dominant_fraction'])
         col_t05_a13_wf = pyfits.Column(name='t05_bulge_prominence_a13_dominant_weighted_fraction',        format='E5.3', array = gzdata['t05_bulge_prominence_a13_dominant_weighted_fraction'])
         col_t05_a13_db = pyfits.Column(name='t05_bulge_prominence_a13_dominant_debiased',                 format='E5.3', array =     adj_t05_a13)
         col_t05_a13_fl = pyfits.Column(name='t05_bulge_prominence_a13_dominant_flag',                     format='I4', array =    flag_t05_a13)
 
         col_t06_a14_ct = pyfits.Column(name='t06_odd_a14_yes_count',                    format='I4', array = gzdata['t06_odd_a14_yes_count'])
-        col_t06_a14_wc = pyfits.Column(name='t06_odd_a14_yes_weight',                   format='I4', array = gzdata['t06_odd_a14_yes_count'])
-        col_t06_a14_fr = pyfits.Column(name='t06_odd_a14_yes_fraction',                 format='E5.3', array = gzdata['t06_odd_a14_yes_weighted_fraction'])
+        col_t06_a14_wc = pyfits.Column(name='t06_odd_a14_yes_weight',                   format='E5.3', array = gzdata['t06_odd_a14_yes_weight'])
+        col_t06_a14_fr = pyfits.Column(name='t06_odd_a14_yes_fraction',                 format='E5.3', array = gzdata['t06_odd_a14_yes_fraction'])
         col_t06_a14_wf = pyfits.Column(name='t06_odd_a14_yes_weighted_fraction',        format='E5.3', array = gzdata['t06_odd_a14_yes_weighted_fraction'])
         col_t06_a14_db = pyfits.Column(name='t06_odd_a14_yes_debiased',                 format='E5.3', array =     adj_t06_a14)
         col_t06_a14_fl = pyfits.Column(name='t06_odd_a14_yes_flag',                     format='I4', array =    flag_t06_a14)
         col_t06_a15_ct = pyfits.Column(name='t06_odd_a15_no_count',                     format='I4', array = gzdata['t06_odd_a15_no_count'])
-        col_t06_a15_wc = pyfits.Column(name='t06_odd_a15_no_weight',                    format='I4', array = gzdata['t06_odd_a15_no_count'])
-        col_t06_a15_fr = pyfits.Column(name='t06_odd_a15_no_fraction',                  format='E5.3', array = gzdata['t06_odd_a15_no_weighted_fraction'])
+        col_t06_a15_wc = pyfits.Column(name='t06_odd_a15_no_weight',                    format='E5.3', array = gzdata['t06_odd_a15_no_weight'])
+        col_t06_a15_fr = pyfits.Column(name='t06_odd_a15_no_fraction',                  format='E5.3', array = gzdata['t06_odd_a15_no_fraction'])
         col_t06_a15_wf = pyfits.Column(name='t06_odd_a15_no_weighted_fraction',         format='E5.3', array = gzdata['t06_odd_a15_no_weighted_fraction'])
         col_t06_a15_db = pyfits.Column(name='t06_odd_a15_no_debiased',                  format='E5.3', array =     adj_t06_a15)
         col_t06_a15_fl = pyfits.Column(name='t06_odd_a15_no_flag',                      format='I4', array =    flag_t06_a15)
 
 
         col_t07_a16_ct = pyfits.Column(name='t07_rounded_a16_completely_round_count',             format='I4', array = gzdata['t07_rounded_a16_completely_round_count'])
-        col_t07_a16_wc = pyfits.Column(name='t07_rounded_a16_completely_round_weight',            format='I4', array = gzdata['t07_rounded_a16_completely_round_count'])
-        col_t07_a16_fr = pyfits.Column(name='t07_rounded_a16_completely_round_fraction',          format='E5.3', array = gzdata['t07_rounded_a16_completely_round_weighted_fraction'])
+        col_t07_a16_wc = pyfits.Column(name='t07_rounded_a16_completely_round_weight',            format='E5.3', array = gzdata['t07_rounded_a16_completely_round_weight'])
+        col_t07_a16_fr = pyfits.Column(name='t07_rounded_a16_completely_round_fraction',          format='E5.3', array = gzdata['t07_rounded_a16_completely_round_fraction'])
         col_t07_a16_wf = pyfits.Column(name='t07_rounded_a16_completely_round_weighted_fraction', format='E5.3', array = gzdata['t07_rounded_a16_completely_round_weighted_fraction'])
         col_t07_a16_db = pyfits.Column(name='t07_rounded_a16_completely_round_debiased',          format='E5.3', array = adj_t07_a16)
         col_t07_a16_fl = pyfits.Column(name='t07_rounded_a16_completely_round_flag',              format='I4', array = flag_t07_a16)
         col_t07_a17_ct = pyfits.Column(name='t07_rounded_a17_in_between_count',                   format='I4', array = gzdata['t07_rounded_a17_in_between_count'])
-        col_t07_a17_wc = pyfits.Column(name='t07_rounded_a17_in_between_weight',                  format='I4', array = gzdata['t07_rounded_a17_in_between_count'])
-        col_t07_a17_fr = pyfits.Column(name='t07_rounded_a17_in_between_fraction',                format='E5.3', array = gzdata['t07_rounded_a17_in_between_weighted_fraction'])
+        col_t07_a17_wc = pyfits.Column(name='t07_rounded_a17_in_between_weight',                  format='E5.3', array = gzdata['t07_rounded_a17_in_between_weight'])
+        col_t07_a17_fr = pyfits.Column(name='t07_rounded_a17_in_between_fraction',                format='E5.3', array = gzdata['t07_rounded_a17_in_between_fraction'])
         col_t07_a17_wf = pyfits.Column(name='t07_rounded_a17_in_between_weighted_fraction',       format='E5.3', array = gzdata['t07_rounded_a17_in_between_weighted_fraction'])
         col_t07_a17_db = pyfits.Column(name='t07_rounded_a17_in_between_debiased',                format='E5.3', array = adj_t07_a17)
         col_t07_a17_fl = pyfits.Column(name='t07_rounded_a17_in_between_flag',                    format='I4', array = flag_t07_a17)
         col_t07_a18_ct = pyfits.Column(name='t07_rounded_a18_cigar_shaped_count',                 format='I4', array = gzdata['t07_rounded_a18_cigar_shaped_count'])
-        col_t07_a18_wc = pyfits.Column(name='t07_rounded_a18_cigar_shaped_weight',                format='I4', array = gzdata['t07_rounded_a18_cigar_shaped_count'])
-        col_t07_a18_fr = pyfits.Column(name='t07_rounded_a18_cigar_shaped_fraction',              format='E5.3', array = gzdata['t07_rounded_a18_cigar_shaped_weighted_fraction'])
+        col_t07_a18_wc = pyfits.Column(name='t07_rounded_a18_cigar_shaped_weight',                format='E5.3', array = gzdata['t07_rounded_a18_cigar_shaped_weight'])
+        col_t07_a18_fr = pyfits.Column(name='t07_rounded_a18_cigar_shaped_fraction',              format='E5.3', array = gzdata['t07_rounded_a18_cigar_shaped_fraction'])
         col_t07_a18_wf = pyfits.Column(name='t07_rounded_a18_cigar_shaped_weighted_fraction',     format='E5.3', array = gzdata['t07_rounded_a18_cigar_shaped_weighted_fraction'])
         col_t07_a18_db = pyfits.Column(name='t07_rounded_a18_cigar_shaped_debiased',              format='E5.3', array = adj_t07_a18)
         col_t07_a18_fl = pyfits.Column(name='t07_rounded_a18_cigar_shaped_flag',                  format='I4', array = flag_t07_a18)
 
         col_t08_a19_ct = pyfits.Column(name='t08_odd_feature_a19_ring_count',                             format='I4', array = gzdata['t08_odd_feature_a19_ring_count'])
-        col_t08_a19_wc = pyfits.Column(name='t08_odd_feature_a19_ring_weight',                            format='I4', array = gzdata['t08_odd_feature_a19_ring_count'])
-        col_t08_a19_fr = pyfits.Column(name='t08_odd_feature_a19_ring_fraction',                          format='E5.3', array = gzdata['t08_odd_feature_a19_ring_weighted_fraction'])
+        col_t08_a19_wc = pyfits.Column(name='t08_odd_feature_a19_ring_weight',                            format='E5.3', array = gzdata['t08_odd_feature_a19_ring_weight'])
+        col_t08_a19_fr = pyfits.Column(name='t08_odd_feature_a19_ring_fraction',                          format='E5.3', array = gzdata['t08_odd_feature_a19_ring_fraction'])
         col_t08_a19_wf = pyfits.Column(name='t08_odd_feature_a19_ring_weighted_fraction',                 format='E5.3', array = gzdata['t08_odd_feature_a19_ring_weighted_fraction'])
         col_t08_a19_db = pyfits.Column(name='t08_odd_feature_a19_ring_debiased',                          format='E5.3', array = adj_t08_a19)    
         col_t08_a19_fl = pyfits.Column(name='t08_odd_feature_a19_ring_flag',                              format='I4', array = flag_t08_a19)  
         col_t08_a20_ct = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_count',                      format='I4', array = gzdata['t08_odd_feature_a20_lens_or_arc_count'])
-        col_t08_a20_wc = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_weight',                     format='I4', array = gzdata['t08_odd_feature_a20_lens_or_arc_count'])
-        col_t08_a20_fr = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_fraction',                   format='E5.3', array = gzdata['t08_odd_feature_a20_lens_or_arc_weighted_fraction'])
+        col_t08_a20_wc = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_weight',                     format='E5.3', array = gzdata['t08_odd_feature_a20_lens_or_arc_weight'])
+        col_t08_a20_fr = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_fraction',                   format='E5.3', array = gzdata['t08_odd_feature_a20_lens_or_arc_fraction'])
         col_t08_a20_wf = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_weighted_fraction',          format='E5.3', array = gzdata['t08_odd_feature_a20_lens_or_arc_weighted_fraction'])
         col_t08_a20_db = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_debiased',                   format='E5.3', array = adj_t08_a20)  
         col_t08_a20_fl = pyfits.Column(name='t08_odd_feature_a20_lens_or_arc_flag',                       format='I4', array = flag_t08_a20)
         col_t08_a21_ct = pyfits.Column(name='t08_odd_feature_a21_disturbed_count',                        format='I4', array = gzdata['t08_odd_feature_a21_disturbed_count'])
-        col_t08_a21_wc = pyfits.Column(name='t08_odd_feature_a21_disturbed_weight',                       format='I4', array = gzdata['t08_odd_feature_a21_disturbed_count'])
-        col_t08_a21_fr = pyfits.Column(name='t08_odd_feature_a21_disturbed_fraction',                     format='E5.3', array = gzdata['t08_odd_feature_a21_disturbed_weighted_fraction'])
+        col_t08_a21_wc = pyfits.Column(name='t08_odd_feature_a21_disturbed_weight',                       format='E5.3', array = gzdata['t08_odd_feature_a21_disturbed_weight'])
+        col_t08_a21_fr = pyfits.Column(name='t08_odd_feature_a21_disturbed_fraction',                     format='E5.3', array = gzdata['t08_odd_feature_a21_disturbed_fraction'])
         col_t08_a21_wf = pyfits.Column(name='t08_odd_feature_a21_disturbed_weighted_fraction',            format='E5.3', array = gzdata['t08_odd_feature_a21_disturbed_weighted_fraction'])
         col_t08_a21_db = pyfits.Column(name='t08_odd_feature_a21_disturbed_debiased',                     format='E5.3', array = adj_t08_a21)      
         col_t08_a21_fl = pyfits.Column(name='t08_odd_feature_a21_disturbed_flag',                         format='I4', array = flag_t08_a21)    
         col_t08_a22_ct = pyfits.Column(name='t08_odd_feature_a22_irregular_count',                        format='I4', array = gzdata['t08_odd_feature_a22_irregular_count'])
-        col_t08_a22_wc = pyfits.Column(name='t08_odd_feature_a22_irregular_weight',                       format='I4', array = gzdata['t08_odd_feature_a22_irregular_count'])
-        col_t08_a22_fr = pyfits.Column(name='t08_odd_feature_a22_irregular_fraction',                     format='E5.3', array = gzdata['t08_odd_feature_a22_irregular_weighted_fraction'])
+        col_t08_a22_wc = pyfits.Column(name='t08_odd_feature_a22_irregular_weight',                       format='E5.3', array = gzdata['t08_odd_feature_a22_irregular_weight'])
+        col_t08_a22_fr = pyfits.Column(name='t08_odd_feature_a22_irregular_fraction',                     format='E5.3', array = gzdata['t08_odd_feature_a22_irregular_fraction'])
         col_t08_a22_wf = pyfits.Column(name='t08_odd_feature_a22_irregular_weighted_fraction',            format='E5.3', array = gzdata['t08_odd_feature_a22_irregular_weighted_fraction'])
         col_t08_a22_db = pyfits.Column(name='t08_odd_feature_a22_irregular_debiased',                     format='E5.3', array = adj_t08_a22)    
         col_t08_a22_fl = pyfits.Column(name='t08_odd_feature_a22_irregular_flag',                         format='I4', array = flag_t08_a22)  
         col_t08_a23_ct = pyfits.Column(name='t08_odd_feature_a23_other_count',                            format='I4', array = gzdata['t08_odd_feature_a23_other_count'])
-        col_t08_a23_wc = pyfits.Column(name='t08_odd_feature_a23_other_weight',                           format='I4', array = gzdata['t08_odd_feature_a23_other_count'])
-        col_t08_a23_fr = pyfits.Column(name='t08_odd_feature_a23_other_fraction',                         format='E5.3', array = gzdata['t08_odd_feature_a23_other_weighted_fraction'])
+        col_t08_a23_wc = pyfits.Column(name='t08_odd_feature_a23_other_weight',                           format='E5.3', array = gzdata['t08_odd_feature_a23_other_weight'])
+        col_t08_a23_fr = pyfits.Column(name='t08_odd_feature_a23_other_fraction',                         format='E5.3', array = gzdata['t08_odd_feature_a23_other_fraction'])
         col_t08_a23_wf = pyfits.Column(name='t08_odd_feature_a23_other_weighted_fraction',                format='E5.3', array = gzdata['t08_odd_feature_a23_other_weighted_fraction'])
         col_t08_a23_db = pyfits.Column(name='t08_odd_feature_a23_other_debiased',                         format='E5.3', array = adj_t08_a23)       
         col_t08_a23_fl = pyfits.Column(name='t08_odd_feature_a23_other_flag',                             format='I4', array = flag_t08_a23)     
         col_t08_a24_ct = pyfits.Column(name='t08_odd_feature_a24_merger_count',                           format='I4', array = gzdata['t08_odd_feature_a24_merger_count'])
-        col_t08_a24_wc = pyfits.Column(name='t08_odd_feature_a24_merger_weight',                          format='I4', array = gzdata['t08_odd_feature_a24_merger_count'])
-        col_t08_a24_fr = pyfits.Column(name='t08_odd_feature_a24_merger_fraction',                        format='E5.3', array = gzdata['t08_odd_feature_a24_merger_weighted_fraction'])
+        col_t08_a24_wc = pyfits.Column(name='t08_odd_feature_a24_merger_weight',                          format='E5.3', array = gzdata['t08_odd_feature_a24_merger_weight'])
+        col_t08_a24_fr = pyfits.Column(name='t08_odd_feature_a24_merger_fraction',                        format='E5.3', array = gzdata['t08_odd_feature_a24_merger_fraction'])
         col_t08_a24_wf = pyfits.Column(name='t08_odd_feature_a24_merger_weighted_fraction',               format='E5.3', array = gzdata['t08_odd_feature_a24_merger_weighted_fraction'])
         col_t08_a24_db = pyfits.Column(name='t08_odd_feature_a24_merger_debiased',                        format='E5.3', array = adj_t08_a24)     
         col_t08_a24_fl = pyfits.Column(name='t08_odd_feature_a24_merger_flag',                            format='I4', array = flag_t08_a24)   
         col_t08_a38_ct = pyfits.Column(name='t08_odd_feature_a38_dust_lane_count',                        format='I4', array = gzdata['t08_odd_feature_a38_dust_lane_count'])
-        col_t08_a38_wc = pyfits.Column(name='t08_odd_feature_a38_dust_lane_weight',                       format='I4', array = gzdata['t08_odd_feature_a38_dust_lane_count'])
-        col_t08_a38_fr = pyfits.Column(name='t08_odd_feature_a38_dust_lane_fraction',                     format='E5.3', array = gzdata['t08_odd_feature_a38_dust_lane_weighted_fraction'])
+        col_t08_a38_wc = pyfits.Column(name='t08_odd_feature_a38_dust_lane_weight',                       format='E5.3', array = gzdata['t08_odd_feature_a38_dust_lane_weight'])
+        col_t08_a38_fr = pyfits.Column(name='t08_odd_feature_a38_dust_lane_fraction',                     format='E5.3', array = gzdata['t08_odd_feature_a38_dust_lane_fraction'])
         col_t08_a38_wf = pyfits.Column(name='t08_odd_feature_a38_dust_lane_weighted_fraction',            format='E5.3', array = gzdata['t08_odd_feature_a38_dust_lane_weighted_fraction'])
         col_t08_a38_db = pyfits.Column(name='t08_odd_feature_a38_dust_lane_debiased',                     format='E5.3', array = adj_t08_a38)   
         col_t08_a38_fl = pyfits.Column(name='t08_odd_feature_a38_dust_lane_flag',                         format='I4', array = flag_t08_a38) 
 
         col_t09_a25_ct = pyfits.Column(name='t09_bulge_shape_a25_rounded_count',                  format='I4', array = gzdata['t09_bulge_shape_a25_rounded_count'])
-        col_t09_a25_wc = pyfits.Column(name='t09_bulge_shape_a25_rounded_weight',                 format='I4', array = gzdata['t09_bulge_shape_a25_rounded_count'])
-        col_t09_a25_fr = pyfits.Column(name='t09_bulge_shape_a25_rounded_fraction',               format='E5.3', array = gzdata['t09_bulge_shape_a25_rounded_weighted_fraction'])
+        col_t09_a25_wc = pyfits.Column(name='t09_bulge_shape_a25_rounded_weight',                 format='E5.3', array = gzdata['t09_bulge_shape_a25_rounded_weight'])
+        col_t09_a25_fr = pyfits.Column(name='t09_bulge_shape_a25_rounded_fraction',               format='E5.3', array = gzdata['t09_bulge_shape_a25_rounded_fraction'])
         col_t09_a25_wf = pyfits.Column(name='t09_bulge_shape_a25_rounded_weighted_fraction',      format='E5.3', array = gzdata['t09_bulge_shape_a25_rounded_weighted_fraction'])
         col_t09_a25_db = pyfits.Column(name='t09_bulge_shape_a25_rounded_debiased',               format='E5.3', array = adj_t09_a25)
         col_t09_a25_fl = pyfits.Column(name='t09_bulge_shape_a25_rounded_flag',                   format='I4', array = flag_t09_a25)
         col_t09_a26_ct = pyfits.Column(name='t09_bulge_shape_a26_boxy_count',                     format='I4', array = gzdata['t09_bulge_shape_a26_boxy_count'])
-        col_t09_a26_wc = pyfits.Column(name='t09_bulge_shape_a26_boxy_weight',                    format='I4', array = gzdata['t09_bulge_shape_a26_boxy_count'])
-        col_t09_a26_fr = pyfits.Column(name='t09_bulge_shape_a26_boxy_fraction',                  format='E5.3', array = gzdata['t09_bulge_shape_a26_boxy_weighted_fraction'])
+        col_t09_a26_wc = pyfits.Column(name='t09_bulge_shape_a26_boxy_weight',                    format='E5.3', array = gzdata['t09_bulge_shape_a26_boxy_weight'])
+        col_t09_a26_fr = pyfits.Column(name='t09_bulge_shape_a26_boxy_fraction',                  format='E5.3', array = gzdata['t09_bulge_shape_a26_boxy_fraction'])
         col_t09_a26_wf = pyfits.Column(name='t09_bulge_shape_a26_boxy_weighted_fraction',         format='E5.3', array = gzdata['t09_bulge_shape_a26_boxy_weighted_fraction'])
         col_t09_a26_db = pyfits.Column(name='t09_bulge_shape_a26_boxy_debiased',                  format='E5.3', array = adj_t09_a26)
         col_t09_a26_fl = pyfits.Column(name='t09_bulge_shape_a26_boxy_flag',                      format='I4', array = flag_t09_a26)
         col_t09_a27_ct = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_count',                 format='I4', array = gzdata['t09_bulge_shape_a27_no_bulge_count'])
-        col_t09_a27_wc = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_weight',                format='I4', array = gzdata['t09_bulge_shape_a27_no_bulge_count'])
-        col_t09_a27_fr = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_fraction',              format='E5.3', array = gzdata['t09_bulge_shape_a27_no_bulge_weighted_fraction'])
+        col_t09_a27_wc = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_weight',                format='E5.3', array = gzdata['t09_bulge_shape_a27_no_bulge_weight'])
+        col_t09_a27_fr = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_fraction',              format='E5.3', array = gzdata['t09_bulge_shape_a27_no_bulge_fraction'])
         col_t09_a27_wf = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_weighted_fraction',     format='E5.3', array = gzdata['t09_bulge_shape_a27_no_bulge_weighted_fraction'])
         col_t09_a27_db = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_debiased',              format='E5.3', array = adj_t09_a27)
         col_t09_a27_fl = pyfits.Column(name='t09_bulge_shape_a27_no_bulge_flag',                  format='I4', array = flag_t09_a27)
 
         col_t10_a28_ct = pyfits.Column(name='t10_arms_winding_a28_tight_count',                   format='I4', array = gzdata['t10_arms_winding_a28_tight_count'])
-        col_t10_a28_wc = pyfits.Column(name='t10_arms_winding_a28_tight_weight',                  format='I4', array = gzdata['t10_arms_winding_a28_tight_count'])
-        col_t10_a28_fr = pyfits.Column(name='t10_arms_winding_a28_tight_fraction',                format='E5.3', array = gzdata['t10_arms_winding_a28_tight_weighted_fraction'])
+        col_t10_a28_wc = pyfits.Column(name='t10_arms_winding_a28_tight_weight',                  format='E5.3', array = gzdata['t10_arms_winding_a28_tight_weight'])
+        col_t10_a28_fr = pyfits.Column(name='t10_arms_winding_a28_tight_fraction',                format='E5.3', array = gzdata['t10_arms_winding_a28_tight_fraction'])
         col_t10_a28_wf = pyfits.Column(name='t10_arms_winding_a28_tight_weighted_fraction',       format='E5.3', array = gzdata['t10_arms_winding_a28_tight_weighted_fraction'])
         col_t10_a28_db = pyfits.Column(name='t10_arms_winding_a28_tight_debiased',                format='E5.3', array = adj_t10_a28)
         col_t10_a28_fl = pyfits.Column(name='t10_arms_winding_a28_tight_flag',                    format='I4', array = flag_t10_a28)
         col_t10_a29_ct = pyfits.Column(name='t10_arms_winding_a29_medium_count',                  format='I4', array = gzdata['t10_arms_winding_a29_medium_count'])
-        col_t10_a29_wc = pyfits.Column(name='t10_arms_winding_a29_medium_weight',                 format='I4', array = gzdata['t10_arms_winding_a29_medium_count'])
-        col_t10_a29_fr = pyfits.Column(name='t10_arms_winding_a29_medium_fraction',               format='E5.3', array = gzdata['t10_arms_winding_a29_medium_weighted_fraction'])
+        col_t10_a29_wc = pyfits.Column(name='t10_arms_winding_a29_medium_weight',                 format='E5.3', array = gzdata['t10_arms_winding_a29_medium_weight'])
+        col_t10_a29_fr = pyfits.Column(name='t10_arms_winding_a29_medium_fraction',               format='E5.3', array = gzdata['t10_arms_winding_a29_medium_fraction'])
         col_t10_a29_wf = pyfits.Column(name='t10_arms_winding_a29_medium_weighted_fraction',      format='E5.3', array = gzdata['t10_arms_winding_a29_medium_weighted_fraction'])
         col_t10_a29_db = pyfits.Column(name='t10_arms_winding_a29_medium_debiased',               format='E5.3', array = adj_t10_a29)
         col_t10_a29_fl = pyfits.Column(name='t10_arms_winding_a29_medium_flag',                   format='I4', array = flag_t10_a29)
         col_t10_a30_ct = pyfits.Column(name='t10_arms_winding_a30_loose_count',                   format='I4', array = gzdata['t10_arms_winding_a30_loose_count'])
-        col_t10_a30_wc = pyfits.Column(name='t10_arms_winding_a30_loose_weight',                  format='I4', array = gzdata['t10_arms_winding_a30_loose_count'])
-        col_t10_a30_fr = pyfits.Column(name='t10_arms_winding_a30_loose_fraction',                format='E5.3', array = gzdata['t10_arms_winding_a30_loose_weighted_fraction'])
+        col_t10_a30_wc = pyfits.Column(name='t10_arms_winding_a30_loose_weight',                  format='E5.3', array = gzdata['t10_arms_winding_a30_loose_weight'])
+        col_t10_a30_fr = pyfits.Column(name='t10_arms_winding_a30_loose_fraction',                format='E5.3', array = gzdata['t10_arms_winding_a30_loose_fraction'])
         col_t10_a30_wf = pyfits.Column(name='t10_arms_winding_a30_loose_weighted_fraction',       format='E5.3', array = gzdata['t10_arms_winding_a30_loose_weighted_fraction'])
         col_t10_a30_db = pyfits.Column(name='t10_arms_winding_a30_loose_debiased',                format='E5.3', array = adj_t10_a30)
         col_t10_a30_fl = pyfits.Column(name='t10_arms_winding_a30_loose_flag',                    format='I4', array = flag_t10_a30)
 
         col_t11_a31_ct = pyfits.Column(name='t11_arms_number_a31_1_count',                        format='I4', array = gzdata['t11_arms_number_a31_1_count'])
-        col_t11_a31_wc = pyfits.Column(name='t11_arms_number_a31_1_weight',                       format='I4', array = gzdata['t11_arms_number_a31_1_count'])
-        col_t11_a31_fr = pyfits.Column(name='t11_arms_number_a31_1_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a31_1_weighted_fraction'])
+        col_t11_a31_wc = pyfits.Column(name='t11_arms_number_a31_1_weight',                       format='E5.3', array = gzdata['t11_arms_number_a31_1_weight'])
+        col_t11_a31_fr = pyfits.Column(name='t11_arms_number_a31_1_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a31_1_fraction'])
         col_t11_a31_wf = pyfits.Column(name='t11_arms_number_a31_1_weighted_fraction',            format='E5.3', array = gzdata['t11_arms_number_a31_1_weighted_fraction'])
         col_t11_a31_db = pyfits.Column(name='t11_arms_number_a31_1_debiased',                     format='E5.3', array = adj_t11_a31)    
         col_t11_a31_fl = pyfits.Column(name='t11_arms_number_a31_1_flag',                         format='I4', array = flag_t11_a31)  
         col_t11_a32_ct = pyfits.Column(name='t11_arms_number_a32_2_count',                        format='I4', array = gzdata['t11_arms_number_a32_2_count'])
-        col_t11_a32_wc = pyfits.Column(name='t11_arms_number_a32_2_weight',                       format='I4', array = gzdata['t11_arms_number_a32_2_count'])
-        col_t11_a32_fr = pyfits.Column(name='t11_arms_number_a32_2_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a32_2_weighted_fraction'])
+        col_t11_a32_wc = pyfits.Column(name='t11_arms_number_a32_2_weight',                       format='E5.3', array = gzdata['t11_arms_number_a32_2_weight'])
+        col_t11_a32_fr = pyfits.Column(name='t11_arms_number_a32_2_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a32_2_fraction'])
         col_t11_a32_wf = pyfits.Column(name='t11_arms_number_a32_2_weighted_fraction',            format='E5.3', array = gzdata['t11_arms_number_a32_2_weighted_fraction'])
         col_t11_a32_db = pyfits.Column(name='t11_arms_number_a32_2_debiased',                     format='E5.3', array = adj_t11_a32)  
         col_t11_a32_fl = pyfits.Column(name='t11_arms_number_a32_2_flag',                         format='I4', array = flag_t11_a32)
         col_t11_a33_ct = pyfits.Column(name='t11_arms_number_a33_3_count',                        format='I4', array = gzdata['t11_arms_number_a33_3_count'])
-        col_t11_a33_wc = pyfits.Column(name='t11_arms_number_a33_3_weight',                       format='I4', array = gzdata['t11_arms_number_a33_3_count'])
-        col_t11_a33_fr = pyfits.Column(name='t11_arms_number_a33_3_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a33_3_weighted_fraction'])
+        col_t11_a33_wc = pyfits.Column(name='t11_arms_number_a33_3_weight',                       format='E5.3', array = gzdata['t11_arms_number_a33_3_weight'])
+        col_t11_a33_fr = pyfits.Column(name='t11_arms_number_a33_3_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a33_3_fraction'])
         col_t11_a33_wf = pyfits.Column(name='t11_arms_number_a33_3_weighted_fraction',            format='E5.3', array = gzdata['t11_arms_number_a33_3_weighted_fraction'])
         col_t11_a33_db = pyfits.Column(name='t11_arms_number_a33_3_debiased',                     format='E5.3', array = adj_t11_a33)      
         col_t11_a33_fl = pyfits.Column(name='t11_arms_number_a33_3_flag',                         format='I4', array = flag_t11_a33)    
         col_t11_a34_ct = pyfits.Column(name='t11_arms_number_a34_4_count',                        format='I4', array = gzdata['t11_arms_number_a34_4_count'])
-        col_t11_a34_wc = pyfits.Column(name='t11_arms_number_a34_4_weight',                       format='I4', array = gzdata['t11_arms_number_a34_4_count'])
-        col_t11_a34_fr = pyfits.Column(name='t11_arms_number_a34_4_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a34_4_weighted_fraction'])
+        col_t11_a34_wc = pyfits.Column(name='t11_arms_number_a34_4_weight',                       format='E5.3', array = gzdata['t11_arms_number_a34_4_weight'])
+        col_t11_a34_fr = pyfits.Column(name='t11_arms_number_a34_4_fraction',                     format='E5.3', array = gzdata['t11_arms_number_a34_4_fraction'])
         col_t11_a34_wf = pyfits.Column(name='t11_arms_number_a34_4_weighted_fraction',            format='E5.3', array = gzdata['t11_arms_number_a34_4_weighted_fraction'])
         col_t11_a34_db = pyfits.Column(name='t11_arms_number_a34_4_debiased',                     format='E5.3', array = adj_t11_a34)    
         col_t11_a34_fl = pyfits.Column(name='t11_arms_number_a34_4_flag',                         format='I4', array = flag_t11_a34)  
         col_t11_a36_ct = pyfits.Column(name='t11_arms_number_a36_more_than_4_count',              format='I4', array = gzdata['t11_arms_number_a36_more_than_4_count'])
-        col_t11_a36_wc = pyfits.Column(name='t11_arms_number_a36_more_than_4_weight',             format='I4', array = gzdata['t11_arms_number_a36_more_than_4_count'])
-        col_t11_a36_fr = pyfits.Column(name='t11_arms_number_a36_more_than_4_fraction',           format='E5.3', array = gzdata['t11_arms_number_a36_more_than_4_weighted_fraction'])
+        col_t11_a36_wc = pyfits.Column(name='t11_arms_number_a36_more_than_4_weight',             format='E5.3', array = gzdata['t11_arms_number_a36_more_than_4_weight'])
+        col_t11_a36_fr = pyfits.Column(name='t11_arms_number_a36_more_than_4_fraction',           format='E5.3', array = gzdata['t11_arms_number_a36_more_than_4_fraction'])
         col_t11_a36_wf = pyfits.Column(name='t11_arms_number_a36_more_than_4_weighted_fraction',  format='E5.3', array = gzdata['t11_arms_number_a36_more_than_4_weighted_fraction'])
         col_t11_a36_db = pyfits.Column(name='t11_arms_number_a36_more_than_4_debiased',           format='E5.3', array = adj_t11_a36)       
         col_t11_a36_fl = pyfits.Column(name='t11_arms_number_a36_more_than_4_flag',               format='I4', array = flag_t11_a36)     
         col_t11_a37_ct = pyfits.Column(name='t11_arms_number_a37_cant_tell_count',                format='I4', array = gzdata['t11_arms_number_a37_cant_tell_count'])
-        col_t11_a37_wc = pyfits.Column(name='t11_arms_number_a37_cant_tell_weight',               format='I4', array = gzdata['t11_arms_number_a37_cant_tell_count'])
-        col_t11_a37_fr = pyfits.Column(name='t11_arms_number_a37_cant_tell_fraction',             format='E5.3', array = gzdata['t11_arms_number_a37_cant_tell_weighted_fraction'])
+        col_t11_a37_wc = pyfits.Column(name='t11_arms_number_a37_cant_tell_weight',               format='E5.3', array = gzdata['t11_arms_number_a37_cant_tell_weight'])
+        col_t11_a37_fr = pyfits.Column(name='t11_arms_number_a37_cant_tell_fraction',             format='E5.3', array = gzdata['t11_arms_number_a37_cant_tell_fraction'])
         col_t11_a37_wf = pyfits.Column(name='t11_arms_number_a37_cant_tell_weighted_fraction',    format='E5.3', array = gzdata['t11_arms_number_a37_cant_tell_weighted_fraction'])
         col_t11_a37_db = pyfits.Column(name='t11_arms_number_a37_cant_tell_debiased',             format='E5.3', array = adj_t11_a37)     
         col_t11_a37_fl = pyfits.Column(name='t11_arms_number_a37_cant_tell_flag',                 format='I4', array = flag_t11_a37)   
@@ -4595,7 +4414,7 @@ def make_tables(makefits=True,stripe82=False, depth='coadd2', photoz=False,latex
     
     return None
 
-def get_cat():
+def get_cat(photoz=False,stripe82=False,depth='normal',final_tables=False):
 
 
     """ Retrieve the saved GZ2 main sample catalog
@@ -4621,7 +4440,21 @@ def get_cat():
 
     """
 
-    p = pyfits.open(fits_path_main+'gz2table_debiased.fits')
+    if final_tables:
+        if stripe82:
+            p = pyfits.open(gz_path+'dr10/dr10_gz2_stripe82_%s.fits' % depth)
+        elif photoz:
+            p = pyfits.open(gz_path+'dr10/dr10_gz2_main_photoz.fits')
+        else:
+            p = pyfits.open(gz_path+'dr10/dr10_gz2_main_specz.fits')
+    else:
+        if stripe82:
+            p = pyfits.open(fits_path_main+'dr10/gz2_s82_%s_debiased.fits' % depth)
+        elif photoz:
+            p = pyfits.open(fits_path_main+'dr10/gz2_photoz_debiased.fits')
+        else:
+            p = pyfits.open(fits_path_main+'dr10/gz2_debiased.fits')
+
     gzdata = p[1].data
     p.close()
 
@@ -4702,11 +4535,12 @@ def which_file_str(arg):
     else:
         return ''
 
-"""
-ratos, dectos are adapted from https://code.google.com/p/agpy/source/browse/trunk/agpy/ratosexagesimal.py 
-"""
-
 def ra_deg_to_sex(ra):
+
+    """
+    ra_deg_to_sex, dec_deg_to_sex are adapted from https://code.google.com/p/agpy/source/browse/trunk/agpy/ratosexagesimal.py 
+    """
+
     r = ra/15.
     deg = r - (r % 1)
     deg -= (deg % 1)
@@ -4726,6 +4560,15 @@ def dec_deg_to_sex(dec):
     return decs
 
 def specobjid_cleanup():
+
+    """
+    Finds the best match for the multiple specobjIDs returned by a CasJobs search.
+    Needed to do final match for creating FITS tables w/correct specobjID. 
+
+    Shouldn't be any galaxies missing specobjIDs in the final table, since Steven's SQL
+    code indicated that they all have spectra. Either track down bug in my code or
+    ask him to supply them to me directly.
+    """
 
     f1 = fits_path_main+'gz2_specobjid_z_duplicate.fits'
     
