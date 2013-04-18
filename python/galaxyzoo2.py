@@ -2814,7 +2814,7 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
 
     """
 
-    fig = plt.figure(13)
+    fig = plt.figure(13,figsize=(16,10))
     fig.clf()
 
     titlenames = ('Smooth or features','Edge-on','Bar', 'Spiral structure','Bulge prominence','Odd',
@@ -2877,11 +2877,12 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
                        interpolation='nearest',
                        origin='lower'
                        )
-        ax.set_title(titlenames[idx])
+        ax.text(-16,14,titlenames[idx],horizontalalignment='right',color='w',fontsize=14)
+        ax.text(-16,12.5,'Task '+'%02i'%(idx+1),horizontalalignment='right',color='w',fontsize=14)
         if idx in bottom_plot:
-            ax.set_xlabel(r'$M_r [mag]$',fontsize=16)
+            ax.set_xlabel(r'$M_r [mag]$',fontsize=16,weight='bold')
         if idx in left_plot:
-            ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22)
+            ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22,weight='bold')
         ax.set_aspect('auto')
         rc(('xtick','ytick'), labelsize=12)
         """
@@ -2901,8 +2902,9 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
 
 
     fig.tight_layout()
-    cb = plt.colorbar(im,orientation='vertical')
-    cb.set_label(r'$%s(N_{%s}/N_{%s})$' % (label_prefix,task_dict['var_str'][0],task_dict['var_str'][1]),fontsize=16)
+    cax = fig.add_axes([0.77,0.15,0.20,0.05])
+    cb = plt.colorbar(im,cax,orientation='horizontal')
+    cb.set_label('log'+r'$_{10} (f_1/f_2)$' ,fontsize=16)
     fig.savefig(paper_figures_path+'gz2_%sbaselines.eps' % file_str, dpi=200)
 
     return None
@@ -2933,6 +2935,15 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal
 
     Notes
     -------
+
+    Legend does not play well with tight_fit. To make papers for figure:
+
+        comment out legend line and run
+        adjust plot window to appropriate size
+        run again
+        comment out tight_fit line
+        uncomment legend line
+        run for a third time
 
 
     """
@@ -3010,7 +3021,8 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal
         ax1.axvline(zlo, color='k', linestyle='--')
         ax1.axvline(zhi, color='k', linestyle='--')
 
-#        plt.legend(legend_raw_str, 'upper right', shadow=True, fancybox=True, prop=font)
+        font.set_size('small')
+        plt.legend([s[4:] for s in legend_raw_str], 'upper right', shadow=True, fancybox=True, prop=font)
 
         ax1.set_xlim(-0.01,0.19)
         ax1.set_ylim(-0.01,1.01)
@@ -3395,7 +3407,7 @@ def plot_confidence_measures(task_dict,stripe82=False,depth='normal'):
 
     return None 
 
-def gz1_comparison():
+def gz1_comparison(plothist=True,plottrumpet=True,verbose=True):
 
     """ Compare the GZ1 and GZ2 results for consistency
 
@@ -3444,75 +3456,94 @@ def gz1_comparison():
     data1_el_clean = (gz1_raw_el >= 0.8) & (gz2_raw_el >= 0.8)
     data1_sp_clean = (gz1_raw_sp >= 0.8) & (gz2_raw_sp >= 0.8)
 
-    fig = plt.figure(17)
-    fig.clf()
+    if plothist:
+        fig = plt.figure(17)
+        fig.clf()
 
-    ax1 = fig.add_subplot(121)
-    histML(data1_el, bins=25, ax=ax1, histtype='step', color='r',weights=np.zeros_like(data1_el) + 1./data1_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-    histML(data1_sp, bins=25, ax=ax1, histtype='step', color='b',weights=np.zeros_like(data1_sp) + 1./data1_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-    histML(data1_el[data1_el_clean], bins=25, ax=ax1, histtype='step', color='r',weights=np.zeros_like(data1_el[data1_el_clean]) + 1./data1_el[data1_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-    histML(data1_sp[data1_sp_clean], bins=25, ax=ax1, histtype='step', color='b',weights=np.zeros_like(data1_sp[data1_sp_clean]) + 1./data1_sp[data1_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-    ax1.set_xlabel(r'$f_{GZ1} - f_{GZ2}$')
-    ax1.set_ylabel('fraction of total sample')
-    ax1.set_xlim(-1.0,1.0)
-    ax1.set_ylim(0,0.5)
-    ax1.set_title('raw votes')
+        ax1 = fig.add_subplot(211)
+        histML(data1_el, bins=25, ax=ax1, histtype='step', color='r',weights=np.zeros_like(data1_el) + 1./data1_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
+        histML(data1_sp, bins=25, ax=ax1, histtype='step', color='b',weights=np.zeros_like(data1_sp) + 1./data1_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
+        histML(data1_el[data1_el_clean], bins=25, ax=ax1, histtype='step', color='r',weights=np.zeros_like(data1_el[data1_el_clean]) + 1./data1_el[data1_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
+        histML(data1_sp[data1_sp_clean], bins=25, ax=ax1, histtype='step', color='b',weights=np.zeros_like(data1_sp[data1_sp_clean]) + 1./data1_sp[data1_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
+        ax1.set_xlabel(r'$f_{GZ1} - f_{GZ2}$')
+        ax1.set_ylabel('fraction of total sample')
+        ax1.set_xlim(-1.0,1.0)
+        ax1.set_ylim(0,0.5)
+        ax1.text(-0.9,0.45,'raw',fontsize='medium', weight='bold')
+        #ax1.set_title('raw votes')
 
-    plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True)
-    
-    ax2 = fig.add_subplot(122)
-    data2_el = gz1_adj_el - gz2_adj_el
-    data2_sp = gz1_adj_sp - gz2_adj_sp
-    data2_el_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
-    data2_sp_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
-    histML(data2_el, bins=25, ax=ax2, histtype='step', color='r',weights=np.zeros_like(data2_el) + 1./data2_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-    histML(data2_sp, bins=25, ax=ax2, histtype='step', color='b',weights=np.zeros_like(data2_sp) + 1./data2_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-    histML(data2_el[data2_el_clean], bins=25, ax=ax2, histtype='step', color='r',weights=np.zeros_like(data2_el[data2_el_clean]) + 1./data2_el[data2_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-    histML(data2_sp[data2_sp_clean], bins=25, ax=ax2, histtype='step', color='b',weights=np.zeros_like(data2_sp[data2_sp_clean]) + 1./data2_sp[data2_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-    ax2.set_xlabel(r'$p_{GZ1} - p_{GZ2}$')
-    ax2.set_ylabel('fraction of total sample')
-    ax2.set_xlim(-1.0,1.0)
-    ax2.set_ylim(0,0.5)
-    ax2.set_title('debiased votes')
-    
-    plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True)
+        legfont = FontProperties()
+        legfont.set_size('small')
 
-    fig.savefig(paper_figures_path+'gz1_gz2.eps', dpi=200)
+        plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+        
+        ax2 = fig.add_subplot(212)
+        data2_el = gz1_adj_el - gz2_adj_el
+        data2_sp = gz1_adj_sp - gz2_adj_sp
+        data2_el_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
+        data2_sp_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
+        histML(data2_el, bins=25, ax=ax2, histtype='step', color='r',weights=np.zeros_like(data2_el) + 1./data2_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
+        histML(data2_sp, bins=25, ax=ax2, histtype='step', color='b',weights=np.zeros_like(data2_sp) + 1./data2_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
+        histML(data2_el[data2_el_clean], bins=25, ax=ax2, histtype='step', color='r',weights=np.zeros_like(data2_el[data2_el_clean]) + 1./data2_el[data2_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
+        histML(data2_sp[data2_sp_clean], bins=25, ax=ax2, histtype='step', color='b',weights=np.zeros_like(data2_sp[data2_sp_clean]) + 1./data2_sp[data2_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
+        ax2.set_xlabel(r'$p_{GZ1} - p_{GZ2}$')
+        ax2.set_ylabel('fraction of total sample')
+        ax2.set_xlim(-1.0,1.0)
+        ax2.set_ylim(0,0.5)
+        ax2.text(-0.9,0.45,'debiased',fontsize='medium', weight='bold')
+        #ax2.set_title('debiased votes')
+        
+        plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+
+        fig.tight_layout()
+        fig.savefig(paper_figures_path+'gz1_gz2.eps', dpi=200)
 
     # Try Steven's "trumpet-style" plot
 
-    fig = plt.figure(18,(10,5))
-    fig.clf()
+    if plottrumpet:
+        fig = plt.figure(18,(10,5))
+        fig.clf()
 
-    ax1 = fig.add_subplot(121)
-    H, xedges, yedges = np.histogram2d(gz1_raw_sp - gz2_raw_sp, gz1_raw_sp, 
-                                       range=[[-1., 1.], [0., 1.]], bins=(50, 50))
-    xcens = xedges[:-1] + (xedges[1]-xedges[0])/2.
-    ycens = yedges[:-1] + (yedges[1]-yedges[0])/2.
-    CS = plt.contourf(xcens,ycens,np.log10(H).T,15,cmap=plt.cm.rainbow)
-    #cb = plt.colorbar(CS,orientation='vertical')
-    #cb.set_label('log '+r'$N_{gal}$',fontsize=16)
-    ax1.set_xlabel(r'$f_{GZ1} - f_{GZ2}$',fontsize=20)
-    ax1.set_ylabel(r'$f_{sp,GZ1}$',fontsize=20)
-    ax1.set_xlim(-1,1)
-    ax1.set_ylim(0,1)
-    ax1.set_title('raw votes')
+        plotheight = 0.38
 
-    ax3 = fig.add_subplot(122)
-    H, xedges, yedges = np.histogram2d(gz1_adj_sp - gz2_adj_sp, gz1_adj_sp, 
-                                       range=[[-1., 1.], [0., 1.]], bins=(50, 50))
-    xcens = xedges[:-1] + (xedges[1]-xedges[0])/2.
-    ycens = yedges[:-1] + (yedges[1]-yedges[0])/2.
-    CS = plt.contourf(xcens,ycens,np.log10(H).T,15,cmap=plt.cm.rainbow)
-    cb = plt.colorbar(CS,orientation='vertical')
-    cb.set_label('log '+r'$N_{gal}$',fontsize=16)
-    ax3.set_xlabel(r'$f_{GZ1} - f_{GZ2}$',fontsize=20)
-    ax3.set_ylabel(r'$f_{sp,GZ1}$',fontsize=20)
-    ax3.set_ylim(0,1)
-    ax3.set_xlim(-1,1)
-    ax3.set_title('adj votes')
+        #ax1 = fig.add_subplot(211)
+        #ax1 = fig.add_axes([0.08,0.20,0.4,0.75])
+        ax1 = fig.add_axes([0.15,0.59,0.8,plotheight])
+        H, xedges, yedges = np.histogram2d(gz1_raw_sp - gz2_raw_sp, gz1_raw_sp, 
+                                           range=[[-1., 1.], [0., 1.]], bins=(50, 50))
+        xcens = xedges[:-1] + (xedges[1]-xedges[0])/2.
+        ycens = yedges[:-1] + (yedges[1]-yedges[0])/2.
+        CS = plt.contourf(xcens,ycens,np.log10(H).T,15,cmap=plt.cm.rainbow)
+        #cb = plt.colorbar(CS,orientation='horizontal')
+        #cb.set_label('log '+r'$N_{gal}$',fontsize=14)
+        ax1.set_xlabel(r'$f_{GZ1} - f_{GZ2}$',fontsize=20)
+        ax1.set_ylabel(r'$f_{sp,GZ1}$',fontsize=20)
+        ax1.set_xlim(-1,1)
+        ax1.set_ylim(0,1)
+        ax1.text(-0.9,0.9,'raw',fontsize='medium', weight='bold')
+        #ax1.set_title('raw votes')
 
-    fig.savefig(paper_figures_path+'gz1_gz2_trumpet.eps', dpi=200)
+        #ax3 = fig.add_subplot(212)
+        #ax3 = fig.add_axes([0.58,0.20,0.4,0.75])
+        ax3 = fig.add_axes([0.15,0.14,0.8,plotheight])
+        H, xedges, yedges = np.histogram2d(gz1_adj_sp - gz2_adj_sp, gz1_adj_sp, 
+                                           range=[[-1., 1.], [0., 1.]], bins=(50, 50))
+        xcens = xedges[:-1] + (xedges[1]-xedges[0])/2.
+        ycens = yedges[:-1] + (yedges[1]-yedges[0])/2.
+        CS = plt.contourf(xcens,ycens,np.log10(H).T,15,cmap=plt.cm.rainbow)
+        ax3.set_xlabel(r'$p_{GZ1} - p_{GZ2}$',fontsize=20)
+        ax3.set_ylabel(r'$p_{sp,GZ1}$',fontsize=20)
+        ax3.set_ylim(0,1)
+        ax3.set_xlim(-1,1)
+        ax3.text(-0.9,0.9,'debiased',fontsize='medium', weight='bold')
+        #ax3.set_title('debiased votes')
+
+        #cax = fig.add_axes([0.08,0.07,0.9,0.025])
+        cax = fig.add_axes([0.08,0.06,0.9,0.015])
+        cb = plt.colorbar(CS,cax,orientation='horizontal')
+        cb.set_label('log '+r'$N_{gal}$',fontsize=14)
+        #fig.tight_layout()
+        fig.savefig(paper_figures_path+'gz1_gz2_trumpet.eps', dpi=200)
 
     gz1_el_clean_flag = (data['ELLIPTICAL'] == 1)
     gz1_el_clean_prob = (gz1_adj_el >= 0.8)
@@ -3552,47 +3583,48 @@ def gz1_comparison():
     prob_great_adj_mg = (gz2_adj_mg[gz1_mg_clean_prob] >= 0.25)
 
 
-    print ' '
-    print '%6i elliptical galaxies flagged in GZ1 sample.' % np.sum(gz1_el_clean_flag)
-    print '   %5i (%4.1f) have raw      f_el > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_raw_el),np.sum(flag_clean_raw_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_el > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_adj_el),np.sum(flag_clean_adj_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_el > 0.5 in the GZ2 sample.' % (np.sum(flag_great_raw_el),np.sum(flag_great_raw_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_el > 0.5 in the GZ2 sample.' % (np.sum(flag_great_adj_el),np.sum(flag_great_adj_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
-    print '%6i elliptical galaxies with p_el > 0.8 in GZ1 sample.' % np.sum(gz1_el_clean_prob)
-    print '   %5i (%4.1f) have raw      f_el > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_raw_el),np.sum(prob_clean_raw_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_el > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_adj_el),np.sum(prob_clean_adj_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_el > 0.5 in the GZ2 sample.' % (np.sum(prob_great_raw_el),np.sum(prob_great_raw_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_el > 0.5 in the GZ2 sample.' % (np.sum(prob_great_adj_el),np.sum(prob_great_adj_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
-    print ' '
-    print ' '
-    print '%6i spiral galaxies flagged in GZ1 sample.' % np.sum(gz1_sp_clean_flag)
-    print '   %5i (%4.1f) have raw      f_fd > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_raw_fd),np.sum(flag_clean_raw_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_fd > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_adj_fd),np.sum(flag_clean_adj_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_fd > 0.5 in the GZ2 sample.' % (np.sum(flag_great_raw_fd),np.sum(flag_great_raw_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_fd > 0.5 in the GZ2 sample.' % (np.sum(flag_great_adj_fd),np.sum(flag_great_adj_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '%6i spiral galaxies with p_cs > 0.8 in GZ1 sample.' % np.sum(gz1_sp_clean_prob)
-    print '   %5i (%4.1f) have raw      f_fd > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_raw_fd),np.sum(prob_clean_raw_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_fd > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_adj_fd),np.sum(prob_clean_adj_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_fd > 0.5 in the GZ2 sample.' % (np.sum(prob_great_raw_fd),np.sum(prob_great_raw_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_fd > 0.5 in the GZ2 sample.' % (np.sum(prob_great_adj_fd),np.sum(prob_great_adj_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print ' '
-    print '%6i spiral galaxies flagged in GZ1 sample.' % np.sum(gz1_sp_clean_flag)
-    print '   %5i (%4.1f) have raw      f_sp > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_raw_sp),np.sum(flag_clean_raw_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_sp > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_adj_sp),np.sum(flag_clean_adj_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_sp > 0.5 in the GZ2 sample.' % (np.sum(flag_great_raw_sp),np.sum(flag_great_raw_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_sp > 0.5 in the GZ2 sample.' % (np.sum(flag_great_adj_sp),np.sum(flag_great_adj_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
-    print '%6i spiral galaxies with p_cs > 0.8 in GZ1 sample.' % np.sum(gz1_sp_clean_prob)
-    print '   %5i (%4.1f) have raw      f_sp > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_raw_sp),np.sum(prob_clean_raw_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_sp > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_adj_sp),np.sum(prob_clean_adj_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_sp > 0.5 in the GZ2 sample.' % (np.sum(prob_great_raw_sp),np.sum(prob_great_raw_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_sp > 0.5 in the GZ2 sample.' % (np.sum(prob_great_adj_sp),np.sum(prob_great_adj_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
-    print ' '
-    print '%6i mergers with p_mg > 0.6 in GZ1 sample.' % np.sum(gz1_mg_clean_prob)
-    print '   %5i (%4.1f) have raw      f_mg > 0.50 in the GZ2 sample.' % (np.sum(prob_clean_raw_mg),np.sum(prob_clean_raw_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_mg > 0.50 in the GZ2 sample.' % (np.sum(prob_clean_adj_mg),np.sum(prob_clean_adj_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have raw      f_mg > 0.25 in the GZ2 sample.' % (np.sum(prob_great_raw_mg),np.sum(prob_great_raw_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
-    print '   %5i (%4.1f) have debiased p_mg > 0.25 in the GZ2 sample.' % (np.sum(prob_great_adj_mg),np.sum(prob_great_adj_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
-    print ' '
+    if verbose:
+        print ' '
+        print '%6i elliptical galaxies flagged in GZ1 sample.' % np.sum(gz1_el_clean_flag)
+        print '   %5i (%4.1f) have raw      f_el > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_raw_el),np.sum(flag_clean_raw_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_el > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_adj_el),np.sum(flag_clean_adj_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_el > 0.5 in the GZ2 sample.' % (np.sum(flag_great_raw_el),np.sum(flag_great_raw_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_el > 0.5 in the GZ2 sample.' % (np.sum(flag_great_adj_el),np.sum(flag_great_adj_el,dtype=float)/np.sum(gz1_el_clean_flag,dtype=float)*100)
+        print '%6i elliptical galaxies with p_el > 0.8 in GZ1 sample.' % np.sum(gz1_el_clean_prob)
+        print '   %5i (%4.1f) have raw      f_el > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_raw_el),np.sum(prob_clean_raw_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_el > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_adj_el),np.sum(prob_clean_adj_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_el > 0.5 in the GZ2 sample.' % (np.sum(prob_great_raw_el),np.sum(prob_great_raw_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_el > 0.5 in the GZ2 sample.' % (np.sum(prob_great_adj_el),np.sum(prob_great_adj_el,dtype=float)/np.sum(gz1_el_clean_prob,dtype=float)*100)
+        print ' '
+        print ' '
+        print '%6i spiral galaxies flagged in GZ1 sample.' % np.sum(gz1_sp_clean_flag)
+        print '   %5i (%4.1f) have raw      f_fd > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_raw_fd),np.sum(flag_clean_raw_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_fd > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_adj_fd),np.sum(flag_clean_adj_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_fd > 0.5 in the GZ2 sample.' % (np.sum(flag_great_raw_fd),np.sum(flag_great_raw_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_fd > 0.5 in the GZ2 sample.' % (np.sum(flag_great_adj_fd),np.sum(flag_great_adj_fd,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '%6i spiral galaxies with p_cs > 0.8 in GZ1 sample.' % np.sum(gz1_sp_clean_prob)
+        print '   %5i (%4.1f) have raw      f_fd > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_raw_fd),np.sum(prob_clean_raw_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_fd > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_adj_fd),np.sum(prob_clean_adj_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_fd > 0.5 in the GZ2 sample.' % (np.sum(prob_great_raw_fd),np.sum(prob_great_raw_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_fd > 0.5 in the GZ2 sample.' % (np.sum(prob_great_adj_fd),np.sum(prob_great_adj_fd,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print ' '
+        print '%6i spiral galaxies flagged in GZ1 sample.' % np.sum(gz1_sp_clean_flag)
+        print '   %5i (%4.1f) have raw      f_sp > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_raw_sp),np.sum(flag_clean_raw_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_sp > 0.8 in the GZ2 sample.' % (np.sum(flag_clean_adj_sp),np.sum(flag_clean_adj_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_sp > 0.5 in the GZ2 sample.' % (np.sum(flag_great_raw_sp),np.sum(flag_great_raw_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_sp > 0.5 in the GZ2 sample.' % (np.sum(flag_great_adj_sp),np.sum(flag_great_adj_sp,dtype=float)/np.sum(gz1_sp_clean_flag,dtype=float)*100)
+        print '%6i spiral galaxies with p_cs > 0.8 in GZ1 sample.' % np.sum(gz1_sp_clean_prob)
+        print '   %5i (%4.1f) have raw      f_sp > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_raw_sp),np.sum(prob_clean_raw_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_sp > 0.8 in the GZ2 sample.' % (np.sum(prob_clean_adj_sp),np.sum(prob_clean_adj_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_sp > 0.5 in the GZ2 sample.' % (np.sum(prob_great_raw_sp),np.sum(prob_great_raw_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_sp > 0.5 in the GZ2 sample.' % (np.sum(prob_great_adj_sp),np.sum(prob_great_adj_sp,dtype=float)/np.sum(gz1_sp_clean_prob,dtype=float)*100)
+        print ' '
+        print '%6i mergers with p_mg > 0.6 in GZ1 sample.' % np.sum(gz1_mg_clean_prob)
+        print '   %5i (%4.1f) have raw      f_mg > 0.50 in the GZ2 sample.' % (np.sum(prob_clean_raw_mg),np.sum(prob_clean_raw_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_mg > 0.50 in the GZ2 sample.' % (np.sum(prob_clean_adj_mg),np.sum(prob_clean_adj_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have raw      f_mg > 0.25 in the GZ2 sample.' % (np.sum(prob_great_raw_mg),np.sum(prob_great_raw_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
+        print '   %5i (%4.1f) have debiased p_mg > 0.25 in the GZ2 sample.' % (np.sum(prob_great_adj_mg),np.sum(prob_great_adj_mg,dtype=float)/np.sum(gz1_mg_clean_prob,dtype=float)*100)
+        print ' '
 
     return None
 
@@ -4620,3 +4652,52 @@ def specobjid_cleanup():
     hdulist.writeto(fits_path_main+'gz2_best_specobj.fits',clobber=True)    
 
     return None
+
+def classification_histogram():
+
+    datafile_main = gz2_maglim_data_file
+    datafile_s82_normal = s82_dict['normal']['file']
+    datafile_s82_coadd1 = s82_dict['coadd1']['file']
+    datafile_s82_coadd2 = s82_dict['coadd2']['file']
+
+    p = pyfits.open(datafile_main)
+    main = p[1].data
+    p.close()
+
+    p = pyfits.open(datafile_s82_normal)
+    normal = p[1].data
+    p.close()
+
+    p = pyfits.open(datafile_s82_coadd1)
+    coadd1 = p[1].data
+    p.close()
+
+    p = pyfits.open(datafile_s82_coadd2)
+    coadd2 = p[1].data
+    p.close()
+
+    data_main = main['t01_smooth_or_features_total_count']
+    data_normal = normal['t01_smooth_or_features_total_count']
+    data_coadd1 = coadd1['t01_smooth_or_features_total_count']
+    data_coadd2 = coadd2['t01_smooth_or_features_total_count']
+
+    fig = plt.figure(19)
+    fig.clf()
+    ax = fig.add_subplot(111)
+    bintype = 40
+    histML(data_main,   bins=bintype, ax=ax, histtype='step', lw=3, color='Orange',weights=np.zeros_like(data_main)   + 1./data_main.size,   range=(0,80))
+    histML(data_normal, bins=bintype, ax=ax, histtype='step', lw=3, color='b',weights=np.zeros_like(data_normal) + 1./data_normal.size, range=(0,80))
+    histML(data_coadd1, bins=bintype, ax=ax, histtype='step', lw=3, color='m',weights=np.zeros_like(data_coadd1) + 1./data_coadd1.size, range=(0,80))
+    histML(data_coadd2, bins=bintype, ax=ax, histtype='step', lw=3, color='g',weights=np.zeros_like(data_coadd2) + 1./data_coadd2.size, range=(0,80))
+    ax.set_xlabel('classification count')
+    ax.set_ylabel('fraction')
+
+    legfont = FontProperties()
+    legfont.set_size('small')
+    plt.legend(('main','stripe82_normal','stripe82_coadd1','stripe82_coadd2'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+    
+    fig.tight_layout()
+    fig.savefig(paper_figures_path+'classification_histogram.eps', dpi=200)
+
+    return None
+

@@ -177,7 +177,7 @@ f(x)=\text{asinh}(\alpha Q x)/Q
 
 The first set of coadded images were visually very different from the normal SDSS images. Maximising the visibility of faint features, however, resulted in more prominent background sky noise; since each pixel is typically dominated by a single band, the background is often brightly coloured by the \citet{lup04} algorithm. Due to concerns that this would make it obvious that images were from deeper data and potentially affect morphological classifications, we created a second set of coadd images in which the colour of background pixels was removed. This was achieved by reducing the colour saturation of pixels outside of a ``soft-edged'' object mask. 
 
-The original and desaturated coadd image sets are labeled ``stripe82\_coadd\_1'' and ``stripe82\_coadd\_2'', respectively (Table~\ref{tbl-sample}). Analysis of the coadded images showed later showed some systematic differences between the two sets of classifications (see Section~\ref{ssec-s82}). 
+The original and desaturated coadd image sets are labeled ``stripe82\_coadd\_1'' and ``stripe82\_coadd\_2'', respectively (Table~\ref{tbl-sample}). Analysis of the coadded images only slight differences between the two sets of classifications (see Section~\ref{ssec-s82}). 
 
 \subsection{Decision tree}\label{ssec-decision_tree}
 
@@ -262,7 +262,13 @@ Data from the classifications were stored in a live Structured Query Language (S
 
 Galaxy~Zoo~2 was launched on 2009-02-16 with the ``original'' sample of 245,609 images. The ``extra'' galaxies from the Legacy survey were added on 2009-09-02. The normal-depth and first coadded Stripe~82 images were mostly added on 2009-09-02, with an additional $\sim7700$ of the coadded images added on 2010-09-24. Finally, the second version of the coadded images were added to the site on 2009-11-04. 
 
-For most of the duration of Galaxy~Zoo~2, images shown to classifiers were selected from the database in a random order. We wanted to ensure, however, that each galaxy ultimately had enough classifications to accurately measure its uncertainty. Therefore, in the final period of Galaxy~Zoo~2, accompanied by a competition with a running tally (dubbed the Zoonometer), objects with low numbers of classifications were shown to users at a higher rate. The ``stripe82\_coadd\_1'' sample was removed from the site at this time. The main sample galaxies finished with a median of 44 classifications; the minimum was 16 classifications, and $>99.9\%$ of the sample had at least 28. The ``stripe82\_coadd\_2'' galaxies had a median of 21 classifications and $>99.9\%$ had at least 10 (Table~\ref{tbl-sample}).
+For most of the duration of Galaxy~Zoo~2, images shown to classifiers were selected from the database in a random order. We wanted to ensure, however, that each galaxy ultimately had enough classifications to accurately measure its uncertainty. Therefore, in the final period of Galaxy~Zoo~2, accompanied by a competition with a running tally (dubbed the Zoonometer), objects with low numbers of classifications were shown to users at a higher rate. The ``stripe82\_coadd\_1'' sample was removed from the site at this time. The main sample galaxies finished with a median of 44 classifications; the minimum was 16 classifications, and $>99.9\%$ of the sample had at least 28. The ``stripe82\_coadd\_2'' galaxies had a median of 21 classifications and $>99.9\%$ had at least 10 (Figure~\ref{fig-classification_histogram}).
+
+\begin{figure}
+\includegraphics[angle=0,width=3.5in]{figures/classification_histogram.eps}
+\caption{Distribution of the number of classifications for the sub-samples within GZ2.
+\label{fig-classification_histogram}}
+\end{figure}
 
 The last GZ2 classifications were collected on 2010-04-29, with the project spanning just over 14~months. The archived site continued to be maintained, but classifications were no longer recorded. The final dataset contained 16,340,298 classifications (comprising a total of 58,719,719 tasks) by 83,943 volunteers.
 
@@ -310,7 +316,7 @@ In a small percentage of cases, an individual user may classify the same object 
 
 \subsection{Consistency and invididual user weighting}\label{ssec-consistency}
 
-The next step in reducing the data is to remove the influence of unreliable users. To do so we applied an iterative weighting scheme, similar to that used for GZ1, but adjusted to account for questions for which more than two answers are possible. First, we calculated the vote fraction ($f_r = n_{r}/n_{task}$) for every response to every task for every object, weighting each user's vote equally. Here, $n_r$ is the number of votes for a given response and $n_{task}$ is the total number of votes for that task. Each vote is compared to the vote fraction to calculate a user's consistency $\kappa$:
+The next step in reducing the data is to reduce the influence of unreliable classifiers. To do so we applied an iterative weighting scheme, similar to that used for GZ1, but adjusted to account for questions for which more than two answers are possible. First, we calculated the vote fraction ($f_r = n_{r}/n_{t}$) for every response to every task for every galaxy, weighting each user's vote equally. Here, $n_r$ is the number of votes for a given response and $n_{t}$ is the total number of votes for that task. Each vote is compared to the vote fraction to calculate a user's consistency $\kappa$:
 
 \begin{equation}
 \kappa = \frac{1}{N_r}\sum_i{\kappa_i},
@@ -341,7 +347,7 @@ For example, if a question has three possible responses, and the galaxy correspo
 \label{fig-consistency}}
 \end{figure}
 
-Each user was assigned a consistency ($\bar{\kappa}$) by taking the mean consistency of every response. From the distribution of results for the initial iteration of $\kappa$ (Figure~\ref{fig-consistency}), we chose a weighting function that down-weighted users in the tail of low consistency:
+Each user was assigned a consistency ($\bar{\kappa}$) by taking the mean consistency of every response. From the distribution of results for the initial iteration (Figure~\ref{fig-consistency}), we chose a weighting function that down-weighted users in the tail of low consistency:
 
 \begin{equation}
 w = \min \left(1.0,(\bar{\kappa} / 0.6)^{8.5} \right)
@@ -383,8 +389,8 @@ For a galaxy to be used in deriving a correction, we therefore require both a mi
 \\ 
 \multicolumn{1}{l}{} &
 \multicolumn{1}{l}{tasks} &
-\multicolumn{1}{c}{$N_{vote}=10$} &
-\multicolumn{1}{c}{$N_{vote}=20$}
+\multicolumn{1}{c}{$n_{t}\geq10$} &
+\multicolumn{1}{c}{$n_{t}\geq20$}
 \\ 
 \hline					
 01                      & --        & --        & --        \\
@@ -526,20 +532,11 @@ Since the redshift can have a strong effect on classification bias, we separate 
 
 \subsection{Stripe~82}\label{ssec-s82}
 
-The distribution of votes for the main sample is similar enough to that of the Stripe~82 normal-depth imaging (with $m_r<17.0$) that the same bias correction applies for both. Table~\ref{tbl-stripe82compare} shows the tasks in the GZ2 question tree and the mean vote fraction for each response. The distributions of vote fractions for both the main sample and Stripe~82 galaxies are quite similar, with the difference in the mean varying by $<10\%$ for almost all responses. The only exceptions to this similarity are for responses that target rare objects (and thus are subject to higher variance for low-number statistics), such as dust lanes, rings, and high-multiplicity spiral arms. 
+The distribution of votes for the main sample is similar enough to that of the Stripe~82 normal-depth imaging (with $m_r<17.0$) that the same bias correction applies for both. The distributions of vote fractions for both the main sample and Stripe~82 galaxies are quite similar, with the difference in the mean varying by $<10\%$ for almost all responses. The only exceptions to this similarity are for responses that target rare objects (and thus are subject to higher variance for low-number statistics), such as dust lanes, rings, and high-multiplicity spiral arms. 
+
+%Table~\ref{tbl-stripe82compare} shows the mean vote fractions for the Stripe~82 normal and coadded image data.
 
 The right panel of Figure~\ref{fig-task01} shows that the vote fractions also behave similarly as a function of redshift, particularly in the $0.01<z<0.08$ range covered by the GZ1 debiasing technique. The type fractions as a function of redshift for both the Stripe~82 normal depth and the rest of the GZ2 main sample are very similar; this is not the case, however, for the coadded Stripe~82 data. For Task~01, fewer galaxies are classified as robustly smooth (above the 0.8 threshold), moving instead to the ``unclassified'' category. Coadded data also showed higher fractions of galaxies with bars and for possessing visible spiral structure. A possible cause for this is that the new image pipeline in the coadded data allows viewers to see faint features or disks, due to improved seeing \citep[from $1.4\arcsec$ to $1.1\arcsec$;][]{ann11} and higher signal-to-noise in the coadded images.
-
-%What needs to be done:
-%\begin{itemize}
-%	\item Verify that the normal-depth Stripe~82 vote fractions are similar to the original + extra samples. {\bf Yes.} 
-%	\item See whether co-added images follow a different distribution, esp. as function of $z, R_{50}, M_r, \mu$. {\bf They do, even accounting for the magnitude cut.} 
-%	\item Decide which of the two co-added samples is more reliable for debiasing efforts. {\bf The only difference between the two samples is a moderate increase in spiral fraction for disk galaxies in coadd1 data. The results of K-S tests on the vote fractions are confusing. Very similar distributions (by eye) have very low probabilities according to the K-S test. Perhaps quote the various moments instead.} 
-%%	\item optional: {\it Do a PCA on the normal vs. coadded versions. Figure out which of the four parameters. and in what combination, produces the most scatter in the data. }
-%	\item How far out in redshift can we correct the normal data using coadd? Need enough galaxies per bin in $M_r$, $R_{50}$, $z$ space {\em for each task} in the Stripe~82 data to establish the baseline. {\bf 20 galaxies per bin at $\Delta M_r=0.4~\rm{mag}, \Delta R_{50}=0.8~\rm{kpc}, \Delta z = 0.01$ covers a comparable amount of parameter space compared to the GZ1 results of B09.}
-%	\item Figure out how the vote fractions are going to be adjusted once a bias has been identified. {\bf Have attempted to correct results for binary tasks based on the B09 method.}
-%	\item Apply corrections to the vote fractions in the GZ2 main sample. {\bf Done; works well over redshift range ($0.01<z<0.09$). See Figure~\ref{fig-type_fractions_s82}}.
-%\end{itemize}
 
 \begin{figure*}
 \includegraphics[angle=-90,width=7.0in]{figures/stripe82_coadd_compare.ps}
@@ -638,11 +635,11 @@ Since the GZ1 vote fractions were specifically directed to galaxies with spiral 
 
 Results from comparing GZ1 to the spiral structure task in GZ2 indicate the robustness of the GZ2 results. If spiral features are identified in GZ2 (having already selected for disk galaxies), then they are very likely to be similarly classified in GZ1. Conversely, if GZ1 classifications indicate a possible (but not definitive) spiral, it is less likely to appear in GZ2 Task~04, based on the stricter requirements for inclusion. The scatter in the debiased likelihoods may thus be a fair representation of the uncertainty in individual classifications.
 
-\begin{figure*}
-\includegraphics[angle=0,width=7.0in]{figures/gz1_gz2.eps}
+\begin{figure}
+\includegraphics[angle=0,width=3.5in]{figures/gz1_gz2.eps}
 \caption{Differences in the vote fractions for galaxies in both the Galaxy~Zoo~1 (GZ1) and Galaxy~Zoo~2 (GZ2) projects. Left: Distribution of the differences in the vote fractions. Dashed lines show data for all galaxies, while solid lines are for the subset in which $f_{el}$ or $f_{sp} > 0.8$ in both samples. Right: same plot, but using the debiased vote fractions for both samples. 
 \label{fig-gz1_gz2}}
-\end{figure*}
+\end{figure}
 
 Figure~\ref{fig-gz1_gz2} shows the distribution of the difference between the vote fractions for the two projects, using the elliptical and combined spiral data for GZ1 and the Task~01 smooth and ``features or disk'' data for GZ2. For the raw vote fractions, galaxies showed a significant skew toward being more likely to be identified as a spiral in GZ1 than in GZ2. When restricted only to galaxies in the joint CLEAN samples ($p>0.8$), the spread is greatly reduced and the distribution is centred around a difference of zero. The debiased vote fractions show a similar spread when comparing GZ1 and GZ2 classifications, although the skew toward spirals in GZ1 is largely removed. When using only clean galaxies and the debiased vote fractions, galaxies are more likely to be identified as spirals in GZ2. 
 
@@ -913,35 +910,33 @@ An exception to this is a population of galaxies classified as ``smooth'' by GZ2
 
 The right panel of Figure~\ref{fig-hc_histogram} shows the distribution of ``unclassified'' galaxies, for which none of the responses for Task~01 had a vote fraction $>0.8$. The HC probability for these galaxies is bimodal, with the larger fraction classified as HC late-type and a smaller fraction as HC early-type. 
 
-Figure~\ref{fig-hc_gz2} plots the HC probability values against the GZ2 vote fraction for both smooth and feature/disk galaxies, similar to Figure~8 in \citet{hue11}. Significant excesses are seen at the lower left and upper right corners for both samples, confirming the earlier result that robust classifications using both methods tend to agree. The relationship of the HC probability to GZ2 vote fraction, however, seems distinctly non-linear and significantly different from the relationship shown in \citet{hue11}. Galaxies with low HC early-type probabilities show no strong correlation with the GZ2 vote fraction, resulting in the vertical stripe in Figure~\ref{fig-hc_gz2}. Intermediate values of the HC probabilities are typically classified by GZ2 users as ``smooth'', with a concentration at the highest HC early-type probabilities. It should be noted that the two panels in Figure~\ref{fig-hc_gz2} are essentially mirror images of each other (since $p_{HC,early} + p_{HC,late} \equiv 1$ and the GZ2 vote fractions only have marginal contributions from either the star/artifact response or downweighting of inconsistent users). 
-
-Splitting the morphology types into the E, S0, Sab, and Scd subclasses, Figure~\ref{fig-hc_gz2_subclass} shows correlations between the HC probablilities and GZ2 vote fractions. While the direction of the correlation is the same as seen in Figures~9 and 10 in \citet{hue11}, the behavior at the extrema is quite different. GZ1 data shows a strong cluster of low-HC and low-GZ2 probabilities for all four subclasses; no such cluster is seen in any of the plots in Figure~\ref{fig-hc_gz2_subclass}. Furthermore, high HC probabilities have the lowest fraction of galaxies in the GZ1 published data, where our plots show a concentration of galaxies along the high end for both P(E) and P(S0). 
-
-{\em It should be investigated whether the scaling on these sets of figures is truly plotting the same value. }
-
 To do:
 \begin{itemize}
 	\item Check how the presence of a bar affects the HC classifications.
 	\item Analyse the HC T-type vs. GZ2 bulge prominence (Figure~\ref{fig-hc_gz2_bulge_contour}).
 \end{itemize}
 
-\begin{figure*}
-\includegraphics[angle=0,width=7.0in]{figures/hc_gz2.eps}
-\caption{Left: GZ2 smooth vote fraction as a function of \citet{hue11} early-type probability. Right: GZ2 features/disk vote fraction as a function of HC late-type probability. Whiter values in both indicate a larger fraction of galaxies in that bin (logarithmic scale).
-\label{fig-hc_gz2}}
-\end{figure*}
-
-\begin{figure*}
-\includegraphics[angle=0,width=6.0in]{figures/hc_gz2_subclass.eps}
-\caption{Left: GZ2 smooth vote fraction as a function of \citet{hue11} early-type probability. Right: GZ2 features/disk vote fraction as a function of HC late-type probability. Whiter values in both indicate a larger fraction of galaxies in that bin (logarithmic scale).
-\label{fig-hc_gz2_subclass}}
-\end{figure*}
-
-\begin{figure}
-\includegraphics[angle=0,width=3.3in]{figures/hc_gz2_bulge_contour.eps}
-\caption{\citet{hue11} early-type probability as a function of the GZ2 vote vote fraction for bulge dominance. The colour of the contours is log~$(N_{gal} + 1)$, where $N_{gal}$ ranges from 0 to $1.5\times10^3$. Only galaxies with at least 10 classifications for Task~05 are shown.   
-\label{fig-hc_gz2_bulge_contour}}
-\end{figure}
+%Figure~\ref{fig-hc_gz2} plots the HC probability values against the GZ2 vote fraction for both smooth and feature/disk galaxies, similar to Figure~8 in \citet{hue11}. Significant excesses are seen at the lower left and upper right corners for both samples, confirming the earlier result that robust classifications using both methods tend to agree. The relationship of the HC probability to GZ2 vote fraction, however, seems distinctly non-linear and significantly different from the relationship shown in \citet{hue11}. Galaxies with low HC early-type probabilities show no strong correlation with the GZ2 vote fraction, resulting in the vertical stripe in Figure~\ref{fig-hc_gz2}. Intermediate values of the HC probabilities are typically classified by GZ2 users as ``smooth'', with a concentration at the highest HC early-type probabilities. It should be noted that the two panels in Figure~\ref{fig-hc_gz2} are essentially mirror images of each other (since $p_{HC,early} + p_{HC,late} \equiv 1$ and the GZ2 vote fractions only have marginal contributions from either the star/artifact response or downweighting of inconsistent users). 
+%
+%Splitting the morphology types into the E, S0, Sab, and Scd subclasses, Figure~\ref{fig-hc_gz2_subclass} shows correlations between the HC probablilities and GZ2 vote fractions. While the direction of the correlation is the same as seen in Figures~9 and 10 in \citet{hue11}, the behavior at the extrema is quite different. GZ1 data shows a strong cluster of low-HC and low-GZ2 probabilities for all four subclasses; no such cluster is seen in any of the plots in Figure~\ref{fig-hc_gz2_subclass}. Furthermore, high HC probabilities have the lowest fraction of galaxies in the GZ1 published data, where our plots show a concentration of galaxies along the high end for both P(E) and P(S0). 
+%
+%\begin{figure*}
+%\includegraphics[angle=0,width=7.0in]{figures/hc_gz2.eps}
+%\caption{Left: GZ2 smooth vote fraction as a function of \citet{hue11} early-type probability. Right: GZ2 features/disk vote fraction as a function of HC late-type probability. Whiter values in both indicate a larger fraction of galaxies in that bin (logarithmic scale).
+%\label{fig-hc_gz2}}
+%\end{figure*}
+%
+%\begin{figure*}
+%\includegraphics[angle=0,width=6.0in]{figures/hc_gz2_subclass.eps}
+%\caption{Left: GZ2 smooth vote fraction as a function of \citet{hue11} early-type probability. Right: GZ2 features/disk vote fraction as a function of HC late-type probability. Whiter values in both indicate a larger fraction of galaxies in that bin (logarithmic scale).
+%\label{fig-hc_gz2_subclass}}
+%\end{figure*}
+%
+%\begin{figure}
+%\includegraphics[angle=0,width=3.3in]{figures/hc_gz2_bulge_contour.eps}
+%\caption{\citet{hue11} early-type probability as a function of the GZ2 vote vote fraction for bulge dominance. The colour of the contours is log~$(N_{gal} + 1)$, where $N_{gal}$ ranges from 0 to $1.5\times10^3$. Only galaxies with at least 10 classifications for Task~05 are shown.   
+%\label{fig-hc_gz2_bulge_contour}}
+%\end{figure}
 
 \subsection{Other classification schemes}
 
@@ -1222,66 +1217,66 @@ The SDSS is managed by the Astrophysical Research Consortium for the Participati
 \tablecomments{The full, machine-readable version of this table is available at http://data.galaxyzoo.org. A portion is shown here for guidance on form and content, which are identical to those in Table~\ref{tbl-mainclass}. Classifications here are for the coadded images (set~2; see \S\ref{ssec-imagecreation}) from Stripe~82, which goes to a deeper magnitude limit and has a better angular resolution than galaxies in the main sample. Pixels in the sky background are colour desaturated in this set of images.}
 \end{deluxetable}
 
-\newpage
-\clearpage
-\tabletypesize{\scriptsize}
-\begin{deluxetable}{lccrrrr}
-\tablecolumns{16}
-\tablewidth{0pc}
-\tablecaption{GZ2 vote fractions for the main and Stripe~82 normal-depth samples \label{tbl-stripe82compare}}
-\tabletypesize{\scriptsize}
-\tablehead{
- & \multicolumn{2}{c}{\underline{Mean vote fraction}} & \multicolumn{2}{c}{\underline{Number of galaxies}} & \multicolumn{2}{c}{\underline{Sample comparison}} \\
-\colhead{User question and response} & 
-\colhead{Main} & 
-\colhead{Stripe~82} & 
-\colhead{Main} & 
-\colhead{Stripe~82} &
-\colhead{$f_m - f_s$} & 
-\colhead{$f_m/f_s$} 
-}
-\small
-\startdata
-T01\_SMOOTH\_OR\_FEATURES\_A01\_SMOOTH                      &      0.642 &      0.613 &     273783 &       8437 &       0.029 &       1.048 \\
-T01\_SMOOTH\_OR\_FEATURES\_A02\_FEATURES\_OR\_DISK          &      0.325 &      0.352 &     273783 &       8437 &      -0.027 &       0.924 \\
-T01\_SMOOTH\_OR\_FEATURES\_A03\_STAR\_OR\_ARTIFACT          &      0.033 &      0.036 &     273783 &       8437 &      -0.003 &       0.924 \\
-T02\_EDGEON\_A04\_YES                                       &      0.234 &      0.229 &     118147 &       4110 &       0.005 &       1.020 \\
-T02\_EDGEON\_A05\_NO                                        &      0.766 &      0.771 &     118147 &       4110 &      -0.005 &       0.994 \\
-T03\_BAR\_A06\_BAR                                          &      0.287 &      0.292 &      87647 &       3077 &      -0.004 &       0.986 \\
-T03\_BAR\_A07\_NO\_BAR                                      &      0.713 &      0.708 &      87647 &       3077 &       0.004 &       1.006 \\
-T04\_SPIRAL\_A08\_SPIRAL                                    &      0.660 &      0.674 &      87621 &       3077 &      -0.014 &       0.980 \\
-T04\_SPIRAL\_A09\_NO\_SPIRAL                                &      0.340 &      0.326 &      87621 &       3077 &       0.014 &       1.042 \\
-T05\_BULGE\_PROMINENCE\_A10\_NO\_BULGE                      &      0.129 &      0.114 &      87608 &       3076 &       0.015 &       1.129 \\
-T05\_BULGE\_PROMINENCE\_A11\_JUST\_NOTICEABLE               &      0.479 &      0.491 &      87608 &       3076 &      -0.012 &       0.976 \\
-T05\_BULGE\_PROMINENCE\_A12\_OBVIOUS                        &      0.321 &      0.333 &      87608 &       3076 &      -0.011 &       0.966 \\
-T05\_BULGE\_PROMINENCE\_A13\_DOMINANT                       &      0.070 &      0.062 &      87608 &       3076 &       0.008 &       1.134 \\
-T06\_ODD\_A14\_YES                                          &      0.199 &      0.185 &     273636 &       8391 &       0.014 &       1.073 \\
-T06\_ODD\_A15\_NO                                           &      0.801 &      0.815 &     273636 &       8391 &      -0.014 &       0.983 \\
-T07\_ROUNDED\_A16\_COMPLETELY\_ROUND                        &      0.330 &      0.326 &     229974 &       6956 &       0.005 &       1.014 \\
-T07\_ROUNDED\_A17\_IN\_BETWEEN                              &      0.496 &      0.501 &     229974 &       6956 &      -0.004 &       0.991 \\
-T07\_ROUNDED\_A18\_CIGAR\_SHAPED                            &      0.173 &      0.174 &     229974 &       6956 &      -0.000 &       0.999 \\
-T08\_ODD\_FEATURE\_A19\_RING                                &      0.147 &      0.178 &      72439 &       2114 &      -0.031 &       0.827 \\
-T08\_ODD\_FEATURE\_A20\_LENS\_OR\_ARC                       &      0.045 &      0.040 &      72439 &       2114 &       0.005 &       1.122 \\
-T08\_ODD\_FEATURE\_A21\_DISTURBED                           &      0.121 &      0.125 &      72439 &       2114 &      -0.003 &       0.973 \\
-T08\_ODD\_FEATURE\_A22\_IRREGULAR                           &      0.177 &      0.170 &      72439 &       2114 &       0.007 &       1.039 \\
-T08\_ODD\_FEATURE\_A23\_OTHER                               &      0.282 &      0.245 &      72439 &       2114 &       0.037 &       1.152 \\
-T08\_ODD\_FEATURE\_A24\_MERGER                              &      0.212 &      0.209 &      72439 &       2114 &       0.003 &       1.015 \\
-T08\_ODD\_FEATURE\_A38\_DUST\_LANE                          &      0.016 &      0.034 &      72439 &       2114 &      -0.018 &       0.475 \\
-T09\_BULGE\_SHAPE\_A25\_ROUNDED                             &      0.538 &      0.567 &      21496 &        746 &      -0.029 &       0.948 \\
-T09\_BULGE\_SHAPE\_A26\_BOXY                                &      0.103 &      0.096 &      21496 &        746 &       0.007 &       1.077 \\
-T09\_BULGE\_SHAPE\_A27\_NO\_BULGE                           &      0.359 &      0.338 &      21496 &        746 &       0.022 &       1.065 \\
-T10\_ARMS\_WINDING\_A28\_TIGHT                              &      0.370 &      0.392 &      55800 &       2052 &      -0.022 &       0.943 \\
-T10\_ARMS\_WINDING\_A29\_MEDIUM                             &      0.417 &      0.405 &      55800 &       2052 &       0.011 &       1.028 \\
-T10\_ARMS\_WINDING\_A30\_LOOSE                              &      0.214 &      0.203 &      55800 &       2052 &       0.011 &       1.054 \\
-T11\_ARMS\_NUMBER\_A31\_1                                   &      0.074 &      0.067 &      55805 &       2053 &       0.008 &       1.117 \\
-T11\_ARMS\_NUMBER\_A32\_2                                   &      0.501 &      0.478 &      55805 &       2053 &       0.023 &       1.048 \\
-T11\_ARMS\_NUMBER\_A33\_3                                   &      0.093 &      0.098 &      55805 &       2053 &      -0.005 &       0.950 \\
-T11\_ARMS\_NUMBER\_A34\_4                                   &      0.038 &      0.043 &      55805 &       2053 &      -0.005 &       0.884 \\
-T11\_ARMS\_NUMBER\_A36\_MORE\_THAN\_4                       &      0.030 &      0.033 &      55805 &       2053 &      -0.002 &       0.934 \\
-T11\_ARMS\_NUMBER\_A37\_CANT\_TELL                          &      0.263 &      0.281 &      55805 &       2053 &      -0.019 &       0.934 \\
-\enddata
-\tablecomments{Data for each task is only for galaxies with at least 10 total responses to the classification question.}
-\end{deluxetable}
+%\newpage
+%\clearpage
+%\tabletypesize{\scriptsize}
+%\begin{deluxetable}{lccrrrr}
+%\tablecolumns{16}
+%\tablewidth{0pc}
+%\tablecaption{GZ2 vote fractions for the main and Stripe~82 normal-depth samples \label{tbl-stripe82compare}}
+%\tabletypesize{\scriptsize}
+%\tablehead{
+% & \multicolumn{2}{c}{\underline{Mean vote fraction}} & \multicolumn{2}{c}{\underline{Number of galaxies}} & \multicolumn{2}{c}{\underline{Sample comparison}} \\
+%\colhead{User question and response} & 
+%\colhead{Main} & 
+%\colhead{Stripe~82} & 
+%\colhead{Main} & 
+%\colhead{Stripe~82} &
+%\colhead{$f_m - f_s$} & 
+%\colhead{$f_m/f_s$} 
+%}
+%\small
+%\startdata
+%T01\_SMOOTH\_OR\_FEATURES\_A01\_SMOOTH                      &      0.642 &      0.613 &     273783 &       8437 &       0.029 &       1.048 \\
+%T01\_SMOOTH\_OR\_FEATURES\_A02\_FEATURES\_OR\_DISK          &      0.325 &      0.352 &     273783 &       8437 &      -0.027 &       0.924 \\
+%T01\_SMOOTH\_OR\_FEATURES\_A03\_STAR\_OR\_ARTIFACT          &      0.033 &      0.036 &     273783 &       8437 &      -0.003 &       0.924 \\
+%T02\_EDGEON\_A04\_YES                                       &      0.234 &      0.229 &     118147 &       4110 &       0.005 &       1.020 \\
+%T02\_EDGEON\_A05\_NO                                        &      0.766 &      0.771 &     118147 &       4110 &      -0.005 &       0.994 \\
+%T03\_BAR\_A06\_BAR                                          &      0.287 &      0.292 &      87647 &       3077 &      -0.004 &       0.986 \\
+%T03\_BAR\_A07\_NO\_BAR                                      &      0.713 &      0.708 &      87647 &       3077 &       0.004 &       1.006 \\
+%T04\_SPIRAL\_A08\_SPIRAL                                    &      0.660 &      0.674 &      87621 &       3077 &      -0.014 &       0.980 \\
+%T04\_SPIRAL\_A09\_NO\_SPIRAL                                &      0.340 &      0.326 &      87621 &       3077 &       0.014 &       1.042 \\
+%T05\_BULGE\_PROMINENCE\_A10\_NO\_BULGE                      &      0.129 &      0.114 &      87608 &       3076 &       0.015 &       1.129 \\
+%T05\_BULGE\_PROMINENCE\_A11\_JUST\_NOTICEABLE               &      0.479 &      0.491 &      87608 &       3076 &      -0.012 &       0.976 \\
+%T05\_BULGE\_PROMINENCE\_A12\_OBVIOUS                        &      0.321 &      0.333 &      87608 &       3076 &      -0.011 &       0.966 \\
+%T05\_BULGE\_PROMINENCE\_A13\_DOMINANT                       &      0.070 &      0.062 &      87608 &       3076 &       0.008 &       1.134 \\
+%T06\_ODD\_A14\_YES                                          &      0.199 &      0.185 &     273636 &       8391 &       0.014 &       1.073 \\
+%T06\_ODD\_A15\_NO                                           &      0.801 &      0.815 &     273636 &       8391 &      -0.014 &       0.983 \\
+%T07\_ROUNDED\_A16\_COMPLETELY\_ROUND                        &      0.330 &      0.326 &     229974 &       6956 &       0.005 &       1.014 \\
+%T07\_ROUNDED\_A17\_IN\_BETWEEN                              &      0.496 &      0.501 &     229974 &       6956 &      -0.004 &       0.991 \\
+%T07\_ROUNDED\_A18\_CIGAR\_SHAPED                            &      0.173 &      0.174 &     229974 &       6956 &      -0.000 &       0.999 \\
+%T08\_ODD\_FEATURE\_A19\_RING                                &      0.147 &      0.178 &      72439 &       2114 &      -0.031 &       0.827 \\
+%T08\_ODD\_FEATURE\_A20\_LENS\_OR\_ARC                       &      0.045 &      0.040 &      72439 &       2114 &       0.005 &       1.122 \\
+%T08\_ODD\_FEATURE\_A21\_DISTURBED                           &      0.121 &      0.125 &      72439 &       2114 &      -0.003 &       0.973 \\
+%T08\_ODD\_FEATURE\_A22\_IRREGULAR                           &      0.177 &      0.170 &      72439 &       2114 &       0.007 &       1.039 \\
+%T08\_ODD\_FEATURE\_A23\_OTHER                               &      0.282 &      0.245 &      72439 &       2114 &       0.037 &       1.152 \\
+%T08\_ODD\_FEATURE\_A24\_MERGER                              &      0.212 &      0.209 &      72439 &       2114 &       0.003 &       1.015 \\
+%T08\_ODD\_FEATURE\_A38\_DUST\_LANE                          &      0.016 &      0.034 &      72439 &       2114 &      -0.018 &       0.475 \\
+%T09\_BULGE\_SHAPE\_A25\_ROUNDED                             &      0.538 &      0.567 &      21496 &        746 &      -0.029 &       0.948 \\
+%T09\_BULGE\_SHAPE\_A26\_BOXY                                &      0.103 &      0.096 &      21496 &        746 &       0.007 &       1.077 \\
+%T09\_BULGE\_SHAPE\_A27\_NO\_BULGE                           &      0.359 &      0.338 &      21496 &        746 &       0.022 &       1.065 \\
+%T10\_ARMS\_WINDING\_A28\_TIGHT                              &      0.370 &      0.392 &      55800 &       2052 &      -0.022 &       0.943 \\
+%T10\_ARMS\_WINDING\_A29\_MEDIUM                             &      0.417 &      0.405 &      55800 &       2052 &       0.011 &       1.028 \\
+%T10\_ARMS\_WINDING\_A30\_LOOSE                              &      0.214 &      0.203 &      55800 &       2052 &       0.011 &       1.054 \\
+%T11\_ARMS\_NUMBER\_A31\_1                                   &      0.074 &      0.067 &      55805 &       2053 &       0.008 &       1.117 \\
+%T11\_ARMS\_NUMBER\_A32\_2                                   &      0.501 &      0.478 &      55805 &       2053 &       0.023 &       1.048 \\
+%T11\_ARMS\_NUMBER\_A33\_3                                   &      0.093 &      0.098 &      55805 &       2053 &      -0.005 &       0.950 \\
+%T11\_ARMS\_NUMBER\_A34\_4                                   &      0.038 &      0.043 &      55805 &       2053 &      -0.005 &       0.884 \\
+%T11\_ARMS\_NUMBER\_A36\_MORE\_THAN\_4                       &      0.030 &      0.033 &      55805 &       2053 &      -0.002 &       0.934 \\
+%T11\_ARMS\_NUMBER\_A37\_CANT\_TELL                          &      0.263 &      0.281 &      55805 &       2053 &      -0.019 &       0.934 \\
+%\enddata
+%\tablecomments{Data for each task is only for galaxies with at least 10 total responses to the classification question.}
+%\end{deluxetable}
 
 \label{lastpage}
 
