@@ -42,36 +42,40 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title[GZ2 data release]{Galaxy~Zoo~2: detailed morphological classifications for 304,122 galaxies from the Sloan Digital Sky Survey}
+\title[Galaxy Zoo 2 data release]{Galaxy~Zoo~2: detailed morphological classifications for 304,122 galaxies from the Sloan Digital Sky Survey}
 \author[Willett et al.]{
   \parbox[t]{16cm}{
   Kyle W. Willett $^{1}$\thanks{E-mail: willett@physics.umn.edu},
-  Chris J. Lintott$^{2,7}$,
-  Steven P. Bamford$^{3}$,
-  Karen L. Masters$^{4,11}$,
+  Chris J. Lintott$^{2,3}$,
+  Steven P. Bamford$^{4}$,
+  Karen L. Masters$^{5,6}$,
   Brooke D. Simmons$^{2}$,
-  Kevin Schawinski$^{5}$,
+  Kevin Schawinski$^{7}$,
   Lucy Fortson$^{1}$,
-  Robert J. Simpson$^{2}$,
-  Ramin A. Skibba$^{6}$,
-  Edward M. Edmondson$^{4}$,
-  Arfon M. Smith$^{2,7}$,
-  Kevin R.V. Casteels$^{8}$,
+  Ramin A. Skibba$^{8}$,
+  Kevin R.V. Casteels$^{9}$,
+  Edward M. Edmondson$^{5}$,
+  Arfon M. Smith$^{2,3}$,
   M. Jordan Raddick$^{9}$,
   Sugata Kaviraj$^{2,10}$,
-  Robert C. Nichol$^{4,11}$\\
+  Thomas Melvin$^{5}$,
+  Robert J. Simpson$^{2}$,
+  Robert C. Nichol$^{5,6}$,
+  William C. Keel$^{12}$
+  \\
   }\\
 $^{1}$School of Physics and Astronomy, University of Minnesota, USA \\
 $^{2}$Department of Physics, University of Oxford, UK \\
-$^{3}$School of Physics and Astronomy, University of Nottingham, UK \\
-$^{4}$Institute of Cosmology and Gravitation, University of Portsmouth, UK \\
-$^{5}$Institute for Astronomy, ETH, Z\"urich, Switzerland \\
-$^{6}$Center for Astrophysics and Space Sciences, University of California San Diego, USA \\
-$^{7}$Astronomy Department, Adler Planetarium and Astronomy Museum, USA \\
-$^{8}$Departament d'Astronomia i Meteorologia, Universitat de Barcelona, Spain \\
-$^{9}$Department of Physics and Astronomy, Johns Hopkins University, USA \\
-$^{10}$Centre for Astrophysics Research, University of Hertfordshire, UK \\
-$^{11}$SEPnet, South East Physics Network, UK \\
+$^{3}$Astronomy Department, Adler Planetarium and Astronomy Museum, USA \\
+$^{4}$School of Physics and Astronomy, University of Nottingham, UK \\
+$^{5}$Institute of Cosmology and Gravitation, University of Portsmouth, UK \\
+$^{6}$SEPnet, South East Physics Network, UK \\
+$^{7}$Institute for Astronomy, ETH, Z\"urich, Switzerland \\
+$^{8}$Center for Astrophysics and Space Sciences, University of California San Diego, USA \\
+$^{9}$Departament d'Astronomia i Meteorologia, Universitat de Barcelona, Spain \\
+$^{10}$Department of Physics and Astronomy, Johns Hopkins University, USA \\
+$^{11}$Centre for Astrophysics Research, University of Hertfordshire, UK \\
+$^{12}$Department of Physics and Astronomy, University of Alabama, USA \\
 }
 
 \begin{document}
@@ -128,9 +132,9 @@ Several cuts were applied to the DR7 Legacy sample for selection in GZ2. The goa
 
 An error in the original query meant that the ``original'' sample initially missed some objects on launch, specifically those flagged as both \textsc{blended} and \textsc{child}. These galaxies, which are typically slightly brighter, larger and bluer than the general population, were added to the site on 2009-09-02. These additional 28,174 galaxies are referred to as the ``extra'' sample. 
 
-In addition to the sample from the Legacy survey, we later added images from Stripe~82, a section along the celestial equator in the Southern Galactic Cap which had been repeatedly imaged during the SDSS survey. The selection criteria are the same as that for the Legacy galaxies, with the exception of a fainter magnitude limit of $m_r < 17.77$. For the Stripe~82 sample only, we included multiple images of individual galaxies: one set of images at single-depth exposures, and two sets of co-added images with multiple exposures. Coadded images combined 47 (south) or 55 (north) separate scans of the region, resulting in an object detection limit approximately two magnitudes lower than in normal imaging \citep{ann11}. 
+In addition to the sample from the Legacy survey, we added images from Stripe~82, a section along the celestial equator in the Southern Galactic Cap which was repeatedly imaged in the SDSS. The selection criteria are the same as that for the Legacy galaxies, with the exception of a fainter magnitude limit of $m_r < 17.77$. For the Stripe~82 sample only, GZ2 includes multiple images of individual galaxies: one set of images at single-depth exposures, plus two sets of co-added images from multiple exposures. Coadded images combined 47 (south) or 55 (north) separate scans of the region, resulting in an object detection limit approximately two magnitudes lower than in normal imaging \citep{ann11}. 
 
-The primary sample for GZ2 analysis consists of the combined ``original'', ``extra'', and the Stripe~82 normal-depth images with $m_r\leq17.0$. We verified that there are no significant differences in classifications between these samples that could be caused, for example, by a time-dependent bias. This is hereafter referred to as the GZ2 {\bf main sample} (Table~\ref{tbl-sample}). Data from both the Stripe~82 normal-depth images with $m_r>17.0$ and the two sets of coadded images are included as separate data products. 
+The primary sample for GZ2 analysis consists of the combined ``original'', ``extra'', and Stripe~82 normal-depth images with $m_r\leq17.0$. We have verified that there are no significant differences in the classifications between these sub-samples (possibly due to a time-dependent bias, for example) and thus can be reliably used as a single data set. This is hereafter referred to as the GZ2 {\bf main sample} (Table~\ref{tbl-sample}), and is used for the bulk of the analysis in this paper. Data from both the Stripe~82 normal-depth images with $m_r>17.0$ and the two sets of coadded images are separately included. 
 
 \begin{table}
  \begin{tabular}{@{}lrcl}
@@ -166,7 +170,7 @@ original + extra + S82 ($m_r<17$) & \\
 
 Images of galaxies from the Legacy and Stripe~82 normal depth surveys were generated from the SDSS ImgCutout web service \citep{nie04}. Each image is a $gri$ colour composite $424\times424$ pixels in size, scaled to $(0.02\times${\tt petroR90\_r}) arcsec/pixel.
 
-Coadded images from Stripe~82 were generated from the corrected SDSS FITS frames in $g$, $r$ and $i$. Frames were stitched together using Montage\footnote{\url{http://montage.ipac.caltech.edu}} and converted to a colour image using a slightly modified version of the asinh stretch code \citep{lup04}, with parameters adjusted to try to replicate normal SDSS colour balance. The parameterisation of the stretch function used is:
+Coadded images from Stripe~82 were generated from the corrected SDSS FITS frames. Frames were stitched together using Montage\footnote{\url{http://montage.ipac.caltech.edu}} and converted to a colour image using a slightly modified version of the asinh stretch code \citep{lup04}, with parameters adjusted to try to replicate normal SDSS colour balance. The parameterisation of the stretch function used is:
 
 \begin{equation}
 f(x)=\text{asinh}(\alpha Q x)/Q
@@ -177,15 +181,15 @@ f(x)=\text{asinh}(\alpha Q x)/Q
 
 The first set of coadded images were visually very different from the normal SDSS images. Maximising the visibility of faint features, however, resulted in more prominent background sky noise; since each pixel is typically dominated by a single band, the background is often brightly coloured by the \citet{lup04} algorithm. Due to concerns that this would make it obvious that images were from deeper data and potentially affect morphological classifications, we created a second set of coadd images in which the colour of background pixels was removed. This was achieved by reducing the colour saturation of pixels outside of a ``soft-edged'' object mask. 
 
-The original and desaturated coadd image sets are labeled ``stripe82\_coadd\_1'' and ``stripe82\_coadd\_2'', respectively (Table~\ref{tbl-sample}). Analysis of the coadded images only slight differences between the two sets of classifications (see Section~\ref{ssec-s82}). 
+The original and desaturated coadd image sets are labeled ``stripe82\_coadd\_1'' and ``stripe82\_coadd\_2'', respectively (Table~\ref{tbl-sample}). Subsequent analysis revealed very few differences between the classifications for the images using the two coadd methods (see Section~\ref{ssec-s82}). 
 
 \subsection{Decision tree}\label{ssec-decision_tree}
 
-Data for Galaxy~Zoo~2 was collected via a web-based interface\footnote{\url{http://zoo2.galaxyzoo.org}}. Users of the interface needed to register with a username for their classifications to be recorded, but were not required to complete any tutorials. They were then shown a {\it gri} colour composite image of a galaxy for classification. Users had the option to invert the default colour scaling on any image being classified. 
+Data for Galaxy~Zoo~2 was collected via a web-based interface. Users of the interface needed to register with a username for their classifications to be recorded, but were not required to complete any tutorials.  
 
-Morphological classification of the galaxies proceeds via a multi-step decision tree. We define a {\it classification} as the total amount of information collected by completing the decision tree. Each individual step in the tree is a {\it task}, which consists of a {\it question} and a finite set of possible {\it responses}. The selection of a particular response is referred to as the user's {\it vote}. 
+The task begins with the user being shown the SDSS colour composite image of a galaxy alongside a question and set of possible responses dealing with the galaxy's shape, similar to Galaxy~Zoo~1. Further morphological classification then proceeds via a multi-step decision tree. In this paper, we define a {\it classification} as the total amount of information collected about one galaxy by a single user completing the decision tree. Each individual step in the tree is a {\it task}, which consists of a {\it question} and a finite set of possible {\it responses}. The selection of a particular response is referred to as the user's {\it vote}.  
 
-Classification begins with a slightly modified version of the GZ1 task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact''. The exact order of any subsequent tasks depends on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this task would not be shown if they had selected either of the other two options. 
+Classification begins with a slightly modified version of the GZ1 task, with users identifying whether the galaxy is either ``smooth'', has ``features or a disk'', or is a ``star or artifact''. The appearance of subsequent tasks depend on the user's previous responses. For example, if the user clicks on the ``smooth'' button, they are subsequently asked to classify the roundness of the galaxy; this task would not be shown if they had selected either of the other two responses. 
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/flowchart.ps}
@@ -193,7 +197,7 @@ Classification begins with a slightly modified version of the GZ1 task, with use
 \label{fig-flowchart}}
 \end{figure*}
 
-The Galaxy~Zoo~2 tree has 11 classification tasks with a total of 37 possible responses (Figure~\ref{fig-flowchart} and Table~\ref{tbl-tree}). A classifier selects only one response for each task, after which they are immediately taken to the next task in the tree. Tasks~01 and 06 are the only questions that are always completed for a given object. Once a classification is complete, an image of the next galaxy is automatically displayed and the user can begin classification of a new object. 
+The GZ2 tree has 11 classification tasks with a total of 37 possible responses (Figure~\ref{fig-flowchart} and Table~\ref{tbl-tree}). A classifier selects only one response for each task, after which they are immediately taken to the next task in the tree. Tasks~01 and 06 are the only questions that are always completed for a given object. Once a classification is complete, an image of the next galaxy is automatically displayed and the user can begin classification of a new object. 
 
 \begin{table}
  \begin{tabular}{@{}cllr}
@@ -260,9 +264,11 @@ The Galaxy~Zoo~2 tree has 11 classification tasks with a total of 37 possible re
 
 Data from the classifications were stored in a live Structured Query Language (SQL) database. In addition to the morphology classifications, the database also recorded a timestamp, user identifier, and image identifier for each classification; volunteers were required to log-in in order for their classifications to be recorded. 
 
+\subsection{Site history}\label{ssec-site_history}
+
 Galaxy~Zoo~2 was launched on 2009-02-16 with the ``original'' sample of 245,609 images. The ``extra'' galaxies from the Legacy survey were added on 2009-09-02. The normal-depth and first coadded Stripe~82 images were mostly added on 2009-09-02, with an additional $\sim7700$ of the coadded images added on 2010-09-24. Finally, the second version of the coadded images were added to the site on 2009-11-04. 
 
-For most of the duration of Galaxy~Zoo~2, images shown to classifiers were selected from the database in a random order. We wanted to ensure, however, that each galaxy ultimately had enough classifications to accurately measure its uncertainty. Therefore, in the final period of Galaxy~Zoo~2, accompanied by a competition with a running tally (dubbed the Zoonometer), objects with low numbers of classifications were shown to users at a higher rate. The ``stripe82\_coadd\_1'' sample was removed from the site at this time. The main sample galaxies finished with a median of 44 classifications; the minimum was 16 classifications, and $>99.9\%$ of the sample had at least 28. The ``stripe82\_coadd\_2'' galaxies had a median of 21 classifications and $>99.9\%$ had at least 10 (Figure~\ref{fig-classification_histogram}).
+For most of the duration of GZ2, the images shown to classifiers were selected from the database in a random order. We wanted to ensure, however, that each galaxy ultimately had enough classifications to accurately measure its uncertainty. Therefore, in the final period of GZ2, accompanied by a competition with a running tally (dubbed the Zoonometer), objects with low numbers of classifications were shown to users at a higher rate. The ``stripe82\_coadd\_1'' sample was removed from the site at this time. The main sample galaxies finished with a median of 44 classifications; the minimum was 16 classifications, and $>99.9\%$ of the sample had at least 28. The ``stripe82\_coadd\_2'' galaxies had a median of 21 classifications and $>99.9\%$ had at least 10 (Figure~\ref{fig-classification_histogram}).
 
 \begin{figure}
 \includegraphics[angle=0,width=3.5in]{figures/classification_histogram.eps}
@@ -312,7 +318,7 @@ A final complication is that the SDSS stripe82 database does not provide matches
 \section{Data reduction} \label{sec-datareduction}
 
 \subsection{Multiple classifications}
-In a small percentage of cases, an individual user may classify the same object more than once. Since we wish to treat each vote as an independent measurement, we removed multiple classifications of the same object by a given user from the data, keeping only the last submitted classification. Repeat classifications occurred for only $\sim1\%$ of all galaxies. The removal of the repeats only altered the final vote fractions (thus changing the morphological classification) for $\lesssim0.01\%$ of the sample.  
+In a small percentage of cases, individual users classified the same image more than once. In order to treat each vote as an independent measurement, such multiple classifications were removed from the data, keeping only their votes from the last submitted classification. Repeat classifications occurred for only $\sim1\%$ of all galaxies. The removal of the repeats only altered the final vote fractions (thus changing the morphological classification) for $\lesssim0.01\%$ of the sample.  
 
 \subsection{Consistency and invididual user weighting}\label{ssec-consistency}
 
@@ -347,22 +353,22 @@ For example, if a question has three possible responses, and the galaxy correspo
 \label{fig-consistency}}
 \end{figure}
 
-Each user was assigned a consistency ($\bar{\kappa}$) by taking the mean consistency of every response. From the distribution of results for the initial iteration (Figure~\ref{fig-consistency}), we chose a weighting function that down-weighted users in the tail of low consistency:
+Each user was assigned a consistency ($\bar{\kappa}$) by taking the mean consistency of every response. From the distribution of results for the initial iteration (Figure~\ref{fig-consistency}), we applied a weighting function that down-weights classifiers in the tail of low consistency:
 
 \begin{equation}
 w = \min \left(1.0,(\bar{\kappa} / 0.6)^{8.5} \right)
 \label{eqn-weight}
 \end{equation}
 
-\noindent For this function, $w=1$ for $\sim95\%$ of users and $w<0.01$ for only $\sim1\%$ of users. The vast majority of users are thus treated equally: there is no up-weighting of the most consistent users. The top panel of Figure~\ref{fig-consistency} also shows that the lowest-weighted users on average classified only a handful ($<10$) of objects. This effect demonstrates either learning during classification, or the systematic loss of inconsistent users during their career as classifiers; further work on user behaviour is needed to distinguish between the two possibilities.
+\noindent For this function, $w=1$ for $\sim95\%$ of classifiers and $w<0.01$ for only $\sim1\%$ of classifiers. The vast majority of classifiers are thus treated equally; there is no up-weighting of the most consistent classifiers. The top panel of Figure~\ref{fig-consistency} also shows that the lowest-weighted classifiers on average completed only a handful ($<10$) of objects. This effect demonstrates either learning during classification, or the systematic loss of inconsistent users during their career as classifiers; further work on user behaviour is needed to distinguish between the two possibilities.
 
-After computing $\kappa$, vote fractions were recalculated using the new user weights. We repeated this process a third time to ensure convergence. For each task, this produces both a weighted number of votes and a weighted vote fraction for each task. These are used exclusively hereafter, and for brevity we typically drop the term ``weighted''. 
+After computing $\kappa$, vote fractions were recalculated using the new user weights. We repeated this process a third time to ensure convergence. For each task, this produces both a weighted number of votes and a weighted vote fraction for each task. These weighted data are used exclusively hereafter when discussing votes and vote fractions; for brevity, we typically drop the term ``weighted''. 
 
 \subsection{Classification bias}\label{ssec-classificationbias}
 
-We also adjust the vote fractions for what we term {\it classification bias}. The overall effect of this bias is a change in observed morphology fractions as a function of redshift {\em independent of any true evolution in galaxy properties}, a trend also seen in the Galaxy~Zoo~1 data \citep{bam09}. The SDSS survey is expected to be shallow enough to justify an assumption of no evolution, and so the presumed cause is that more distant galaxies, on average, are both smaller and dimmer in the cutout images; as a result, finer morphological features are more difficult to identify. This effect is not limited to crowd-sourced classifications; expert classifications must also suffer from bias to some degree, although their more limited statistics make it difficult to quantify. 
+We also adjust the vote fractions for what we term {\it classification bias}. The overall effect of this bias is a change in observed morphology fractions as a function of redshift {\em independent of any true evolution in galaxy properties}, a trend also seen in the Galaxy~Zoo~1 data \citep{bam09}. The SDSS survey is expected to be shallow enough to justify an assumption of no evolution, and so the presumed cause is that more distant galaxies, on average, are both smaller and dimmer in the cutout images. As a result, finer morphological features are more difficult to identify. We note that this effect is not limited to crowd-sourced classifications; expert classifications must also suffer from bias to some degree, although smaller sample sizes make this difficult to quantify. 
 
-Figure~\ref{fig-type_fractions} demonstrates the classification bias for several of the Galaxy~Zoo~2 classification tasks. The average vote fraction for each response is shown as a function of redshift; the fraction of votes for finer morphological features (such as identification of disk galaxies, spiral structure, or galactic bars) decreases at higher redshift. The trend is strongest for the initial classification of smooth and feature/disk galaxies, but almost all tasks exhibit some level of change. 
+Figure~\ref{fig-type_fractions} demonstrates the effect of classification bias for the GZ2 classification tasks. The average vote fraction for each response is shown as a function of redshift; the fraction of votes for finer morphological features (such as identification of disk galaxies, spiral structure, or galactic bars) decreases at higher redshift. The trend is strongest for the initial classification of smooth and feature/disk galaxies, but almost all tasks exhibit some level of change. 
 
 Part of the observed trends in type fractions at high redshifts is due to the nature of a magnitude-limited sample; high-redshift galaxies must be more luminous to be detected in the SDSS and are thus more likely to be giant red ellipticals. However, we see clear evidence of the classification bias even in luminosity-limited samples (between the dashed vertical lines in Figure~\ref{fig-type_fractions}). Since this bias contaminates any potential studies of galaxy demographics over the sample volume, it must be corrected to the fullest possible extent. 
 
@@ -372,7 +378,7 @@ Part of the observed trends in type fractions at high redshifts is due to the na
 \label{fig-type_fractions}}
 \end{figure*}
 
-\citet{bam09} corrected for classification bias in the GZ1 data, but only for the elliptical and combined spiral variables. Their approach was to bin the galaxies as a function of absolute magnitude (\mr), the physical Petrosian half-light radius (\rfifty), and redshift. They then computed the average elliptical-to-spiral ratio for each (\mr,\rfifty) bin in the lowest redshift slice with significant numbers of galaxies; this yields a local baseline relation which gives the (presumably) unbiased morphology as a function of the galaxies' {\em physical}, rather than {\em observed} parameters. From the local relation, they derived a correction for each (\mr,\rfifty,$z$) bin and then adjusted the vote fractions for the individual galaxies in each bin. The validity of this approach is justified in part since debiased vote fractions result in a consistent morphology-density relation over a range of redshifts \citep{bam09}. We modify and extend this technique for the Galaxy~Zoo~2 classifications as described below. 
+\citet{bam09} corrected for classification bias in the GZ1 data, but only for the elliptical and combined spiral variables. Their approach was to bin the galaxies as a function of absolute magnitude (\mr), the physical Petrosian half-light radius (\rfifty), and redshift. They then computed the average elliptical-to-spiral ratio for each (\mr,\rfifty) bin in the lowest redshift slice with significant numbers of galaxies; this yields a local baseline relation which gives the (presumably) unbiased morphology as a function of the galaxies' {\em physical}, rather than {\em observed} parameters. From the local relation, they derived a correction for each (\mr,\rfifty,$z$) bin and then adjusted the vote fractions for the individual galaxies in each bin. The validity of this approach is justified in part since debiased vote fractions result in a consistent morphology-density relation over a range of redshifts \citep{bam09}. We modify and extend this technique for the GZ2 classifications as described below. 
 
 There are two major differences between the GZ1 and GZ2 data. First, GZ2 has a decision tree, rather than a single question and response for each vote. This means that all tasks, with the exception of the first, depend on responses to previous tasks in the decision tree. For example, the bar question is only asked if the user classifies a galaxy as having ``features or disk'' and as ``not edge-on''. Thus, the value of the vote fraction for this example task only addresses the total bar fraction {\em among galaxies that a user has classified as disks and are not edge-on}, and not as a function of the general population. 
 
@@ -409,7 +415,7 @@ For a galaxy to be used in deriving a correction, we therefore require both a mi
  \caption{Thresholds for determining well-sampled galaxies in GZ2 \label{tbl-thresholds}}
 \end{table}
 
-The second major difference is that the adjustment of the GZ1 vote fractions assumed that the single task was essentially binary. Since almost every vote in GZ1 was for a response of either ``elliptical'' or ``spiral'' (either anticlockwise, clockwise, or edge-on), they were able to use that ratio as the sole metric of the morphology. No systematic debiasing was done for the other GZ1 response options (``star/don't know'', ``merger'', or ``edge on/unclear''), and the method of adjusting the vote fractions assumes that these other options do not significantly affect the classification bias for the most popular responses. This is not possible for GZ2: many tasks have more than two possible responses and represent a continuum of relative feature strength, rather than a binary choice.
+The second major difference is that the adjustment of the GZ1 vote fractions assumed that the single task was essentially binary. Since almost every vote in GZ1 was for a response of either ``elliptical'' or ``spiral'' (either anticlockwise, clockwise, or edge-on), this ratio was employed as the sole metric. No systematic debiasing was done for the other GZ1 response options (``star/don't know'' or ``merger''), and the method of adjusting the vote fractions assumes that these other options do not significantly affect the classification bias for the most popular responses. This is not possible for GZ2: many tasks have more than two possible responses and represent a continuum of relative feature strength, rather than a binary choice.
 
 Vote fractions for each galaxy are adjusted for classification bias using the following method. The method relies on the assumption that for a galaxy of a given physical brightness and size, a sample of other galaxies with similar brightnesses and sizes will (statistically) share the same average mix of morphologies. We quantify this using the ratio of vote fractions $(f_i/f_j)$ for responses $i$ and $j$. We assume that the true (that is, unbiased) ratio of likelihoods for each task $(p_i/p_j)$ is related to the measured ratio via a single multiplicative constant:
 
@@ -431,7 +437,7 @@ p_i + p_j + p_k + \dots = 1,
 \label{eqn-sumprob}
 \end{equation}
 
-\noindent then dividing (\ref{eqn-adjprob1}) by (\ref{eqn-sumprob}) yields:
+\noindent then multiplying (\ref{eqn-adjprob1}) by the inverse of (\ref{eqn-sumprob}) yields:
 
 \begin{eqnarray}
 p_i &=& \frac{1}{1/p_i} \times \frac{1}{p_i + p_j + p_k + \dots} \\
@@ -458,11 +464,11 @@ C_{j,i} &=& \text{$log_{10}$}~\left(\frac{f_i}{f_j}\right)_{z=0} - \text{log$_{1
 \label{eqnarray-adjprob4}
 \end{eqnarray}
 
-\noindent So the correction $C_{j,i}$ for any bin is simply the difference between $f_i/f_j$ at the desired redshift and that of a local baseline, where the ratios between vote fractions are expressed as logarithms.  
+\noindent The correction $C_{j,i}$ for any bin is thus the difference between $f_i/f_j$ at the desired redshift and that of a local baseline, if the ratios between vote fractions are expressed as logarithms.  
 
-The local baselines and subsequent corrections are derived from the main sample data (original + extra + apparent~magnitude-limited Stripe~82). Since determining the baseline ratio relies on absolute magnitude and physical size, we only use the 86\% of galaxies in the main sample with spectroscopic redshifts. We also use data only from galaxies with sufficient numbers of responses to determine their morphology; this threshold is different for each task (Table~\ref{tbl-thresholds}).  
+The local baselines and subsequent corrections are derived from the GZ2 main sample data. Since determining the baseline ratio relies on absolute magnitude and physical size, we only use the 86\% of galaxies in the main sample with spectroscopic redshifts. We also use data only from galaxies with sufficient numbers of responses to determine their morphology; this threshold is different for each task (Table~\ref{tbl-thresholds}).  
 
-The vote fractions for each task response are binned in three dimensions: the absolute magnitude \mr, the Petrosian $r$-band half-light radius \rfifty, and redshift $z$. Bins for \mr~range from $-24$ to $-16$ in steps of 0.25~mag, for \rfifty~from 0 to 15~kpc in steps of 0.5~kpc, and for $z$ from $0.01$ to $0.26$ in steps of 0.01. These bin ranges and step sizes are chosen to maximize the phase space covered by the bias correction. Only bins with at least 20~galaxies are considered. The value of each bin in the cube is the sum of the vote fractions for that response. For each pair of responses $(i,j)$ to a question, we compute log$(f_j/f_i)$ in every (\mr,\rfifty,\redshift) bin. The local baseline relation is established by selecting the value in the non-empty bin(s) for the lowest-redshift slice at a given (\mr,\rfifty). 
+The vote fractions for each task response are binned in three dimensions: the absolute magnitude \mr, the Petrosian $r$-band half-light radius \rfifty, and redshift $z$. Bins for \mr~range from $-24$ to $-16$ in steps of 0.25~mag, for \rfifty~from 0 to 15~kpc in steps of 0.5~kpc, and for $z$ from $0.01$ to $0.26$ in steps of 0.01. These bin ranges and step sizes are chosen to maximize the phase space covered by the bias correction. Only bins with at least 20~galaxies are considered. %The value of each bin in the cube is the sum of the vote fractions for that response. For each pair of responses $(i,j)$ to a question, we compute log$(f_j/f_i)$ in every (\mr,\rfifty,\redshift) bin. The local baseline relation is established by selecting the value in the non-empty bin(s) for the lowest-redshift slice at a given (\mr,\rfifty). 
 
 Since each unique pair of responses to a question will have a different local baseline, there are $\binom{n}{2}$ correction terms for a task with $n$ responses. This reduces to the method with a single pair of variables described in \citet{bam09} if $n=2$. 
 
@@ -472,7 +478,7 @@ Since each unique pair of responses to a question will have a different local ba
 \label{fig-baselines}}
 \end{figure*}
 
-The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-baselines} for the first two responses in each task. To derive a correction for bins not covered at low redshift, we attempted to fit each baseline ratio with an analytic, smoothly-varying function. The baseline ratio for the ``smooth'' and ``features/disk'' responses to Task~01 is functionally very similar to the GZ1 relation \citep[Figure~A5 in ][]{bam09}, as expected. This ratio is reasonably well-fit with an analytic function taken from \citet{bam09}: 
+The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-baselines} for the first two responses in each task. To derive a correction for bins not covered at low redshift, we attempted to fit each baseline ratio with an analytic, smoothly-varying function. The baseline ratio for the ``smooth'' and ``features/disk'' responses to Task~01 is functionally very similar to the GZ1 relation \citep[Figure~A5 in][]{bam09}, as expected. This ratio is reasonably well-fit with an analytic function: 
 
 \begin{equation}
 \frac{f_j}{f_i}[R_{50},M_r] = \frac{s_6}{1 + exp[(\alpha - M_r)/\beta]} + s_7
@@ -503,58 +509,60 @@ None of the other tasks are well-fit by a function of the form in Equation~\ref{
 
 The success of this method is generally good for most GZ2 tasks and responses. Figure~\ref{fig-type_fractions} illustrates the comparison between the mean raw and debiased vote fractions as a function of redshift. The debiased results ({\it thick lines}) are generally flat over $0.01<z<0.085$, where $L^\star$ galaxies \citep[$M_r\sim-20.44$;][]{bla03a} are within the detection limit of the survey and the bins are more poorly sampled. The debiased early- and late-type fractions of 0.45 and 0.55 agree with the GZ1 type fractions derived by \citet{bam09} for the same selection criteria. The bar fraction in disk galaxies is roughly 0.35, slightly higher than the value found by using thresholded GZ2 data in \citet{mas11c}.
 
-\begin{figure*}
-\includegraphics[angle=0,width=7.0in]{figures/gz2_bias_demo_task01.eps}
-\caption{GZ2 vote fractions for Task~01 ({\it smooth, features/disk, or star/artifact?}) as a function of spectroscopic redshift. The left graph shows the fraction of galaxies for which the vote fraction exceeded 0.8. Galaxies which did not have a response above the threshold are labeled as ``unclassified''. The right shows the mean of the vote fractions, by the total number of responses to the task for each galaxy. Data are shown for the GZ2 original + extra (thick solid), Stripe~82 normal-depth (thin dotted), and Stripe~82 co-add depth (thin solid) samples. Stripe~82 data is only for galaxies with $m_r < 17.0$, the same magnitude limit applied to the GZ2 main sample.  
-\label{fig-task01}}
-\end{figure*}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%    Catalogue       %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{The catalogue} \label{sec-catalogue}
 
-Other possible inclusions for catalogue:
-\begin{itemize}
-	\item Metrics on classification confidence \citep[Table 04,][]{lin11} {\it (not generated yet)}
-\end{itemize}
+%Other possible inclusions for catalogue:
+%\begin{itemize}
+%	\item Metrics on classification confidence \citep[Table 04,][]{lin11} {\it (not generated yet)}
+%\end{itemize}
+
+The data release for GZ2 includes the vote counts and fractions (raw, weighted, and debiased) for each task in the classification tree for each galaxy. Data for the five subsamples described below can be accessed at \url{http://data.galaxyzoo.org}, and will be available on CasJobs\footnote{\url{http://skyserver.sdss3.org/casjobs/}} in SDSS Data Release~10 after Jul~2013. Abridged portions of each data table are included in this paper (Tables~\ref{tbl-mainclass}--\ref{tbl-stripe82_coadd2}).
 
 \subsection{Main sample}\label{ssec-catalogue_main}
 
-The data release for Galaxy~Zoo~2 consists of four tables, abridged portions of which appear in this paper. Table~\ref{tbl-mainclass} contains classification data for the 243,500 galaxies in the main sample with spectroscopic redshifts. Each galaxy is identified by its unique SDSS DR7 objID, as well as its original sample designation (either original, extra or Stripe~82 normal-depth). $N_{class}$ is the total number of users who classified the galaxy, while $N_{votes}$ gives the total number of votes summed over all classifications and all responses. For each of the 37 morphological classes, we give six parameters: the raw number of votes for that response (eg, {\tt t01\_smooth\_or\_features\_a01\_smooth\_count}), the number of votes weighted for consistency ({\tt $^\star$\_weight}), the fraction of votes for the task ({\tt $^\star$\_fraction}), the vote fraction weighted for consistency ({\tt $^\star$\_weighted\_fraction}), the debiased likelihood ({\tt $^\star$\_debiased}), which is the weighted vote fraction adjusted for classification bias (see Section~\ref{ssec-classificationbias}), and a boolean flag ({\tt $^\star$\_flag}) that is set if the galaxy is included in a clean, debiased sample (as described below).
+Table~\ref{tbl-mainclass} contains classification data for the 243,500 galaxies in the main sample with spectroscopic redshifts. Each galaxy is identified by its unique SDSS DR7 objID, as well as its original sample designation (either original, extra or Stripe~82 normal-depth). $N_{class}$ is the total number of users who classified the galaxy, while $N_{votes}$ gives the total number of votes summed over all classifications and all responses. For each of the 37 morphological classes, we give six parameters: the raw number of votes for that response (eg, {\tt t01\_smooth\_or\_features\_a01\_smooth\_count}), the number of votes weighted for consistency ({\tt $^\star$\_weight}), the fraction of votes for the task ({\tt $^\star$\_fraction}), the vote fraction weighted for consistency ({\tt $^\star$\_weighted\_fraction}), the debiased likelihood ({\tt $^\star$\_debiased}), which is the weighted vote fraction adjusted for classification bias (see Section~\ref{ssec-classificationbias}), and a boolean flag ({\tt $^\star$\_flag}) that is set if the galaxy is included in a clean, debiased sample (as described below).
 
-Flags for each morphological parameter are determined by applying three criteria: the first is the requirement that more than 50\% of votes for preceding task(s) must eventually select for the task being flagged. For example, to select galaxies from which a clean barred sample can be identified, we require both $p_{features/disk}\geq0.5$ and $p_{not edge-on}\geq0.5$. Secondly, the object must exceed a minimum number of total votes (ranging from 5--30) for that task, in order to eliminate variance due to small-number statistics. Finally, we establish a threshold value for the debiased vote fraction; this is 0.5 for Tasks~02 and 03, and 0.8 for all other tasks. Note that GZ1 also used a debiased threshold value of 0.8, based on a correction applied to raw vote fractions at the same threshold \citep{bam09,lin11}. 
+Flags for each morphological parameter are determined by applying three criteria: the first is the requirement that the vote fraction for the preceding task(s) must exceed some threshold (Table~\ref{tbl-thresholds}) to ensure that the question is well-answered. For example, to select galaxies from which a clean barred sample can be identified, we require both $p_{features/disk}\geq0.5$ and $p_{not edge-on}\geq0.5$. Secondly, the task must exceed a minimum number of votes (10 for Stripe~82, 20 for the main sample) in order to eliminate variance due to small-number statistics. Finally, the debiased vote fraction itself must exceed a given threshold; this is 0.5 for Tasks~02 and 03, and 0.8 for all other tasks. We note that this is a highly conservative selection -- each of the above parameters may be adjusted to provide different clean thresholds, depending on the use case for the data.%Note that GZ1 also used a debiased threshold value of 0.8, based on a correction applied to raw vote fractions at the same threshold \citep{bam09,lin11}. 
 
-Table~\ref{tbl-mainclass_photoz} shows the GZ2 classifications for the 42,462 main sample galaxies without spectroscopic redshifts. To compute the debiased likelihoods, we used the morphology corrections obtained for galaxies in the spectroscopic main sample. We then used the photometric redshift provided by the SDSS \citep{csa03} to derive \mr~and \rfifty~and select the appropriate correction bin. The mean error in the redshift of the photometric sample (from the SDSS photo-$z$) is $\Delta~z=0.021$ (a fractional uncertainty of 27\%), compared to the spectroscopic accuracy of $\Delta~z=0.00016$ (0.3\%). Since the size of the redshift bins in $C_{j,i}$ is 0.01, a shift of 2--3 bins can potentially produce a very large change in the debiased vote fractions. 
+Table~\ref{tbl-mainclass_photoz} gives the GZ2 classifications for the 42,462 main sample galaxies without spectroscopic redshifts. To compute the debiased likelihoods, we used the morphology corrections obtained for galaxies in the spectroscopic main sample. We then used SDSS photometric redshifts \citep{csa03} to derive \mr~and \rfifty~ for each galaxy in the photometric sample and selected the appropriate correction bin. The mean error in the redshift of the photometric sample (from the SDSS photo-$z$) is $\Delta~z=0.021$ (a fractional uncertainty of 27\%), compared to the spectroscopic accuracy of $\Delta~z=0.00016$ (0.3\%). Since the size of the redshift bins in $C_{j,i}$ is 0.01, a shift of 2--3 bins can potentially produce a very large change in the debiased vote fractions. 
 
-Since the redshift can have a strong effect on classification bias, we separate galaxies with spectroscopic and photometric redshifts, and do not recommend that the debiased data be combined for analysis. For use cases where the main driver is the number of galaxies, however, it may be possible to combine the raw vote fractions to create the largest possible sample.
+Since the redshift can have a strong effect on classification bias, we separate galaxies with spectroscopic and photometric redshifts, and do not recommend that the debiased data be combined for analysis. For use cases where the main driver is the number of galaxies, however, it may be possible to combine the raw vote fractions for the two samples.
 
 \subsection{Stripe~82}\label{ssec-s82}
 
-The distribution of votes for the main sample is similar enough to that of the Stripe~82 normal-depth imaging (with $m_r<17.0$) that the same bias correction applies for both. The distributions of vote fractions for both the main sample and Stripe~82 galaxies are quite similar, with the difference in the mean varying by $<10\%$ for almost all responses. The only exceptions to this similarity are for responses that target rare objects (and thus are subject to higher variance for low-number statistics), such as dust lanes, rings, and high-multiplicity spiral arms. 
+The data for Stripe~82 is reduced separately from the main sample. This is due to the deeper magnitude limit of the samples (both normal and coadded) as well as the improved seeing in the latter. Since different image qualities can potentially affect the debiasing, all three Stripe~82 samples have their classifications separately adjusted for classification bias. The method is the same as that used for the spectroscopic main sample galaxies -- the only difference is that the vote threshold for the coadded sample is lowered from 10 to 20. 
 
-%Table~\ref{tbl-stripe82compare} shows the mean vote fractions for the Stripe~82 normal and coadded image data.
+Table~\ref{tbl-stripe82_normal} gives classifications for the Stripe~82 normal-depth images with spectroscopic redshifts. Galaxies in this table with $m_r < 17.0$ also appear in Table~\ref{tbl-mainclass}; however, the corrections for classification bias here are derived based only on Stripe~82 data, and so debiased likelihoods and flags may be slightly different. Classifications for galaxies with photometric redshifts only are not included.
 
-The right panel of Figure~\ref{fig-task01} shows that the vote fractions also behave similarly as a function of redshift, particularly in the $0.01<z<0.08$ range covered by the GZ1 debiasing technique. The type fractions as a function of redshift for both the Stripe~82 normal depth and the rest of the GZ2 main sample are very similar; this is not the case, however, for the coadded Stripe~82 data. For Task~01, fewer galaxies are classified as robustly smooth (above the 0.8 threshold), moving instead to the ``unclassified'' category. Coadded data also showed higher fractions of galaxies with bars and for possessing visible spiral structure. A possible cause for this is that the new image pipeline in the coadded data allows viewers to see faint features or disks, due to improved seeing \citep[from $1.4\arcsec$ to $1.1\arcsec$;][]{ann11} and higher signal-to-noise in the coadded images.
+Tables~\ref{tbl-stripe82_coadd1} and \ref{tbl-stripe82_coadd2} contains classifications for the coadded images of Stripe~82 galaxies with spectroscopic redshifts. Debiased probabilities and flags are derived from separately for each coadded data set. Since both the number of galaxies and the average number of classifications per galaxy are a small fraction of that in the main sample, though, the corrections encompass a smaller range of tasks and phase space in (\mr,\rfifty,\redshift). The increased exposure time and improved seeing, however, means that the effect of classification bias is lessened at lower redshifts; the raw vote fractions may thus be more suitable for some science cases using the coadded images. 
+
+\begin{figure*}
+\includegraphics[angle=0,width=7.0in]{figures/gz2_bias_demo_task01.eps}
+\caption{GZ2 vote fractions for Task~01 ({\it smooth, features/disk, or star/artifact?}) as a function of spectroscopic redshift. The left graph shows the fraction of galaxies for which the vote fraction exceeded 0.8. Galaxies which did not have a response above 0.8 are labeled ``unclassified''. The right shows the mean of the vote fractions, weighted by the total number of responses per classification galaxy. Data are shown for the GZ2 original + extra (thick solid), Stripe~82 normal-depth (thin dotted), and Stripe~82 co-add depth (thin solid) samples with a magnitude limit of $m_r < 17.0$.
+\label{fig-task01}}
+\end{figure*}
+
+Figure~\ref{fig-task01} compares the results of the GZ2 classifications for main sample galaxies to Stripe~82, using Task~01 vote fractions as an example. The distributions of the responses for both the main sample and Stripe~82 normal-depth show the same behavior as a function of redshift. This applies both when using thresholded vote fractions and the raw likelihoods. The type fractions for the coadded data, however, are significantly different -- classifications of coadded images have a significant increase in the fraction of responses for ``features or disk''. This results in a large increase in the number of unclassified galaxies (and subsequent decrease in the number of clean smooth galaxies) when using thresholds, and a similar shift of vote fractions from smooth to feature/disk when using the raw likelihoods. 
+
+This significant difference in the classification behavior demonstrates why the main sample corrections cannot be applied to the coadded images. The likely cause is that the coadded data allows classifiers to better distinguish faint features and/or disks, due to both improved seeing \citep[from $1.4\arcsec$ to $1.1\arcsec$;][]{ann11} and higher signal-to-noise ratio.
 
 \begin{figure*}
 \includegraphics[angle=-90,width=7.0in]{figures/stripe82_coadd_compare.ps}
-\caption{Comparison of GZ2 classifications from the two sets of coadded images for Stripe~82. Left: Distribution of the difference in vote fractions for galaxies that appear in both the coadd1 and coadd2 samples. Each panel shows selected responses for galaxies with at least 10 responses to the task. The dashed line shows the median of each distribution; a value of zero means there is no systematic difference, although the widths indicate considerable amounts of scatter for individual classifications. ``Noticeable bulge'' was the only response in GZ2 for which the mean $|\Delta_{coadd}| > 0.1$. Right: mean values of the difference in the vote fractions for every response in the GZ2 tree. 
+\caption{Comparison of GZ2 classifications for the coadded images of Stripe~82. Left: Distribution of the difference in vote fractions for galaxies that appear in both the coadd1 and coadd2 samples. Four example tasks are shown, including only galaxies with at least 10 reponses per task. The dashed line shows the median of each distribution; a value of zero means there is no systematic difference, although the widths indicate considerable amounts of scatter for individual classifications. ``Noticeable bulge'' was the only response in GZ2 for which the mean $|\Delta_{coadd}| > 0.1$. Right: mean values of the difference in the vote fractions for every response in the GZ2 tree. 
 \label{fig-stripe82_compare}}
 \end{figure*}
 
-%\begin{figure*}
-%\includegraphics[angle=0,width=7.0in]{figures/task01_type_fractions.ps}
-%\caption{Comparison of GZ2 Task~01 raw and debiased classifications. Raw classifications are the mean likelihood of all galaxies at each redshift by the number of votes per object. Debiased likelihoods have been adjusted using Equation~\ref{eqn-adjust}. The left panel shows all GZ2 main sample galaxies with redshifts, while the right panel shows all galaxies brighter than $M_r < -20.17$. 
-%\label{fig-task01_fractions}}
-%\end{figure*}
-
-For almost every response in the GZ2 decision tree, the data (no bias correction) show no systematic differences between classifications using the coadd1 and coadd2 images. Figure~\ref{fig-stripe82_compare} shows the difference between the two vote fractions ($\Delta_{coadd} = f_{coadd1} - f_{coadd2}$). If the mean value of \dcoadd~for a response is non-zero, that would indicate a systematic bias in classification due to the image processing. In GZ2, 33/37~tasks have $|\Delta_{coadd}| < 0.05$ (for galaxies with at least 10 responses to the task), with variations in the mean scattered on both sides of \dcoadd. For most purposes, therefore, the two versions of images were not distinguished and their classifications can be combined. 
+Comparing the coadd1 and coadd2 images, the data show no systematic differences between classifications for the majority of the GZ2 tasks. Figure~\ref{fig-stripe82_compare} shows the difference between the two vote fractions ($\Delta_{coadd} = f_{coadd1} - f_{coadd2}$) for four examples. If the mean value of \dcoadd~for a response was non-zero, that would indicate a systematic bias in classification due to the image processing. In GZ2, 33/37~tasks have $|\Delta_{coadd}| < 0.05$ (for galaxies with at least 10 responses to the task), with variations in the mean scattered on both sides of \dcoadd. 
 
 The biggest systematic difference is for the response to Task~05 (bulge prominence) of the bulge being ``just noticeable''. The mean fraction in coadd2 data is $\sim35\%$ higher than that in coadd1 data. This effect is opposite (but not equal) to that for an ``obvious'' bulge, for which the coadd1 data is $\sim13\%$ higher; this may indicate a general shift in votes toward a more prominent bulge. A similar but smaller effect is seen in classification of bulge shapes for edge-on disks (Task~09), where votes for ``no bulge'' in coadd1 data go to ``rounded bulge'' in coadd2. The specific cause for these effects as it relates to the image quality is not investigated further in this paper. 
 
-The comparison of the coadd1 and coadd2 data sets (which only differ in their treatment of background noise) demonstrates the intrinsic variability in classification of a single object, even with several tens of votes. For example, in the (unbiased) vote fractions from Task~01, 6831 (32.0\%) galaxies from coadd1 and 7,244 (33.9\%) galaxies from coadd2 exceed the ``clean'' early-type threshold of $p\geq0.8$. However, only 2,300 galaxies meet this threshold in {\em both} samples, while the union of the two yields 11,602 galaxies. The difference in numbers between the samples decreases when a higher value of $p$ is used. 
+For most morphological questions, the two versions of coadded images showed no significant difference. While either set of coadded data can likely be used for science, we recommend using coadd2 if picking between them. The overall consistenct indicates that the votes for both could potentially be combined and treated as a single data set; this could be useful for increasing the classification accuracy for deeper responses (such as arms number or arms winding) within the GZ2 tree.
+
+%The comparison of the coadd1 and coadd2 data sets (which only differ in their treatment of background noise) demonstrates the intrinsic variability in classification of a single object, even with several tens of votes. For example, in the (unbiased) vote fractions from Task~01, 6831 (32.0\%) galaxies from coadd1 and 7,244 (33.9\%) galaxies from coadd2 exceed the ``clean'' early-type threshold of $p\geq0.8$. However, only 2,300 galaxies meet this threshold in {\em both} samples, while the union of the two yields 11,602 galaxies. The difference in numbers between the samples decreases when a higher value of $p$ is used. 
 
 %Ellipticals ($p > 0.8$):
 %
@@ -582,15 +590,9 @@ The comparison of the coadd1 and coadd2 data sets (which only differ in their tr
 %\label{fig-type_fractions_s82}}
 %\end{figure*}
 
-Three tables of GZ2 morphological data are presented for the Stripe~82 galaxies. Table~\ref{tbl-stripe82_normal} gives classifications for Stripe~82 normal-depth images with spectroscopic redshifts. Galaxies in this table with $m_r < 17.0$ also appear in Table~\ref{tbl-mainclass}; however, the corrections for classification bias here are derived based only on Stripe~82 data, and so debiased likelihoods and flags may be slightly different. 
-
-Tables~\ref{tbl-stripe82_coadd1} and \ref{tbl-stripe82_coadd2} contains classification data for the Stripe~82 galaxies with co-added images and spectroscopic redshifts. Debiased probabilities and flags are derived from separately from each coadded data set. Since both the number of galaxies and the average number of classifications per galaxy are a small fraction of that in the main sample, though, the corrections encompass a smaller range of tasks and phase space in (\mr,\rfifty,\redshift). The increased exposure time and improved seeing, however, means that the effect of classification bias is lessened at lower redshifts; the raw vote fractions may thus be more suitable for some science cases using the coadded images. 
-
-\subsection{Additional data}\label{ssec-metadata}
-
-Although not reproduced in this paper, the repository at \url{http://data.galaxyzoo.org} contains pre-matched tables containing SDSS metadata for the spectroscopic galaxies in the GZ2 main sample. These tables contains some of the most commonly used DR7 parameters including SDSS exposure information, position, photometry, size, and redshift. These are provided as a resource for members of the community who wish to compare the morphogical data against external parameters. 
-
-Tables~\ref{tbl-mainclass}--\ref{tbl-stripe82_coadd2} can also be accessed from CasJobs in the SDSS Data Release~10, expected to be available in Jul~2013. 
+%\subsection{Additional data}\label{ssec-metadata}
+%
+%Although not reproduced in this paper, the repository at \url{http://data.galaxyzoo.org} contains pre-matched tables containing SDSS metadata for the spectroscopic galaxies in the GZ2 main sample. These tables contains some of the most commonly used DR7 parameters including SDSS exposure information, position, photometry, size, and redshift. These are provided as a resource for members of the community who wish to compare the morphogical data against external parameters. 
 
 \subsection{Using the classification data}\label{ssec-usingdata}
 
@@ -602,13 +604,13 @@ Tables~\ref{tbl-mainclass}--\ref{tbl-stripe82_coadd2} can also be accessed from 
 
 \section{Comparison of GZ2 to other classification methods}\label{sec-comparison}
 
-We compare the classifications for GZ2 to four other morphological catalogues, all of which are for SDSS images and overlap (at least in part) with the GZ2 sample:
+To assess both the scope and potential accuracy of the GZ2 classifications, we have compared our results to four recent morphological catalogues (including the previous veresion of Galaxy~Zoo). All four use classifications based on optical SDSS images and have significant overlaps with the galaxies in GZ2. 
 
 \begin{itemize}
 	\item Galaxy~Zoo~1 \citep{lin11}
 	\item \citet{nai10}
-	\item \citet{hue11}
 	\item EFIGI \citep{bai11}
+	\item \citet{hue11}
 \end{itemize}
 
 %The main purpose of this section is to perform preliminary comparisons between the weighted, but not debiased data from GZ2 available in early 2012. This analysis will need to be repeated to account for biases in the data; hopefully with the groundwork laid here, it will be faster to repeat it later.  
@@ -711,7 +713,7 @@ The lack of sensitivity to weak bars from NA10 may also be related to the design
 
 NA10 identified three other fine-structure features related to bars: ansae, peanuts, and nuclear bars. None of the three correlate strongly with the GZ2 bar parameter, with more galaxies actually having vote fractions $<0.5$ than above it. Nuclear bars are the only feature that overlaps with the NA10 bar strength classifications; out of 283 nuclear bars, 3 galaxies also have strong bars, 44 have intermediate bars, and 166 have weak bars. No ansae are detected in the GZ2 subsample of disks that are not edge-on, likely due to the axial cut. 
 
-%In the GZ2 main sample, 15,873 galaxies are in the clean, debiased sample of bars (as set by the flag in the data). This is 29.6\% of the clean sample of disks that are not edge-on, in extremely good agreement with both the 29.4\% fraction found in the smaller volume-limited sample of \citet{mas11c}, and with the $\sim30\%$ for disk galaxies with $(b/a)>0.4$ (or log~$(a/b)<0.398$) and T-types of S0 or later of \citet{nai10a}.
+%In the GZ2 main sample, 15,873 galaxies are in the clean, debiased sample of bars (as set by the flag in the data). This is 29.6\% of the clean sample of disks that are not edge-on, in extremely good agreement with both the 29.4\% fraction found in the smaller volume-limited sample of \citet{mas11c}, and with the $\sim30\%$ for disk galaxies with $(b/a)>0.4$ (or log~$(b/a)<0.398$) and T-types of S0 or later of \citet{nai10a}.
 %In the published literature, \citep{mas11c} mention the NA10 catalogue and note that both papers agree with a bar fraction depending on morphology with a minimum near the division between the blue and red sequences. There is no detailed comparison between the galaxies in the two samples.
 
 %Comment : This previous paragraph seems to repeat information that's already included. 
@@ -966,6 +968,8 @@ The data in this paper are the result of the efforts of the Galaxy~Zoo~2 volunte
 The development of Galaxy Zoo 2 was supported by The Leverhulme Trust. CJL acknowledges support from the STFC Science in Society program. 
 
 Boilerplate for individual grants, Zooniverse support, etc.
+
+STFC numbers?
 
 This research made use of Montage, funded by the National Aeronautics and Space Administration's Earth Science Technology Office, Computation Technologies Project, under Cooperative Agreement Number NCC5-626 between NASA and the California Institute of Technology. Montage is maintained by the NASA/IPAC Infrared Science Archive.
 

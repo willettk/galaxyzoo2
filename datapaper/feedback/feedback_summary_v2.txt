@@ -13,9 +13,6 @@ At end of all the comparison sections: put a recommendation for cutoffs, if poss
 Jordan Raddick
 
 - add table with minimum thresholds and vote counts per task
-- raises the issue of 50% thresholds
-- What should users do about the rare objects with high variance in Stripe 82?
-- How do differences in coadded data affect use by potential users?
 - Suggestion: add section 4.4 with example cases on using data
 
 Lucy Fortson
@@ -30,22 +27,16 @@ Karen Masters
 
 - early-type = E/S0/S0a, late-type = Sab and later?
 - Absolute magnitude limit: -20.94 (KLM) vs -20.89 (KWW)?
-- bigger section comparing S82 single-depth and coadd
 - will make a p_bar plot for Hoyle comparisons to EFIGI
-- f_x -> v_X; vote fractions vs. fraction of galaxies with characteristic?
 
 Tom Melvin
 
-- contrary viewpoint on GZ1 vs. GZ2 classification
 - suggests that we offer users an example of how to extract given objects (or alternatively, how to use likelihoods to do population studies)
 
 Ramin Skibba
 
 - suggests shortening Section 5, specifically the NA10 comparisons (reasonable)
-- "noticeable bulge" in Fig. 6 has more scatter because of the strong covariance(?) between the just noticeable and obvious questions. These overwhelmingly dominate the bulge prominence question, and are a general effect of the fact that this question really represents more of a continuum (relative strength) rather than a dichotomy.
 - bulge-disk composition? Simard et al, Lackner & Gunn
-- number of clean ellipticals vs. spirals in GZ1: genuine distribution of galaxies in the local universe?
-- thicken lines in IDL histogram plots (Figs 10-13)
 
 Brooke Simmons
 
@@ -63,7 +54,7 @@ Steven Bamford
 
 - suggests changes in the paragraph that Edd provided on image creation; not sure which to use.
 - check luminosity range for barred galaxies compared to Masters at end of Sec. 3
-- Steven has (legitimate) concerns about flags.
+- Has (legitimate) concerns about flags.
 - change Figure 5 to start at z=0.01. Argument for not thresholding?
 
 - check galaxies with NA10 no-bar, GZ2 yes. Are they actually barred?
