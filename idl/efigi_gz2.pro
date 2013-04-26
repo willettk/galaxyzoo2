@@ -36,7 +36,7 @@ pro efigi_gz2, ps=ps, stop=stop, count=count, gz2armcount=gz2armcount
 
 ; Bars
 
-file='~/Astronomy/Research/GalaxyZoo/bars_efigi_gz2_axial_willettk.csv'
+file='~/Astronomy/Research/GalaxyZoo/csv/bars_efigi_gz2_axial_willettk.csv'
 readcol, file, $
 	objid,$
 	efigi_bar,efigi_bar_inf,efigi_bar_sup,$
@@ -81,7 +81,7 @@ readcol, file, $
 	print,'Total number of overlap galaxies between samples: ',strtrim(n_elements(objid))
 
 if keyword_set(ps) then begin
-	ps_start, filename='~/Astronomy/Research/GalaxyZoo/efigi_bars'+counttitle+'.eps',$
+	ps_start, filename='~/Astronomy/Research/GalaxyZoo/datapaper/figures/efigi_bars'+counttitle+'.eps',$
 		/color, /quiet, /encap, xs=20, ys=7
 	cs=1.5
 	th=3
@@ -154,7 +154,7 @@ cgplot, indgen(1), $
 	xtickv = [0,0.25,0.50,0.75,1.0], $
 	xticks=4, $
 	position=[0.55,0.1,0.90,0.9], $
-	title='Face-on galaxies', $
+	title='Disks, not edge-on', $
 	xtitle='EFIGI bar length', $
 	ytitle='GZ2 bar weighted fraction'
 
@@ -264,7 +264,7 @@ if keyword_set(ps) then ps_end
 
 restore, '~/Astronomy/Research/GalaxyZoo/EFIGI/efigi_all.sav'
 
-file='~/Astronomy/Research/GalaxyZoo/contamination_efigi_gz2_willettk.csv'
+file='~/Astronomy/Research/GalaxyZoo/csv/contamination_efigi_gz2_willettk.csv'
 readcol, file, $
 	c_objid,c_pgc,$
 	gz2_artifact_wfraction,$
@@ -332,7 +332,7 @@ match, e_pgc, c_pgc, eind, cind
 
 !p.multi=[0,2,3]
 
-efigi = mrdfits('~/Astronomy/Research/GalaxyZoo/efigi_gz2_willettk.fit',1)
+efigi = mrdfits('~/Astronomy/Research/GalaxyZoo/fits/efigi_gz2_willettk.fit',1)
 
 if n_elements(gz2armcount) eq 0 then gz2armcount = 0
 
@@ -341,9 +341,9 @@ if n_elements(gz2armcount) eq 0 then gz2armcount = 0
 match, objid[where(alog10(1./expab_r) lt 0.3,axcount)], efigi[where(efigi.arm_curvature ge 0 and efigi.t10_arms_winding_total_count ge gz2armcount)].objid, junkind1, axial_armcurve_ind
 
 if keyword_set(ps) then begin
-	ps_start, filename='~/Astronomy/Research/GalaxyZoo/efigi_arm_curvature'+counttitle+'.eps',$
-		/color, /quiet, /encap, xs=14, ys=7
-	cs=1.5
+	ps_start, filename='~/Astronomy/Research/GalaxyZoo/datapaper/figures/efigi_arm_curvature'+counttitle+'.eps',$
+		/color, /quiet, /encap, xs=8, ys=7
+	cs=2
 	th=3
 	thickline=3
 	thinline=1
@@ -363,10 +363,10 @@ cgplot, indgen(1), $
 	yr=[0,1],/ystyle, $
 	xtickv = [0,0.25,0.50,0.75,1.0], $
 	xticks=4, $
-	position=[0.07,0.63,0.42,0.9], $
+	position=[0.07,0.66,0.42,0.93], $
 	title='All galaxies', $
 ;	xtitle='EFIGI arm curvature', $
-	ytitle='GZ2 tight spiral WF'
+	ytitle='GZ2 tight fraction'
 
 efbin = 0.25
 gz2bin = 0.1
@@ -401,7 +401,7 @@ endfor
 
 ;cgplots, !x.crange, !y.crange, linestyle=2, thick=th
 
-cgcolorbar, /vertical, /right, position=[0.63,0.43,0.9,0.45],range=[0,max(bccount_arr)]
+cgcolorbar, /vertical, /right, position=[0.66,0.43,0.93,0.45],range=[0,max(bccount_arr)]
 
 corr_na_gz = correlate(efigi[goodarmind].t10_arms_winding_a28_tight_weighted_fraction,efigi[goodarmind].arm_curvature)
 print,''
@@ -413,10 +413,10 @@ cgplot, indgen(1), $
 	yr=[0,1],/ystyle, $
 	xtickv = [0,0.25,0.50,0.75,1.0], $
 	xticks=4, $
-	position=[0.55,0.63,0.90,0.9], $
-	title='Face-on galaxies', $
+	position=[0.55,0.66,0.90,0.93], $
+	title='Disks, not edge-on', $
 ;	xtitle='EFIGI arm curvature', $
-	ytitle='GZ2 tight spiral WF'
+	ytitle='GZ2 tight fraction'
 
 efbin = 0.25
 gz2bin = 0.1
@@ -451,7 +451,7 @@ endfor
 
 ;cgplots, !x.crange, !y.crange, linestyle=2, thick=th
 
-cgcolorbar, /vertical, /right, position=[0.63,0.93,0.9,0.95],range=[0,max(bccount_ax_arr)]
+cgcolorbar, /vertical, /right, position=[0.66,0.93,0.93,0.95],range=[0,max(bccount_ax_arr)]
 
 corr_na_gz = correlate(efigi[axial_armcurve_ind].t10_arms_winding_a28_tight_weighted_fraction,efigi[axial_armcurve_ind].arm_curvature)
 print,''
@@ -475,7 +475,7 @@ cgplot, indgen(1), $
 	xticks=4, $
 	position=[0.07,0.35,0.42,0.60], $
 ;	xtitle='EFIGI arm curvature', $
-	ytitle='GZ2 medium spiral WF'
+	ytitle='GZ2 medium fraction'
 
 efbin = 0.25
 gz2bin = 0.1
@@ -524,7 +524,7 @@ cgplot, indgen(1), $
 	xticks=4, $
 	position=[0.55,0.35,0.90,0.60], $
 ;	xtitle='EFIGI arm curvature', $
-	ytitle='GZ2 medium spiral WF'
+	ytitle='GZ2 medium fraction'
 
 efbin = 0.25
 gz2bin = 0.1
@@ -584,7 +584,7 @@ cgplot, indgen(1), $
 	xticks=4, $
 	position=[0.07,0.10,0.42,0.30], $
 	xtitle='EFIGI arm curvature', $
-	ytitle='GZ2 loose spiral WF'
+	ytitle='GZ2 loose fraction'
 
 efbin = 0.25
 gz2bin = 0.1
@@ -631,7 +631,7 @@ cgplot, indgen(1), $
 	xticks=4, $
 	position=[0.55,0.10,0.90,0.30], $
 	xtitle='EFIGI arm curvature', $
-	ytitle='GZ2 loose spiral WF'
+	ytitle='GZ2 loose fraction'
 
 efbin = 0.25
 gz2bin = 0.1

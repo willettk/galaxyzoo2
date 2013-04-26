@@ -262,6 +262,8 @@ cghistoplot, bs_fit[sd_ind], $
 
 al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
+symsize=0.5
+
 cgplot, bs_fit[e_ind], na_ttype[e_ind], $
     xr=[-6,10], /xstyle, $
     yr=[-6,10], /ystyle, $
@@ -270,35 +272,41 @@ cgplot, bs_fit[e_ind], na_ttype[e_ind], $
     xtitle='Predicted T-type', $
     ytitle='NA10 T-type', $
     psym = 16, $
+    symsize=symsize, $
     color='black'
 
 cgplot, bs_fit[s0_ind], na_ttype[s0_ind], $
     /overplot, $
     thick = th, $
     psym = 16, $
+    symsize=symsize, $
     color='tomato'
 
 cgplot, bs_fit[sa_ind], na_ttype[sa_ind], $
     /overplot, $
     thick = th, $
     psym = 16, $
+    symsize=symsize, $
     color='yellow'
 
 cgplot, bs_fit[sb_ind], na_ttype[sb_ind], $
     /overplot, $
     psym = 16, $
+    symsize=symsize, $
     thick = th, $
     color='green'
 
 cgplot, bs_fit[sc_ind], na_ttype[sc_ind], $
     /overplot, $
     psym = 16, $
+    symsize=symsize, $
     thick = th, $
     color='dark green'
 
 cgplot, bs_fit[sd_ind], na_ttype[sd_ind], $
     /overplot, $
     psym = 16, $
+    symsize=symsize, $
     thick = th, $
     color='blue'
 

@@ -45,7 +45,7 @@ fitsdir = gz2dir+'fits/tasks/'
 
 ; Read in the masked data created by Python module
 
-gz2 = mrdfits(fitsdir+var_def+'_data_for_idl.fits',1,/silent)
+gz2 = mrdfits(fitsdir+var_def+'_'+file_str+'data_for_idl.fits',1,/silent)
 tagnames=tag_names(gz2)
 
 ; Create array of bins in redshift, abs mag, and size space
@@ -101,8 +101,8 @@ a = {edges_redshift:edges_redshift, $
 ; add the bin edges and centers as binary tables in secondary HDU. 
 ; Data can now be read back into Python.
 
-mwrfits, transpose(hcube), fitsdir+var_def+'_idlbinned.fits', /create,/silent
-mwrfits, a, fitsdir+var_def+'_idlbinned.fits',/silent
+mwrfits, transpose(hcube), fitsdir+var_def+'_'+file_str+'idlbinned.fits', /create,/silent
+mwrfits, a, fitsdir+var_def+'_'+file_str+'idlbinned.fits',/silent
 
 ; Create temp file to indicate that process has finished
 

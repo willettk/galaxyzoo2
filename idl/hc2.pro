@@ -34,12 +34,12 @@
 
 pro hc2, ps=ps, stop=stop
 
-gz2dir = '~/Astronomy/Research/GalaxyZoo/'
-fitsdir = '~/Astronomy/Research/GalaxyZoo/fits/'
-figdir = '~/Astronomy/Research/GalaxyZoo/gz2dropbox/figures/'
-gz2hcfile = fitsdir+'gz2_sample_table_hc.fits'
+gz2dir  = '~/Astronomy/Research/GalaxyZoo/'
+fitsdir = gz2dir+'fits/'
+figdir  = gz2dir+'datapaper/figures/'
+savdir  = gz2dir+'sav/'
 
-restore,gz2dir+'gz2hc.sav'
+restore,savdir+'gz2hc.sav'
 
 tagnames=tag_names(gz2hc)
 nt = n_elements(tagnames)

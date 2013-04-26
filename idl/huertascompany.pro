@@ -34,12 +34,14 @@
 
 pro huertascompany, ps=ps, stop=stop
 
-gz2dir = '~/Astronomy/Research/GalaxyZoo/'
-fitsdir = '~/Astronomy/Research/GalaxyZoo/fits/'
-figdir = '~/Astronomy/Research/GalaxyZoo/gz2dropbox/figures/'
+gz2dir  = '~/Astronomy/Research/GalaxyZoo/'
+fitsdir = gz2dir+'fits/'
+figdir  = gz2dir+'datapaper/figures/'
+savdir  = gz2dir+'sav/'
+
 gz2hcfile = fitsdir+'gz2_sample_table_hc.fits'
 
-restore,gz2dir+'gz2hc.sav'
+restore,savdir+'gz2hc.sav'
 
 tagnames=tag_names(gz2hc)
 nt = n_elements(tagnames)
@@ -295,7 +297,7 @@ if keyword_set(ps) then ps_end
 	ni = n_elements(hcbins)
 	nj = n_elements(gzbins)
 
-	restore, gz2dir+'hc_grids.sav'
+	restore, savdir+'hc_grids.sav'
 
 	if keyword_set(ps) then begin
 		ps_start, filename=figdir+'hc_gz2.eps',/color, /quiet,/encap, xsize=7, ysize=3
@@ -435,49 +437,7 @@ if keyword_set(ps) then ps_end
 
 ; Plot the HC probabilities as function of bulge dominance
 
-mintask = 10
-minprob = 0.5
-taskind = where(gz2main.T02_EDGEON_A05_NO_WEIGHT ge 30,nt)
-print,nt
-
-h1 = double(hist_2d(gz2main[taskind].(wfind[10]),     gz2main[taskind].pscd,bin1 = 0.05, bin2 = 0.05, min1 = 0.00, max1 = 1.00, min2 = 0.00, max2 = 1.00))
-h2 = double(hist_2d(gz2main[taskind].(wfind[11]),     gz2main[taskind].pscd,bin1 = 0.05, bin2 = 0.05, min1 = 0.00, max1 = 1.00, min2 = 0.00, max2 = 1.00))
-h3 = double(hist_2d(gz2main[taskind].(wfind[12]),     gz2main[taskind].pscd,bin1 = 0.05, bin2 = 0.05, min1 = 0.00, max1 = 1.00, min2 = 0.00, max2 = 1.00))
-h4 = double(hist_2d(gz2main[taskind].(wfind[13]),     gz2main[taskind].pscd,bin1 = 0.05, bin2 = 0.05, min1 = 0.00, max1 = 1.00, min2 = 0.00, max2 = 1.00))
-
-y = fillarr(0.05, 0.0, 1.05)
-x = fillarr(0.05, 0.0, 1.05)
-whiteback
-
-if keyword_set(ps) then begin
-	ps_start, filename=figdir+'hc_gz2_bulge_contour.eps',/color, /quiet,/encap, xsize=15, ysize=15
-	cs=2
-	th=3
-	thickline=5
-	thinline=1
-endif else begin
-	cs=2
-	th=1
-	th=3
-	thickline=1
-	thinline=1
-endelse
-
-!p.multi=[0,2,2]
-
-ncolors = 50
-cgloadct, 33, ncolors=ncolors, bottom=1
-levels = fillarr(0.07,0,3.5)
-;levels = fillarr(10,1,500)
-
-cgcontour, alog10(h1+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='No bulge'
-cgcontour, alog10(h2+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Just noticeable'
-cgcontour, alog10(h3+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Obvious bulge'
-cgcontour, alog10(h4+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1, ytitle='HC Scd probability', xtitle='GZ2 vote fraction', charsize = cs, title='Dominant bulge'
-
-cgcolorbar,position=[0.45,0.52,0.60,0.54],title='log(N!Igal!N + 1)',ncolors=ncolors
-
-if keyword_set(ps) then ps_end
+hc_bulge, ps=ps
 
 if keyword_set(stop) then stop
 

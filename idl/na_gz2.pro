@@ -37,7 +37,7 @@ pro na_gz2, ps=ps, stop=stop, axial=axial, count=count
 ; Paths for files and plots
 
 csv_path = '~/Astronomy/Research/GalaxyZoo/csv/'
-fig_path = '~/Astronomy/Research/GalaxyZoo/gz2dropbox/figures/'
+fig_path = '~/Astronomy/Research/GalaxyZoo/datapaper/figures/'
 
 ; Bars in GZ2 and NA10
 
@@ -48,6 +48,10 @@ readcol, file, $
 	expAB_r,expAB_g,$
 	format='a,l,f,i,i,i,f,f', $
 	skip=1,/silent
+
+	; This kluge is so that histogram bins end at vote fractions of 1.0 - KW, 27 Mar 2013
+	gzbar1 = where(bar_gz eq 1.0)
+	bar_gz[gzbar1] = 1d - 1d-3
 
 	axialcut = where(alog10(1./expab_r) lt 0.3)
 	if keyword_set(axial) then begin
@@ -77,9 +81,9 @@ readcol, file, $
 ; Plot the binned GZ bar percentage vs. percentage of Nair galaxies in that bin range that have barflag > 0
 
 if keyword_set(ps) then begin
-	ps_start, filename=fig_path+'na_bars'+axialtitle+counttitle+'.eps',/color, /quiet, xs=14, ys=8, /encap
+	ps_start, filename=fig_path+'na_bars'+axialtitle+counttitle+'.eps',/color, /quiet, xs=12, ys=8, /encap
 	cs=1.2
-	th=3
+	th=7
 	thickline=3
 	thinline=1
 endif else begin
@@ -106,11 +110,13 @@ endfor
 
 gzbinarr = fillarr(1./nbins,0,1.-1./nbins)
 cgplot, gzbinarr,nabinarr, $
+	psym = 16, $
 	charsize=cs, $
 	xtitle='GZ2 bar fraction', $
-	ytitle='Barred NA galaxies/All NA galaxies'
+	thick = th, ythick=th, xthick=th, $
+	ytitle='fraction of barred galaxies in NA10'
 
-cgplot,/over,gzbinarr,gzbinarr,linestyle=1
+cgplot,/over,fillarr(0.1,0.,1.1),fillarr(0.1,0.,1.1),linestyle=2, thick=3
 
 corr_na_gz = correlate(gzbinarr,nabinarr)
 print,''
@@ -118,47 +124,61 @@ print,'Spearman correlation factor: ',corr_na_gz
 
 ; Plot 2
 
+bs2 = 0.05
 cghistoplot,bar_gz[where(bar_na eq 0)], $
+	thick = th, $
 	charsize=cs,/outline,/freq,$
+	binsize = bs2, $
 	datacolor='blue', $
+	xr=[-0.05, 1.05], /xstyle, $
+        ytickformat='(f4.2)',$
+	ytitle='fraction of galaxies', $
 	xtitle='GZ2 bar fraction'
-cghistoplot,bar_gz[where(bar_na ge 1)], /outline, datacolor='red',/oplot,/freq
-al_legend,charsize=cs,psym=28,color=['blue','red'],/top,/right,['NA no bar','NA bar']
+cghistoplot,bar_gz[where(bar_na ge 1)], binsize = bs2, /outline, datacolor='red',/oplot,/freq, thick=th
+al_legend,charsize=cs,psym=28,color=['blue','red'],/top,/right,['NA10 no bar','NA10 bar']
 
 ; Plot 3
 
+bs3=0.10
 cghistoplot,bar_gz[where(bar_na gt 0)], $
 	charsize=cs,/outline,$
 	thick=th, $
 ;	/freq,$
+	binsize = bs3, $
 	datacolor='Red', $
+	ytitle='number of galaxies', $
+	xr=[-0.05, 1.05], /xstyle, $
 	xtitle='GZ2 bar fraction'
 na_bar1 = where(na_binparse(bar_na,1),c1)
 na_bar2 = where(na_binparse(bar_na,2),c2)
 na_bar3 = where(na_binparse(bar_na,3),c3)
-if c1 gt 4 then cghistoplot,bar_gz[na_bar1], /outline, datacolor='blue',/oplot, thick=th
-if c2 gt 4 then cghistoplot,bar_gz[na_bar2], /outline, datacolor='green',/oplot, thick=th
-if c3 gt 4 then cghistoplot,bar_gz[na_bar3], /outline, datacolor='purple',/oplot, thick=th
+if c1 gt 4 then cghistoplot,bar_gz[na_bar1], /outline, binsize=bs3, datacolor='blue',/oplot, thick=th
+if c2 gt 4 then cghistoplot,bar_gz[na_bar2], /outline, binsize=bs3, datacolor='dark green',/oplot, thick=th
+if c3 gt 4 then cghistoplot,bar_gz[na_bar3], /outline, binsize=bs3, datacolor='purple',/oplot, thick=th
 
-al_legend,charsize=cs,psym=28,color=['red','blue','green','purple'],/top,/left,['NA all bars','Strong bar','Int. bar','Weak bar']
+al_legend,charsize=cs,psym=28,color=['red','blue','dark green','purple'],/top,/left,['NA10 all bars','Strong bar','Int. bar','Weak bar']
 
 ; Plot 4
 
+bs4 = 0.10
 cghistoplot,bar_gz[where(bar_na gt 0)], $
 	charsize=cs,/outline,$
 	thick=th, $
 ;	/freq,$
+	binsize = bs4, $
 	datacolor='Red', $
+	ytitle='number of galaxies', $
+	xr=[-0.05, 1.05], /xstyle, $
 	xtitle='GZ2 bar fraction'
 
 na_bar4 = where(na_binparse(bar_na,4),c4)
 na_bar5 = where(na_binparse(bar_na,5),c5)
 na_bar6 = where(na_binparse(bar_na,6),c6)
-if c4 gt 4 then cghistoplot,bar_gz[na_bar4], /outline, datacolor='hot pink',/oplot, thick=th
-if c5 gt 4 then cghistoplot,bar_gz[na_bar5], /outline, datacolor='orange',/oplot, thick=th
-if c6 gt 4 then cghistoplot,bar_gz[na_bar6], /outline, datacolor='black',/oplot, thick=th
+if c4 gt 4 then cghistoplot,bar_gz[na_bar4], /outline, binsize = bs4, datacolor='hot pink',/oplot, thick=th
+if c5 gt 4 then cghistoplot,bar_gz[na_bar5], /outline, binsize = bs4, datacolor='orange',/oplot, thick=th
+if c6 gt 4 then cghistoplot,bar_gz[na_bar6], /outline, binsize = bs4, datacolor='black',/oplot, thick=th
 
-al_legend,charsize=cs,psym=28,color=['red','hot pink','orange','black'],/top,/left,['NA all bars','Ansae','Peanut','Nuclear bar']
+al_legend,charsize=cs,psym=28,color=['red','hot pink','orange','black'],/top,/left,['NA10 all bars','Ansae','Peanut','Nuclear bar']
 
 ; What type of bar (if any) do the sub-bar features correlate with?
 
@@ -240,11 +260,7 @@ al_legend,charsize=cs,psym=28,color=['red','hot pink','orange','black'],/top,/le
 
 if keyword_set(ps) then ps_end
 
-
 ; RINGS
-
-
-
 
 ringfile=csv_path+'rings_na_gz2_willettk.csv'
 readcol, ringfile, $
@@ -274,10 +290,12 @@ if keyword_set(ps) then begin
 	cs=1.2
 	th=3
 	legsize=3
+	thickline = 7
 endif else begin
 	cs=2
 	th=1
 	legsize = 1.2
+	thickline = 1
 endelse
 
 !p.multi=[0,2,2]
@@ -296,18 +314,21 @@ endfor
 
 cghistoplot, ring_count, $
 	binsize=2, $
+	thick=thickline, $
 	/log, $
 	/outline, $
 	datacolor='red', $
-	xtitle='Number of votes for ring in GZ2', $
+	xtitle='Number of votes for "ring" (GZ2)', $
+	ytitle='Count', $
 	charsize=cs
 
 cghistoplot, /oplot, ring_count[where(ring_na gt 0)], $
 	/outline, $
+	thick=thickline, $
 	datacolor='blue', $
 	binsize=2
 
-al_legend,charsize=cs,psym=28,color=['red','blue'],/top,/right,['All galaxies','NA rings']
+al_legend,charsize=cs,psym=28,color=['red','blue'],/top,/right,['All galaxies','Rings (NA10)']
 
 ;cghistoplot, /oplot, ring_count[where(na_binparse(ring_na,1))], $
 ;	/outline, $
@@ -342,45 +363,50 @@ for i=0,rbin-1 do begin
 endfor
 cgplot, rbinarr[0:rbin-1],rvotearr, $
 	thick = thickline, $
+	xthick=thickline, $
+	ythick=thickline, $
 	xr=[0,60], $
 	charsize=cs, $
 	yr=[0,1.1],/ystyle, $
-	xtitle='Number of votes for ring in GZ2',$ 
-	ytitle='Ringed fraction (NA)'
+	xtitle='Number of votes for "ring" (GZ2)', $
+	ytitle='Ringed fraction (NA10)'
 
 cgplot, rbinarr[0:rbin-1],rvotearr_nuclear, $
-	thick=thinline, $
+	thick=thickline, $
 	/over, $
 	color='orange'
 
 cgplot, rbinarr[0:rbin-1],rvotearr_inner, $
-	thick=thinline, $
+	thick=thickline, $
 	/over, $
 	color='green'
 
 cgplot, rbinarr[0:rbin-1],rvotearr_outer, $
-	thick=thinline, $
+	thick=thickline, $
 	/over, $
 	color='purple'
 
-al_legend,charsize=cs,psym=28,color=['black','orange','green','purple'],/top,/right,['NA all rings','Nuclear ring','Inner ring','Outer ring']
+al_legend,charsize=cs,psym=28,color=['black','orange','green','purple'],/top,/right,['All rings','Nuclear ring','Inner ring','Outer ring']
 ; Plot 3
 
 bin3 = 0.05
 cghistoplot, ring_wfraction, $
+	thick = thickline, $
 	/log, $
 	binsize=bin3, $
 	/outline, $
 	datacolor='Red', $
-	xtitle='GZ2 vote fraction', $
+	xtitle='Vote fraction for "ring" (GZ2)', $
+	ytitle='Count', $
 	charsize=cs
 
 cghistoplot, /oplot, ring_wfraction[where(ring_na gt 0)], $
+	thick = thickline, $
 	/outline, $
 	binsize=bin3, $
 	datacolor='blue'
 
-al_legend,charsize=cs,psym=28,color=['red','blue'],/top,/right,['All galaxies','NA rings']
+al_legend,charsize=cs,psym=28,color=['red','blue'],/top,/right,['All galaxies','Rings (NA10)']
 
 ; Plot 4
 
@@ -400,72 +426,33 @@ for i=0,rbin-1 do begin
 endfor
 cgplot, rbinarr[0:rbin-1],rvotearr, $
 	thick=thickline, $
+	xthick=thickline, $
+	ythick=thickline, $
 	charsize=cs, $
 	yr=[0,1.1],/ystyle, $
-	xtitle='GZ2 vote fraction',$ 
-	ytitle='Ringed fraction (NA)'
+	xtitle='Vote fraction for "ring" (GZ2)', $
+	ytitle='Ringed fraction (NA10)'
 
 cgplot, rbinarr[0:rbin-1],rvotearr_nuclear, $
-	thick=thinline, $
+	thick=thickline, $
 	/over, $
 	color='orange'
 
 cgplot, rbinarr[0:rbin-1],rvotearr_inner, $
-	thick=thinline, $
+	thick=thickline, $
 	/over, $
 	color='green'
 
 cgplot, rbinarr[0:rbin-1],rvotearr_outer, $
-	thick=thinline, $
+	thick=thickline, $
 	/over, $
 	color='purple'
 
-;binsize=0.1
-;cghistoplot,ring_wfraction[where(ring_na gt 0)], $
-;	charsize=cs,/outline,$
-;	binsize=binsize, $
-;	thick=th, $
-;	yr=[0,800], $
-;;	/freq,$
-;	datacolor='Red', $
-;	xtitle='GZ2 vote fraction'
-;na_ring1 = where(na_binparse(ring_na,1),c1)
-;na_ring2 = where(na_binparse(ring_na,2),c2)
-;na_ring3 = where(na_binparse(ring_na,3),c3)
-;if c1 gt 4 then cghistoplot,ring_wfraction[na_ring1], /outline, datacolor='orange',/oplot, thick=th, binsize=binsize
-;if c2 gt 4 then cghistoplot,ring_wfraction[na_ring2], /outline, datacolor='green',/oplot, thick=th, binsize=binsize
-;if c3 gt 4 then cghistoplot,ring_wfraction[na_ring3], /outline, datacolor='purple',/oplot, thick=th, binsize=binsize
-;
-al_legend,charsize=cs,psym=28,color=['black','orange','green','purple'],/top,/right,['NA all rings','Nuclear ring','Inner ring','Outer ring']
-
-
-; Plot 4
-
-; Load the direct GZ2 data from the downloaded csv table; compare trends for the sample
-
-;match, csv_objid, r_objid, ra, rb
-;
-;; Simple - what is the ring fraction in the overlap sample? What is it in the total original + extra samples?
-;
-;indall = where((sample eq 'original' or sample eq 'extra') and ring_count gt 10,icount)
-;indbar = where((sample eq 'original' or sample eq 'extra') and ring_count gt 10 and t03_bar_a06_bar_weighted_fraction ge t03_bar_a07_no_bar_weighted_fraction,barcount)
-;indnobar = where((sample eq 'original' or sample eq 'extra') and ring_count gt 10 and t03_bar_a06_bar_weighted_fraction lt t03_bar_a07_no_bar_weighted_fraction,nobarcount)
-;
-;print,'Original + extra (all) rings:',icount,float(barcount)/float(barcount + nobarcount)
-;
-;indall = where((sample[ra] eq 'original' or sample[ra] eq 'extra') and ring_count[ra] gt 10,icount)
-;indbar = where((sample[ra] eq 'original' or sample[ra] eq 'extra') and ring_count[ra] gt 10 and t03_bar_a06_bar_weighted_fraction[ra] ge t03_bar_a07_no_bar_weighted_fraction[ra],barcount)
-;indnobar = where((sample[ra] eq 'original' or sample[ra] eq 'extra') and ring_count[ra] gt 10 and t03_bar_a06_bar_weighted_fraction[ra] lt t03_bar_a07_no_bar_weighted_fraction[ra],nobarcount)
-;
-;print,'Original + extra (overlap) rings:',icount,float(barcount)/float(barcount + nobarcount)
-
-
+al_legend,charsize=cs,psym=28,color=['black','orange','green','purple'],/top,/right,['All rings','Nuclear ring','Inner ring','Outer ring']
 
 if keyword_set(ps) then ps_end
 
 ; PAIRS/INTERACTING
-
-
 
 pairfile=csv_path+'pairs_interacting_na_gz2_willettk.csv'
 readcol, pairfile, $
@@ -506,28 +493,33 @@ endelse
 
 cghistoplot, merger_count, $
 	binsize=2, $
+	thick = thickline, $
 	/log, $
 	datacolor='black', $
 	/outline, $
-	xtitle='Number of votes for merger in GZ2', $
+	xtitle='Number of votes for "merger" (GZ2)', $
+	ytitle='Count', $
 	charsize=cs
 
 cghistoplot, /oplot, merger_count[where(pair_na gt 0)], $
 	/outline, $
+	thick = thickline, $
 	datacolor='blue', $
 	binsize=2
 
 cghistoplot, /oplot, merger_count[where(interaction_na gt 2)], $
 	/outline, $
+	thick = thickline, $
 	datacolor='red', $
 	binsize=2
 
 cghistoplot, /oplot, merger_count, $
 	/outline, $
+	thick = thickline, $
 	datacolor='black', $
 	binsize=2
 
-al_legend,charsize=cs,psym=28,color=['black','blue','red'],/top,/right,['All galaxies','NA pairs','NA interacting']
+al_legend,charsize=cs,psym=28,color=['black','blue','red'],/top,/right,['All galaxies','NA10 pairs','NA10 interacting']
 
 ;cghistoplot, /oplot, ring_count[where(na_binparse(ring_na,1))], $
 ;	/outline, $
@@ -558,13 +550,17 @@ for i=0,mbin-1 do begin
 endfor
 
 cgplot, mbinarr[0:mbin-1],mvotearr, $
+	thick = thickline, $
+	xthick=thickline, $
+	ythick=thickline, $
 	charsize=cs, $
 	color='red', $
 	yr=[0,1.1],/ystyle, $
-	xtitle='Number of votes for merger in GZ2',$ 
-	ytitle='Interaction/pair fraction (NA)'
+	xtitle='Number of votes for "merger" (GZ2)', $
+	ytitle='Interaction/pair fraction (NA10)'
 
 cgplot, mbinarr[0:mbin-1],pvotearr, $
+	thick = thickline, $
 	/over, $
 	color='blue'
 
@@ -574,22 +570,26 @@ bin3 = 0.05
 cghistoplot, merger_wfraction, $
 	/log, $
 	binsize=bin3, $
+	thick = thickline, $
 	/outline, $
 	datacolor='black', $
-	xtitle='GZ2 merger vote fraction', $
+	xtitle='Vote fraction for "merger" (GZ2)', $
+	ytitle='Count', $
 	charsize=cs
 
 cghistoplot, /oplot, merger_wfraction[where(pair_na gt 0)], $
 	binsize=bin3, $
+	thick = thickline, $
 	/outline, $
 	datacolor='blue'
 
 cghistoplot, /oplot, merger_wfraction[where(interaction_na gt 2)], $
 	binsize=bin3, $
+	thick = thickline, $
 	/outline, $
 	datacolor='red'
 
-al_legend,charsize=cs,psym=28,color=['black','blue','red'],/top,/right,['All galaxies','NA pairs','NA interacting']
+al_legend,charsize=cs,psym=28,color=['black','blue','red'],/top,/right,['All galaxies','NA10 pairs','NA10 interacting']
 
 ;kstwo, merger_wfraction, merger_wfraction[where(pair_na gt 0)], d, p & print,d,p
 ;kstwo, merger_wfraction, merger_wfraction[where(interaction_na gt 0)], d, p & print,d,p
@@ -610,13 +610,17 @@ endfor
 
 cgplot, mbinarr[0:mbin-1],mvotearr, $
 	charsize=cs, $
+	thick = thickline, $
+	xthick=thickline, $
+	ythick=thickline, $
 	color='red', $
 	yr=[0,1.1],/ystyle, $
-	xtitle='GZ2 merger vote fraction',$ 
-	ytitle='Interaction/pair fraction (NA)'
+	xtitle='Vote fraction for "merger" (GZ2)', $
+	ytitle='Interaction/pair fraction (NA10)'
 
 cgplot, mbinarr[0:mbin-1],pvotearr, $
 	/over, $
+	thick = thickline, $
 	color='blue'
 
 if keyword_set(ps) then ps_end
@@ -625,6 +629,15 @@ if keyword_set(ps) then ps_end
 
 !p.multi=[0,2,2]
 binsize=2
+
+if keyword_set(ps) then begin
+	ps_start, filename=fig_path+'na_pairs'+axialtitle+counttitle+'_plot2.eps',/color, /quiet, xs=14, ys=8, /encap
+	cs=1.2
+	th=3
+endif else begin
+	cs=2
+	th=1
+endelse
 
 cghistoplot,merger_count[where(pair_na gt 0)], $
 	charsize=cs,/outline,$
@@ -726,9 +739,25 @@ if c8 gt 4 then cghistoplot,merger_wfraction[na_pair8], /outline, datacolor='bla
 
 al_legend,charsize=cs/2.,psym=28,color=['black','blue','green','purple','red','yellow','orange','hotpink','black'],/top,/right,['Interacting','None','Disturbed','Warp','Shells','Short tail','Medium tail','Long tail','Bridge']
 
+if keyword_set(ps) then ps_end
+
 ; Check number of tails
 
 !p.multi=[0,2,1]
+
+if keyword_set(ps) then begin
+	ps_start, filename=fig_path+'na_tails'+axialtitle+counttitle+'.eps',/color, /quiet,/encap,xs=15.0,ys=7.0
+	cs=1.2
+	th=3
+	thickline=7
+	thinline=1
+endif else begin
+	cs=2
+	th=1
+	th=3
+	thickline=1
+	thinline=1
+endelse
 
 cghistoplot,merger_count, $
 	charsize=cs,/outline,$
@@ -764,6 +793,7 @@ if c4 gt 4 then cghistoplot,merger_wfraction[na_tails4], /outline, datacolor='re
 
 al_legend,charsize=cs/2.,psym=28,color=['black','blue','green','purple','red'],/top,/right,['No tails','1 tail','2 tails','3+ tails','Bunny']
 
+if keyword_set(ps) then ps_end
 
 ; T-Types
 
@@ -809,7 +839,7 @@ if keyword_set(ps) then begin
 	ps_start, filename=fig_path+'na_ttype'+axialtitle+counttitle+'.eps',/color, /quiet,/encap,xs=15.0,ys=7.0
 	cs=1.2
 	th=3
-	thickline=5
+	thickline=7
 	thinline=1
 endif else begin
 	cs=2
@@ -839,7 +869,7 @@ cghistoplot, gz_features_or_disk_wfraction[where(ttype ge -3 and ttype le 0)], $
 	datacolor='lime green'
 
 cghistoplot, gz_features_or_disk_wfraction[where(ttype gt 1 and ttype le 8)], $
-	thick=thinline, $
+	thick=thickline, $
 ;	/freq, $
 	/outline, $
 	binsize=bin, $
@@ -869,7 +899,7 @@ cghistoplot, gz_spiral_wfraction[where(ttype ge -3 and ttype le 0 and totalsc ge
 	datacolor='lime green'
 
 cghistoplot, gz_spiral_wfraction[where(ttype gt 0 and ttype le 8 and totalsc ge spiralcount)], $
-	thick=thinline, $
+	thick=thickline, $
 ;	/freq, $
 	/outline, $
 	binsize=bin, $
