@@ -35,33 +35,21 @@ Tom Melvin
 
 Ramin Skibba
 
-- suggests shortening Section 5, specifically the NA10 comparisons (reasonable)
 - bulge-disk composition? Simard et al, Lackner & Gunn
 
 Brooke Simmons
 
-- histogram of the number of classifications per galaxy for the main sample?
-- add more columns to Table 2? Subscript text, answer number
 - does the fact that adjustment doesn't work between 0.085 and 0.25 say anything about the expected timescales for galaxy evolution? really good question.
-- change text on min. number of classifications, depending on new debiasing results
 - how well does a linear fit work for Tasks 01 and 07?
 - do the differences between coadd1 and coadd2 data change as a function of apparent magnitude and/or surface brightness?
-- look at samples of galaxies for which GZ1 and GZ2 imaging disagrees. What's going on?
-- offer to look into GZ1 vs. GZ2 more carefully. Thanks!
 - science part: plot SSFR vs. the bulge prominence?
 
 Steven Bamford
 
-- suggests changes in the paragraph that Edd provided on image creation; not sure which to use.
 - check luminosity range for barred galaxies compared to Masters at end of Sec. 3
 - Has (legitimate) concerns about flags.
-- change Figure 5 to start at z=0.01. Argument for not thresholding?
 
 - check galaxies with NA10 no-bar, GZ2 yes. Are they actually barred?
-- not clear on comment about comparing ansae/peanuts to the NA no-bar histogram
-- rewrite text in NA10 merger section. Prefer to use vote fractions vs. total number of votes, or multiply by previous cut!
-- for Figure 11 (NA10 rings), try f_odd * fring?
-- explain in all NA10 sections that we put a vote fraction + vote limit on previous questions.
 - are "dominant" bulges ellipticals with tidal tails?
 
 Kevin Casteels
