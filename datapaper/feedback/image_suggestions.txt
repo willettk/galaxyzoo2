@@ -1,0 +1,8 @@
+Fig 4 - larger/rotate
+Fig 6 - thick lines thicker; replot axes; get rid of minor ticks
+Fig 7 - hatch histograms, increase y-axis
+Fig 10-13 - tick marks
+Fig 14 - 
+Fig 21 - diff. colour scheme, 
+
+Overall - change figures to PDF in order that the flowchart can be displayed at native resolution

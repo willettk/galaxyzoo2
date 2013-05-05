@@ -1,0 +1,7 @@
+I have now finished your draft data paper. Again, this is a "tour de force". I don't have a scanner at home so send just my major comments now:
+
+* I got confused by Eqn 19 and Figure 16. I really like the idea of combining bulge prominence and spiral arms to get a good separation of Sa-Sb-Sc classes, but you seem to dwell just on the bar prominence and I wonder if not more analysis would get you a better correlation using Tasks 5 and 10. I'd advocate a deeper look at this if possible as I do think this could be one of the legacies of this paper (a way to cleanly separate Sa's and Sc's). Likewise, why not try separating Sba and Sbc, by imposing the bar criteria first (I was actually confused as to how the bar criteria followed in here).
+
+* Following the train of thought above, I wonder if you could devise a scheme where SDSS galaxies could be put on the Hubble tuning fork i.e., combinations of parameters and cuts that gave you Hubbles' classification (more or less). Nice story if possible.
+
+* Section 5.4 regarding the correlation with HC. Is this interesting and does it have solid conclusions? I really didn't feel it did as written and is quite defensive. Why not remove this subsection all together? Section 5.5 seems too much work and I think the comparisons you have done are good enough. These schemes should be discussed in the introduction, not here.
