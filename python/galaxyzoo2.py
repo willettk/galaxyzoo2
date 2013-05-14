@@ -13,6 +13,7 @@ import numpy as np
 import numpy.ma as ma
 import time
 import os
+import matplotlib
 
 from matplotlib import rc
 from matplotlib import pyplot as plt
@@ -2559,7 +2560,7 @@ def plot_galaxy_counts(task_dict,vmin=0,vmax=1000,stripe82=False,depth='normal')
 
     return fig
 
-def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False, depth='normal', ploterrors=False, photoz=False):
+def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False, depth='normal', ploterrors=False, photoz=False, plotadj=True):
 
     """ Plot the mean type fractions for all responses for each task
         as a function of redshift. Left plot shows all galaxies,
@@ -2739,15 +2740,17 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
         ax1.plot(zplotbins, p_raw_typefrac[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
         legend_raw_str.append('raw %s' % task_str)
 
-    colorarr = ['r','b','m','g','c','y','k'][::-1]
-    for idx,task_str in enumerate(task_dict['var_str']):
-        linecolor = colorarr.pop()
-        ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
-        legend_adj_str.append('adj %s' % task_str)
+    if plotadj:
+        colorarr = ['r','b','m','g','c','y','k'][::-1]
+        for idx,task_str in enumerate(task_dict['var_str']):
+            linecolor = colorarr.pop()
+            ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
+            legend_adj_str.append('adj %s' % task_str)
 
-        if ploterrors:
-            ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
-               color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+    if ploterrors:
+        ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
+           color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+        if plotadj:
             ax1.errorbar(zplotbins, p_adj_typefrac[idx,:], yerr = p_adj_typefrac_err[idx,:], 
                color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
@@ -2768,14 +2771,16 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
         linecolor = colorarr.pop()
         ax2.plot(zplotbins, p_raw_typefrac_maglim[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
 
-    colorarr = ['r','b','m','g','c','y','k'][::-1]
-    for idx,task_str in enumerate(task_dict['var_str']):
-        linecolor = colorarr.pop()
-        ax2.plot(zplotbins, p_adj_typefrac_maglim[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
+    if plotadj:
+        colorarr = ['r','b','m','g','c','y','k'][::-1]
+        for idx,task_str in enumerate(task_dict['var_str']):
+            linecolor = colorarr.pop()
+            ax2.plot(zplotbins, p_adj_typefrac_maglim[idx,:], color=linecolor, linestyle='--' ,linewidth=4)
 
-        if ploterrors:
-            ax2.errorbar(zplotbins, p_raw_typefrac_maglim[idx,:], yerr = p_raw_typefrac_err_maglim[idx,:], 
-               color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+    if ploterrors:
+        ax2.errorbar(zplotbins, p_raw_typefrac_maglim[idx,:], yerr = p_raw_typefrac_err_maglim[idx,:], 
+           color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+        if plotadj:
             ax2.errorbar(zplotbins, p_adj_typefrac_maglim[idx,:], yerr = p_adj_typefrac_err_maglim[idx,:], 
                color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
 
@@ -2794,7 +2799,7 @@ def plot_type_fractions(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=
 
     return None
 
-def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
+def plot_all_baselines(paperplot=False,stripe82=False,depth='normal',plot_type='pdf'):
 
     """ Plot the baseline morphology ratios for all 11 tasks in GZ2
 
@@ -2877,12 +2882,14 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
                        interpolation='nearest',
                        origin='lower'
                        )
-        ax.text(-16,14,titlenames[idx],horizontalalignment='right',color='w',fontsize=14)
-        ax.text(-16,12.5,'Task '+'%02i'%(idx+1),horizontalalignment='right',color='w',fontsize=14)
+        ax.text(-16,14,titlenames[idx],horizontalalignment='right',color='w',fontsize=16)
+        ax.text(-16,12.5,'Task '+'%02i'%(idx+1),horizontalalignment='right',color='w',fontsize=16)
         if idx in bottom_plot:
-            ax.set_xlabel(r'$M_r [mag]$',fontsize=16,weight='bold')
+            ax.set_xlabel(r'$M_r [mag]$',fontsize=26,weight='bold')
         if idx in left_plot:
-            ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=22,weight='bold')
+            ax.set_ylabel(r'$R_{50} [kpc]$',fontsize=26,weight='bold')
+        ax.set_xticks(np.arange(-24,-15,2))
+        ax.set_yticks(np.arange(0,15,2))
         ax.set_aspect('auto')
         rc(('xtick','ytick'), labelsize=12)
         """
@@ -2897,19 +2904,21 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='normal'):
         absmag_lim_hiz = mag_lim - cosmology.dmod_flat(0.25)
         size_1arcsec = cosmology.ang_scale_flat(np.mean(centers_redshift))
         ax.autoscale(False)
-        ax.plot(SBlim_mag, SBlim_size,'w--')
-        ax.axhline(size_1arcsec, color='w', linestyle='dashed')
+        ax.plot(SBlim_mag, SBlim_size,'w--', lw=3)
+        ax.axhline(size_1arcsec, color='w', linestyle='dashed', lw=3)
 
 
     fig.tight_layout()
     cax = fig.add_axes([0.77,0.15,0.20,0.05])
     cb = plt.colorbar(im,cax,orientation='horizontal')
     cb.set_label('log'+r'$_{10} (f_1/f_2)$' ,fontsize=16)
-    fig.savefig(paper_figures_path+'gz2_%sbaselines.eps' % file_str, dpi=200)
+    cb.set_ticks(np.arange(-1.5,2.0,0.5))
+    fig.savefig(paper_figures_path+'gz2_%sbaselines.%s' % (file_str,plot_type), dpi=200)
 
     return None
 
-def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal', paperplot=False, axlabelsize=14, titlesize=16):
+def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal', paperplot=False, axlabelsize=14, titlesize=16,
+                            plot_type = 'pdf'):
 
     """ Plot the type fractions as function of redshift for all 11 tasks in GZ2
 
@@ -2948,7 +2957,8 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal
 
     """
 
-    fig = plt.figure(14)
+    matplotlib.use('pdf')
+    fig = plt.figure(14,figsize=(17,10))
     fig.clf()
 
     titlenames = ('Smooth or features','Edge-on','Bar', 'Spiral structure','Bulge prominence','Odd',
@@ -3035,8 +3045,9 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal
         rc('xtick', labelsize=10)
         rc('ytick', labelsize=10)
 
-    fig.tight_layout()
-    fig.savefig(paper_figures_path+'gz2_%stype_fractions.eps' % file_str, dpi=200)
+    #fig.tight_layout()
+    #fig.set_tight_layout(True)
+    fig.savefig(paper_figures_path+'gz2_%stype_fractions.%s' % (file_str,plot_type), dpi=200)
 
     return None
 
@@ -3407,7 +3418,7 @@ def plot_confidence_measures(task_dict,stripe82=False,depth='normal'):
 
     return None 
 
-def gz1_comparison(plothist=True,plottrumpet=True,verbose=True):
+def gz1_comparison(plothist=True,plottrumpet=True,verbose=True, plot_type='pdf'):
 
     """ Compare the GZ1 and GZ2 results for consistency
 
@@ -3457,7 +3468,7 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True):
     data1_sp_clean = (gz1_raw_sp >= 0.8) & (gz2_raw_sp >= 0.8)
 
     if plothist:
-        fig = plt.figure(17)
+        fig = plt.figure(17,figsize=(5,8))
         fig.clf()
 
         ax1 = fig.add_subplot(211)
@@ -3482,10 +3493,10 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True):
         data2_sp = gz1_adj_sp - gz2_adj_sp
         data2_el_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
         data2_sp_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
-        histML(data2_el, bins=25, ax=ax2, histtype='step', color='r',weights=np.zeros_like(data2_el) + 1./data2_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-        histML(data2_sp, bins=25, ax=ax2, histtype='step', color='b',weights=np.zeros_like(data2_sp) + 1./data2_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-        histML(data2_el[data2_el_clean], bins=25, ax=ax2, histtype='step', color='r',weights=np.zeros_like(data2_el[data2_el_clean]) + 1./data2_el[data2_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-        histML(data2_sp[data2_sp_clean], bins=25, ax=ax2, histtype='step', color='b',weights=np.zeros_like(data2_sp[data2_sp_clean]) + 1./data2_sp[data2_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
+        histML(data2_el,                 bins=25, ax=ax2, histtype='stepfilled', alpha=0.4, color='r',weights=np.zeros_like(data2_el)                 + 1./data2_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
+        histML(data2_sp,                 bins=25, ax=ax2, histtype='stepfilled', alpha=0.4, color='b',weights=np.zeros_like(data2_sp)                 + 1./data2_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
+        histML(data2_el[data2_el_clean], bins=25, ax=ax2, histtype='step', lw=5, alpha=0.4, color='r',weights=np.zeros_like(data2_el[data2_el_clean]) + 1./data2_el[data2_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
+        histML(data2_sp[data2_sp_clean], bins=25, ax=ax2, histtype='step', lw=5, alpha=0.4, color='b',weights=np.zeros_like(data2_sp[data2_sp_clean]) + 1./data2_sp[data2_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
         ax2.set_xlabel(r'$p_{GZ1} - p_{GZ2}$')
         ax2.set_ylabel('fraction of total sample')
         ax2.set_xlim(-1.0,1.0)
@@ -3496,12 +3507,12 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True):
         plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True, prop=legfont)
 
         fig.tight_layout()
-        fig.savefig(paper_figures_path+'gz1_gz2.eps', dpi=200)
+        fig.savefig(paper_figures_path+'gz1_gz2.%s' % plot_type, dpi=200)
 
     # Try Steven's "trumpet-style" plot
 
     if plottrumpet:
-        fig = plt.figure(18,(10,5))
+        fig = plt.figure(18,(5,8))
         fig.clf()
 
         plotheight = 0.38
@@ -3543,7 +3554,7 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True):
         cb = plt.colorbar(CS,cax,orientation='horizontal')
         cb.set_label('log '+r'$N_{gal}$',fontsize=14)
         #fig.tight_layout()
-        fig.savefig(paper_figures_path+'gz1_gz2_trumpet.eps', dpi=200)
+        fig.savefig(paper_figures_path+'gz1_gz2_trumpet.%s' % plot_type, dpi=200)
 
     gz1_el_clean_flag = (data['ELLIPTICAL'] == 1)
     gz1_el_clean_prob = (gz1_adj_el >= 0.8)
@@ -4685,19 +4696,28 @@ def classification_histogram():
     fig.clf()
     ax = fig.add_subplot(111)
     bintype = 40
-    histML(data_main,   bins=bintype, ax=ax, histtype='step', lw=3, color='Orange',weights=np.zeros_like(data_main)   + 1./data_main.size,   range=(0,80))
-    histML(data_normal, bins=bintype, ax=ax, histtype='step', lw=3, color='b',weights=np.zeros_like(data_normal) + 1./data_normal.size, range=(0,80))
-    histML(data_coadd1, bins=bintype, ax=ax, histtype='step', lw=3, color='m',weights=np.zeros_like(data_coadd1) + 1./data_coadd1.size, range=(0,80))
-    histML(data_coadd2, bins=bintype, ax=ax, histtype='step', lw=3, color='g',weights=np.zeros_like(data_coadd2) + 1./data_coadd2.size, range=(0,80))
-    ax.set_xlabel('classification count')
-    ax.set_ylabel('fraction')
+
+    color1 = (228/255., 26/255., 28/255.) 
+    color2 = (55/255., 126/255., 184/255.)
+    color3 = (77/255., 175/255., 74/255.) 
+    color4 = (152/255., 78/255., 163/255.)
+
+    histML(data_main,   bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color1, weights=np.zeros_like(data_main)   + 1./data_main.size,   range=(0,80))
+    histML(data_normal, bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color2, weights=np.zeros_like(data_normal) + 1./data_normal.size, range=(0,80))
+    histML(data_coadd1, bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color3, weights=np.zeros_like(data_coadd1) + 1./data_coadd1.size, range=(0,80))
+    histML(data_coadd2, bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color4, weights=np.zeros_like(data_coadd2) + 1./data_coadd2.size, range=(0,80))
+    ax.set_xlabel('classification count', fontsize=20)
+    ax.set_ylabel('fraction', fontsize=20)
+
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontsize(16)
 
     legfont = FontProperties()
-    legfont.set_size('small')
+    legfont.set_size('large')
     plt.legend(('main','stripe82_normal','stripe82_coadd1','stripe82_coadd2'), 'upper right', shadow=True, fancybox=True, prop=legfont)
     
     fig.tight_layout()
-    fig.savefig(paper_figures_path+'classification_histogram.eps', dpi=200)
+    fig.savefig(paper_figures_path+'classification_histogram.pdf', dpi=200)
 
     return None
 
