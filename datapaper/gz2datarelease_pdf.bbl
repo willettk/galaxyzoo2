@@ -1,4 +1,4 @@
-\begin{thebibliography}{48}
+\begin{thebibliography}{50}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -117,6 +117,9 @@
   {Schawinski}, \& {Bamford}}]{kav12a}
 {Kaviraj} S. {et~al.}, 2012, \mnras, 423, 49
 
+\bibitem[{{Kormendy} \& {Bender}(2012)}]{kor12}
+{Kormendy} J., {Bender} R., 2012, \apjs, 198, 2
+
 \bibitem[{{Kormendy} \& {Kennicutt}(2004)}]{kor04}
 {Kormendy} J., {Kennicutt}, Jr. R.~C., 2004, \araa, 42, 603
 
@@ -229,6 +232,9 @@
 {Taylor} M.~B., 2005, in Astronomical Society of the Pacific Conference Series,
   Vol. 347, Astronomical Data Analysis Software and Systems XIV, {Shopbell} P.,
   {Britton} M., {Ebert} R., eds., p.~29
+
+\bibitem[{{van den Bergh}(1976)}]{van76}
+{van den Bergh} S., 1976, \apj, 206, 883
 
 \bibitem[{{York} {et~al}\mbox{.}(2000){York}, {Adelman}, {Anderson},
   {Anderson}, {Annis}, {Bahcall}, {Bakken}, {Barkhouser}, {Bastian}, {Berman},
