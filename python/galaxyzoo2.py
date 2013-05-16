@@ -4767,6 +4767,8 @@ def correlation_matrix():
     goodt10 = ((gz2data['t04_spiral_a08_spiral_weight'] + gz2data['t04_spiral_a09_no_spiral_weight']) >= arms_winding['min_classifications']) & (gz2data[arms_winding['dependent_tasks'][-1]] >= arms_winding['vf_prev'][str(vote_threshold)])
     goodt11 = ((gz2data['t04_spiral_a08_spiral_weight'] + gz2data['t04_spiral_a09_no_spiral_weight']) >= arms_number['min_classifications']) & (gz2data[arms_number['dependent_tasks'][-1]] >= arms_number['vf_prev'][str(vote_threshold)])
 
+    # Create a mask for data considered to be well-answered
+
     qmask = np.vstack((goodt01,goodt01,goodt01,
                       goodt02,goodt02,
                       goodt03,goodt03,
@@ -4778,19 +4780,30 @@ def correlation_matrix():
                       goodt09,goodt09,goodt09,
                       goodt10,goodt10,goodt10,
                       goodt11,goodt11,goodt11,goodt11,goodt11,goodt11))
+    
+    # Apply mask to data
     dm = ma.array(data,mask=qmask)
+
+    # Create correlation coefficient arrays for both unmasked and masked data
 
     R_all = ma.corrcoef(dm)
     R_masked = np.corrcoef(data)
+
+    # Save to pkl files for plotting 
 
     pickle.dump(R_all, open(pkl_path+'correlation_matrix.pkl','wb')) 
     pickle.dump(R_masked, open(pkl_path+'correlation_matrix_masked.pkl','wb')) 
 
     return None
 
-def correlation_matrix_plot():
+def correlation_matrix_plot(mask=True):
 
-    R = pickle.load(open(pkl_path+'correlation_matrix_masked.pkl','rb')) 
+    if mask:
+        R = pickle.load(open(pkl_path+'correlation_matrix_masked.pkl','rb')) 
+        corrmatrix = np.ma.masked_equal(np.tril(R),0.).T[::-1]
+    else:
+        R = pickle.load(open(pkl_path+'correlation_matrix.pkl','rb')) 
+        corrmatrix = np.ma.masked_equal(np.tril(R),0.).T[::-1]
 
     # Plotting the correlation matrix
 
@@ -4798,27 +4811,136 @@ def correlation_matrix_plot():
     fig.clf()
     ax = fig.add_subplot(111)
 
-    pc = ax.pcolor(np.ma.masked_equal(np.tril(R),0.).T[::-1],cmap=cm.BrBG,vmin=-1.,vmax=1.)
-    ax.set_xlabel('GZ2 response')
-    ax.set_ylabel('GZ2 response')
+    cm.BrBG.set_bad(color='grey')
+    pc = ax.pcolormesh(corrmatrix,cmap=cm.BrBG,vmin=-1.,vmax=1.)
+    ax.set_position((0.15,0.02,0.85,0.85))
     cb = plt.colorbar(pc,orientation='vertical')
-    cb.set_label(r'$\rho$',fontsize=20)
+    cb.set_label('linear correlation coefficient',fontsize=20)
     ax.set_xlim(0,37)
     ax.set_ylim(0,37)
-    ax.set_xticks(np.arange(0,37,5))
-    ax.set_yticks(np.arange(0,37,5))
+    ax.axis('off')
 
-    ax.text( 2,37,'smooth or features',    rotation=45.,fontsize='small',va='bottom')
-    ax.text( 5,37,'edge-on',               rotation=45.,fontsize='small',va='bottom')
-    ax.text( 7,37,'bar',                   rotation=45.,fontsize='small',va='bottom')
-    ax.text( 9,37,'spiral',                rotation=45.,fontsize='small',va='bottom')
-    ax.text(12,37,'bulge prominence',      rotation=45.,fontsize='small',va='bottom')
-    ax.text(15,37,'odd',                   rotation=45.,fontsize='small',va='bottom')
-    ax.text(17,37,'rounded',               rotation=45.,fontsize='small',va='bottom')
-    ax.text(22,37,'odd feature',           rotation=45.,fontsize='small',va='bottom')
-    ax.text(26,37,'bulge shape',           rotation=45.,fontsize='small',va='bottom')
-    ax.text(29,37,'arms winding',          rotation=45.,fontsize='small',va='bottom')
-    ax.text(34,37,'arms number',           rotation=45.,fontsize='small',va='bottom')
+    ax.text( 1,38,'smooth or features',    rotation=45.,fontsize='small',va='bottom')
+    ax.text( 4,38,'edge-on',               rotation=45.,fontsize='small',va='bottom')
+    ax.text( 6,38,'bar',                   rotation=45.,fontsize='small',va='bottom')
+    ax.text( 8,38,'spiral',                rotation=45.,fontsize='small',va='bottom')
+    ax.text(10,38,'bulge prominence',      rotation=45.,fontsize='small',va='bottom')
+    ax.text(13,38,'anything odd',          rotation=45.,fontsize='small',va='bottom')
+    ax.text(16,38,'rounded',               rotation=45.,fontsize='small',va='bottom')
+    ax.text(21,38,'odd feature',           rotation=45.,fontsize='small',va='bottom')
+    ax.text(26,38,'bulge shape',           rotation=45.,fontsize='small',va='bottom')
+    ax.text(29,38,'arms winding',          rotation=45.,fontsize='small',va='bottom')
+    ax.text(33,38,'arms number',           rotation=45.,fontsize='small',va='bottom')
+
+    ax.text( 0 + 0.5,37.3,'s',fontsize='x-small',ha='center')
+    ax.text( 1 + 0.5,37.3,'f',fontsize='x-small',ha='center')
+    ax.text( 2 + 0.5,37.3,'a',fontsize='x-small',ha='center')
+    ax.text( 3 + 0.5,37.3,'y',fontsize='x-small',ha='center')
+    ax.text( 4 + 0.5,37.3,'n',fontsize='x-small',ha='center')
+    ax.text( 5 + 0.5,37.3,'y',fontsize='x-small',ha='center')
+    ax.text( 6 + 0.5,37.3,'n',fontsize='x-small',ha='center')
+    ax.text( 7 + 0.5,37.3,'y',fontsize='x-small',ha='center')
+    ax.text( 8 + 0.5,37.3,'n',fontsize='x-small',ha='center')
+    ax.text( 9 + 0.5,37.3,'n',fontsize='x-small',ha='center')
+    ax.text(10 + 0.5,37.3,'j',fontsize='x-small',ha='center')
+    ax.text(11 + 0.5,37.3,'o',fontsize='x-small',ha='center')
+    ax.text(12 + 0.5,37.3,'d',fontsize='x-small',ha='center')
+    ax.text(13 + 0.5,37.3,'y',fontsize='x-small',ha='center')
+    ax.text(14 + 0.5,37.3,'n',fontsize='x-small',ha='center')
+    ax.text(15 + 0.5,37.3,'r',fontsize='x-small',ha='center')
+    ax.text(16 + 0.5,37.3,'i',fontsize='x-small',ha='center')
+    ax.text(17 + 0.5,37.3,'c',fontsize='x-small',ha='center')
+    ax.text(18 + 0.5,37.3,'r',fontsize='x-small',ha='center')
+    ax.text(19 + 0.5,37.3,'l',fontsize='x-small',ha='center')
+    ax.text(20 + 0.5,37.3,'d',fontsize='x-small',ha='center')
+    ax.text(21 + 0.5,37.3,'i',fontsize='x-small',ha='center')
+    ax.text(22 + 0.5,37.3,'o',fontsize='x-small',ha='center')
+    ax.text(23 + 0.5,37.3,'m',fontsize='x-small',ha='center')
+    ax.text(24 + 0.5,37.3,'dl',fontsize='x-small',ha='center')
+    ax.text(25 + 0.5,37.3,'r',fontsize='x-small',ha='center')
+    ax.text(26 + 0.5,37.3,'b',fontsize='x-small',ha='center')
+    ax.text(27 + 0.5,37.3,'n',fontsize='x-small',ha='center')
+    ax.text(28 + 0.5,37.3,'t',fontsize='x-small',ha='center')
+    ax.text(29 + 0.5,37.3,'m',fontsize='x-small',ha='center')
+    ax.text(30 + 0.5,37.3,'l',fontsize='x-small',ha='center')
+    ax.text(31 + 0.5,37.3,'1',fontsize='x-small',ha='center')
+    ax.text(32 + 0.5,37.3,'2',fontsize='x-small',ha='center')
+    ax.text(33 + 0.5,37.3,'3',fontsize='x-small',ha='center')
+    ax.text(34 + 0.5,37.3,'4',fontsize='x-small',ha='center')
+    ax.text(35 + 0.5,37.3,'+',fontsize='x-small',ha='center')
+    ax.text(36 + 0.5,37.3,'?',fontsize='x-small',ha='center')
+
+    ax.text(-0.3,37 -  0 - 0.5,'s', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  1 - 0.5,'f', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  2 - 0.5,'a', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  3 - 0.5,'y', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  4 - 0.5,'n', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  5 - 0.5,'y', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  6 - 0.5,'n', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  7 - 0.5,'y', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  8 - 0.5,'n', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 -  9 - 0.5,'n', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 10 - 0.5,'j', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 11 - 0.5,'o', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 12 - 0.5,'d', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 13 - 0.5,'y', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 14 - 0.5,'n', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 15 - 0.5,'r', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 16 - 0.5,'i', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 17 - 0.5,'c', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 18 - 0.5,'r', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 19 - 0.5,'l', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 20 - 0.5,'d', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 21 - 0.5,'i', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 22 - 0.5,'o', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 23 - 0.5,'m', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 24 - 0.5,'dl',fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 25 - 0.5,'r', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 26 - 0.5,'b', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 27 - 0.5,'n', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 28 - 0.5,'t', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 29 - 0.5,'m', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 30 - 0.5,'l', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 31 - 0.5,'1', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 32 - 0.5,'2', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 33 - 0.5,'3', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 34 - 0.5,'4', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 35 - 0.5,'+', fontsize='x-small',va='center',ha='right')
+    ax.text(-0.3,37 - 36 - 0.5,'?', fontsize='x-small',va='center',ha='right')
+
+    ax.text(-1,37 -  2,'smooth or features',    rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 -  4,'edge-on',               rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 -  6,'bar',                   rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 -  8,'spiral',                rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 11,'bulge prominence',      rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 14,'anything odd',          rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 17,'rounded',               rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 22,'odd feature',           rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 26,'bulge shape',           rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 29,'arms winding',          rotation=0.,fontsize='small',ha='right')
+    ax.text(-1,37 - 34,'arms number',           rotation=0.,fontsize='small',ha='right')
+
+    ax.hlines(37. -  3.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. -  5.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. -  7.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. -  9.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. - 13.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. - 15.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. - 18.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. - 25.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. - 28.,0.,37.,color='k',linestyles='dashed')
+    ax.hlines(37. - 31.,0.,37.,color='k',linestyles='dashed')
+
+    ax.vlines( 3.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines( 5.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines( 7.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines( 9.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines(13.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines(15.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines(18.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines(25.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines(28.,0.,37.,color='k',linestyles='dashed')
+    ax.vlines(31.,0.,37.,color='k',linestyles='dashed')
 
     fig.savefig(paper_figures_path+'correlation_matrix.pdf', dpi=200)
 
