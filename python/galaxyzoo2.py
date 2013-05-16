@@ -3460,7 +3460,7 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True, plot_type='pdf')
     gz2_raw_mg = data['t08_odd_feature_a24_merger_weighted_fraction']
     gz2_adj_mg = data['t08_odd_feature_a24_merger_debiased']
 
-    # Find the differences between GZ1/GZ2 raw classifications
+    # Find the differences between GZ1/GZ2 debiased classifications
 
     data1_el = gz1_raw_el - gz2_raw_el
     data1_sp = gz1_raw_sp - gz2_raw_sp
@@ -3468,9 +3468,11 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True, plot_type='pdf')
     data1_sp_clean = (gz1_raw_sp >= 0.8) & (gz2_raw_sp >= 0.8)
 
     if plothist:
-        fig = plt.figure(17,figsize=(5,8))
+        #fig = plt.figure(17,figsize=(5,8))
+        fig = plt.figure(17,figsize=(5,4))
         fig.clf()
 
+        """
         ax1 = fig.add_subplot(211)
         histML(data1_el, bins=25, ax=ax1, histtype='step', color='r',weights=np.zeros_like(data1_el) + 1./data1_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
         histML(data1_sp, bins=25, ax=ax1, histtype='step', color='b',weights=np.zeros_like(data1_sp) + 1./data1_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
@@ -3483,28 +3485,32 @@ def gz1_comparison(plothist=True,plottrumpet=True,verbose=True, plot_type='pdf')
         ax1.text(-0.9,0.45,'raw',fontsize='medium', weight='bold')
         #ax1.set_title('raw votes')
 
-        legfont = FontProperties()
-        legfont.set_size('small')
-
         plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+        """
         
-        ax2 = fig.add_subplot(212)
+        legfont = FontProperties()
+        legfont.set_size('medium')
+
+        #ax2 = fig.add_subplot(212)
+        ax2 = fig.add_subplot(111)
         data2_el = gz1_adj_el - gz2_adj_el
         data2_sp = gz1_adj_sp - gz2_adj_sp
         data2_el_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
-        data2_sp_clean = (gz1_adj_el >= 0.8) & (gz2_adj_el >= 0.8)
-        histML(data2_el,                 bins=25, ax=ax2, histtype='stepfilled', alpha=0.4, color='r',weights=np.zeros_like(data2_el)                 + 1./data2_el.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-        histML(data2_sp,                 bins=25, ax=ax2, histtype='stepfilled', alpha=0.4, color='b',weights=np.zeros_like(data2_sp)                 + 1./data2_sp.size, range=(-1.,1.), linewidth=2, linestyle='dashed')
-        histML(data2_el[data2_el_clean], bins=25, ax=ax2, histtype='step', lw=5, alpha=0.4, color='r',weights=np.zeros_like(data2_el[data2_el_clean]) + 1./data2_el[data2_el_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-        histML(data2_sp[data2_sp_clean], bins=25, ax=ax2, histtype='step', lw=5, alpha=0.4, color='b',weights=np.zeros_like(data2_sp[data2_sp_clean]) + 1./data2_sp[data2_sp_clean].size, range=(-1.,1.), linewidth=1, linestyle='solid')
-        ax2.set_xlabel(r'$p_{GZ1} - p_{GZ2}$')
+        data2_sp_clean = (gz1_adj_sp >= 0.8) & (gz2_adj_sp >= 0.8)
+        #histML(data2_el,                 bins=30, ax=ax2, histtype='step', alpha=1.0, color='r',weights=np.zeros_like(data2_el)                 + 1./data2_el.size, range=(-1.,1.), linewidth=4, linestyle='dashed')
+        histML(data2_sp,                 bins=30, ax=ax2, histtype='step', alpha=1.0, color='b',weights=np.zeros_like(data2_sp)                 + 1./data2_sp.size, range=(-1.,1.), linewidth=4, linestyle='dashed')
+        #histML(data2_el[data2_el_clean], bins=30, ax=ax2, histtype='stepfilled', lw=1, alpha=0.4, color='r',weights=np.zeros_like(data2_el[data2_el_clean]) + 1./data2_el[data2_el_clean].size, range=(-1.,1.), linestyle='solid')
+        histML(data2_sp[data2_sp_clean], bins=30, ax=ax2, histtype='stepfilled', lw=1, alpha=0.4, color='b',weights=np.zeros_like(data2_sp[data2_sp_clean]) + 1./data2_sp[data2_sp_clean].size, range=(-1.,1.), linestyle='solid')
+        ax2.set_xlabel(r'$p_{sp,GZ1} - p_{sp,GZ2}$')
         ax2.set_ylabel('fraction of total sample')
         ax2.set_xlim(-1.0,1.0)
-        ax2.set_ylim(0,0.5)
         ax2.text(-0.9,0.45,'debiased',fontsize='medium', weight='bold')
         #ax2.set_title('debiased votes')
         
-        plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+        print len(data2_sp),np.sum(data2_sp_clean)
+        
+        #plt.legend(('el','sp','el > 0.8','sp > 0.8'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+        plt.legend(('all galaxies',r'$p_{sp} > 0.8$'), 'upper right', shadow=True, fancybox=True, prop=legfont)
 
         fig.tight_layout()
         fig.savefig(paper_figures_path+'gz1_gz2.%s' % plot_type, dpi=200)
@@ -4702,10 +4708,10 @@ def classification_histogram():
     color3 = (77/255., 175/255., 74/255.) 
     color4 = (152/255., 78/255., 163/255.)
 
-    histML(data_main,   bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color1, weights=np.zeros_like(data_main)   + 1./data_main.size,   range=(0,80))
-    histML(data_normal, bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color2, weights=np.zeros_like(data_normal) + 1./data_normal.size, range=(0,80))
-    histML(data_coadd1, bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color3, weights=np.zeros_like(data_coadd1) + 1./data_coadd1.size, range=(0,80))
-    histML(data_coadd2, bins=bintype, ax=ax, alpha = 0.4, histtype='stepfilled', lw=1, color=color4, weights=np.zeros_like(data_coadd2) + 1./data_coadd2.size, range=(0,80))
+    histML(data_main,   bins=bintype, ax=ax, alpha = 0.6, histtype='stepfilled', lw=1, color=color1, weights=np.zeros_like(data_main)   + 1./data_main.size,   range=(0,80))
+    histML(data_normal, bins=bintype, ax=ax, alpha = 0.6, histtype='stepfilled', lw=1, color=color2, weights=np.zeros_like(data_normal) + 1./data_normal.size, range=(0,80))
+    histML(data_coadd1, bins=bintype, ax=ax, alpha = 0.6, histtype='stepfilled', lw=1, color=color3, weights=np.zeros_like(data_coadd1) + 1./data_coadd1.size, range=(0,80))
+    histML(data_coadd2, bins=bintype, ax=ax, alpha = 0.6, histtype='stepfilled', lw=1, color=color4, weights=np.zeros_like(data_coadd2) + 1./data_coadd2.size, range=(0,80))
     ax.set_xlabel('classification count', fontsize=20)
     ax.set_ylabel('fraction', fontsize=20)
 
@@ -4721,3 +4727,99 @@ def classification_histogram():
 
     return None
 
+def correlation_matrix():
+
+    gz2data = get_cat()
+
+    dbs_names = gz2data.names[12::6]
+    data = np.zeros((gz2data.shape[0]),dtype=float)
+
+    for n in dbs_names:
+        data = np.vstack((data,gz2data[n]))
+
+    data = data[1:,:]
+
+    # Set up a mask for data insufficiently answered from previous questions
+
+    vote_threshold = vt_mainsample
+
+    smooth = get_task_dict('smooth')
+    edgeon = get_task_dict('edgeon')
+    bar = get_task_dict('bar')
+    spiral = get_task_dict('spiral')
+    odd = get_task_dict('odd')
+    odd_feature = get_task_dict('odd_feature')
+    arms_winding = get_task_dict('arms_winding')
+    arms_number = get_task_dict('arms_number')
+    bulge = get_task_dict('bulge')
+    bulge_shape = get_task_dict('bulge_shape')
+    rounded = get_task_dict('rounded')
+
+    goodt01 = ((gz2data['t01_smooth_or_features_a01_smooth_weight'] + gz2data['t01_smooth_or_features_a02_features_or_disk_weight'] + gz2data['t01_smooth_or_features_a03_star_or_artifact_weight']) >= vote_threshold)
+    goodt02 = ((gz2data['t01_smooth_or_features_a01_smooth_weight'] + gz2data['t01_smooth_or_features_a02_features_or_disk_weight'] + gz2data['t01_smooth_or_features_a03_star_or_artifact_weight']) >= vote_threshold) & (gz2data[edgeon['dependent_tasks']] >= edgeon['vf_prev'][str(vote_threshold)])
+    goodt03 = ((gz2data['t02_edgeon_a04_yes_weight'] + gz2data['t02_edgeon_a05_no_weight']) >= bar['min_classifications']) & (gz2data[bar['dependent_tasks'][-1]] >= bar['vf_prev'][str(vote_threshold)])
+    goodt04 = ((gz2data['t02_edgeon_a04_yes_weight'] + gz2data['t02_edgeon_a05_no_weight']) >= spiral['min_classifications']) & (gz2data[spiral['dependent_tasks'][-1]] >= spiral['vf_prev'][str(vote_threshold)])
+    goodt05 = ((gz2data['t02_edgeon_a04_yes_weight'] + gz2data['t02_edgeon_a05_no_weight']) >= bulge['min_classifications']) & (gz2data[bulge['dependent_tasks'][-1]] >= bulge['vf_prev'][str(vote_threshold)])
+    goodt06 = ((gz2data['t06_odd_a14_yes_weight'] + gz2data['t06_odd_a15_no_weight']) >= vote_threshold)
+    goodt07 = ((gz2data['t01_smooth_or_features_a01_smooth_weight'] + gz2data['t01_smooth_or_features_a02_features_or_disk_weight'] + gz2data['t01_smooth_or_features_a03_star_or_artifact_weight']) >= vote_threshold) & (gz2data[rounded['dependent_tasks']] >= rounded['vf_prev'][str(vote_threshold)])
+    goodt08 = ((gz2data['t06_odd_a14_yes_weight'] + gz2data['t06_odd_a15_no_weight']) >= odd_feature['min_classifications']) & (gz2data[odd_feature['dependent_tasks']] >= odd_feature['vf_prev'][str(vote_threshold)])
+    goodt09 = ((gz2data['t02_edgeon_a04_yes_weight'] + gz2data['t02_edgeon_a05_no_weight']) >= bar['min_classifications']) & (gz2data[bulge_shape['dependent_tasks'][-1]] >= bulge_shape['vf_prev'][str(vote_threshold)])
+    goodt10 = ((gz2data['t04_spiral_a08_spiral_weight'] + gz2data['t04_spiral_a09_no_spiral_weight']) >= arms_winding['min_classifications']) & (gz2data[arms_winding['dependent_tasks'][-1]] >= arms_winding['vf_prev'][str(vote_threshold)])
+    goodt11 = ((gz2data['t04_spiral_a08_spiral_weight'] + gz2data['t04_spiral_a09_no_spiral_weight']) >= arms_number['min_classifications']) & (gz2data[arms_number['dependent_tasks'][-1]] >= arms_number['vf_prev'][str(vote_threshold)])
+
+    qmask = np.vstack((goodt01,goodt01,goodt01,
+                      goodt02,goodt02,
+                      goodt03,goodt03,
+                      goodt04,goodt04,
+                      goodt05,goodt05,goodt05,goodt05,
+                      goodt06,goodt06,
+                      goodt07,goodt07,goodt07,
+                      goodt08,goodt08,goodt08,goodt08,goodt08,goodt08,goodt08,
+                      goodt09,goodt09,goodt09,
+                      goodt10,goodt10,goodt10,
+                      goodt11,goodt11,goodt11,goodt11,goodt11,goodt11))
+    dm = ma.array(data,mask=qmask)
+
+    R_all = ma.corrcoef(dm)
+    R_masked = np.corrcoef(data)
+
+    pickle.dump(R_all, open(pkl_path+'correlation_matrix.pkl','wb')) 
+    pickle.dump(R_masked, open(pkl_path+'correlation_matrix_masked.pkl','wb')) 
+
+    return None
+
+def correlation_matrix_plot():
+
+    R = pickle.load(open(pkl_path+'correlation_matrix_masked.pkl','rb')) 
+
+    # Plotting the correlation matrix
+
+    fig = plt.figure(21,figsize=(10,8))
+    fig.clf()
+    ax = fig.add_subplot(111)
+
+    pc = ax.pcolor(np.ma.masked_equal(np.tril(R),0.).T[::-1],cmap=cm.BrBG,vmin=-1.,vmax=1.)
+    ax.set_xlabel('GZ2 response')
+    ax.set_ylabel('GZ2 response')
+    cb = plt.colorbar(pc,orientation='vertical')
+    cb.set_label(r'$\rho$',fontsize=20)
+    ax.set_xlim(0,37)
+    ax.set_ylim(0,37)
+    ax.set_xticks(np.arange(0,37,5))
+    ax.set_yticks(np.arange(0,37,5))
+
+    ax.text( 2,37,'smooth or features',    rotation=45.,fontsize='small',va='bottom')
+    ax.text( 5,37,'edge-on',               rotation=45.,fontsize='small',va='bottom')
+    ax.text( 7,37,'bar',                   rotation=45.,fontsize='small',va='bottom')
+    ax.text( 9,37,'spiral',                rotation=45.,fontsize='small',va='bottom')
+    ax.text(12,37,'bulge prominence',      rotation=45.,fontsize='small',va='bottom')
+    ax.text(15,37,'odd',                   rotation=45.,fontsize='small',va='bottom')
+    ax.text(17,37,'rounded',               rotation=45.,fontsize='small',va='bottom')
+    ax.text(22,37,'odd feature',           rotation=45.,fontsize='small',va='bottom')
+    ax.text(26,37,'bulge shape',           rotation=45.,fontsize='small',va='bottom')
+    ax.text(29,37,'arms winding',          rotation=45.,fontsize='small',va='bottom')
+    ax.text(34,37,'arms number',           rotation=45.,fontsize='small',va='bottom')
+
+    fig.savefig(paper_figures_path+'correlation_matrix.pdf', dpi=200)
+
+    return None
