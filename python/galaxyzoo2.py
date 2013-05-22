@@ -14,11 +14,14 @@ import numpy.ma as ma
 import time
 import os
 import matplotlib
+import urllib
 
 from matplotlib import rc
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.font_manager import FontProperties
+from random import sample
+
 from itertools import chain
 from astropy.io import fits as pyfits
 from astroML.plotting import hist as histML
@@ -4463,7 +4466,7 @@ def make_tables(makefits=True,stripe82=False, depth='normal', photoz=False,latex
     
     return None
 
-def get_cat(photoz=False,stripe82=False,depth='normal',final_tables=False):
+def get_cat(photoz=False,stripe82=False,depth='normal',final_tables=False,sample=False):
 
 
     """ Retrieve the saved GZ2 main sample catalog
@@ -4489,7 +4492,9 @@ def get_cat(photoz=False,stripe82=False,depth='normal',final_tables=False):
 
     """
 
-    if final_tables:
+    if sample:
+        p = pyfits.open(fits_path_main+'debiased_main_specz_sample.fits')
+    elif final_tables:
         if stripe82:
             p = pyfits.open(gz_path+'dr10/dr10_gz2_stripe82_%s.fits' % depth)
         elif photoz:
@@ -4557,8 +4562,6 @@ def objlist(gzdata,response):
         CSV and VOTables in TOPCAT.
 
     """
-
-    from random import sample
 
     ra = gzdata['RA'][gzdata[response+'_flag'].astype(bool)]
     dec = gzdata['DEC'][gzdata[response+'_flag'].astype(bool)]
@@ -4945,3 +4948,102 @@ def correlation_matrix_plot(mask=True):
     fig.savefig(paper_figures_path+'correlation_matrix.pdf', dpi=200)
 
     return None
+
+def simulation_example_gals(data,verbose=False):
+
+    # Pull images of example morphologies for a range of sizes, luminosities, and redshifts in GZ2
+
+    el = (data['t01_smooth_or_features_a01_smooth_flag'] == 1)
+    sp_bar_medium = (data['t03_bar_a06_bar_flag'] == 1) & (data['t10_arms_winding_a29_medium_flag'] == 1)
+    sp_nobar_medium = (data['t03_bar_a07_no_bar_flag'] == 1) & (data['t10_arms_winding_a29_medium_flag'] == 1)
+    edgeon = (data['t02_edgeon_a04_yes_flag'] == 1)
+    merger = (data['t08_odd_feature_a24_merger_flag'] == 1)
+
+    # Slice on redshift first
+
+    dz = 0.02
+    zarr = np.arange(0.02,0.25,dz)
+
+    simfile_path = gz_path+'simulations/GZ2_randomish_examples/'
+
+    for z in zarr:
+
+        z_range = (data['REDSHIFT'] > (z - dz/2.)) & (data['REDSHIFT'] < (z + dz/2.))
+
+        dl = 1
+        lumarr = np.arange(-23,-19,dl)
+        ds = 3
+        sizearr = np.arange(2,15,ds)
+
+        for size in sizearr:
+
+            #lum_range = (data['PETROMAG_MR'] > (lum - dl/2.)) & (data['PETROMAG_MR'] < (lum + dl/2.)) 
+            size_range = (data['PETROR50_R_KPC'] > (size - ds/2.)) & (data['PETROR50_R_KPC'] < (size + ds/2.)) 
+
+            ind_el             = (el & z_range & size_range)
+            ind_sp_bar_medium   = (sp_bar_medium & z_range & size_range)
+            ind_sp_nobar_medium = (sp_nobar_medium & z_range & size_range)
+            ind_edgeon         = (edgeon & z_range & size_range)
+            ind_merger         = (merger & z_range & size_range)
+
+            inds = (ind_el, ind_sp_bar_medium, ind_sp_nobar_medium, ind_edgeon, ind_merger)
+            ind_names = ('Elliptical','Spiral barred medium','Spiral no bar medium','Edge-on','Merger')
+            ind_shorts = ('ell','bar','nob','edg','mer')
+
+            for ind_set,ind_name,ind_short in zip(inds,ind_names,ind_shorts):
+                if np.sum(ind_set) >= 1:
+                    ra,dec,location = sample(zip(data['ra'][ind_set],data['dec'][ind_set],data['location'][ind_set]),1)[0]
+                    if verbose:
+                        print "%s, z = %4.2f, size = %2i kpc, %6.3f, %6.3f" % (ind_name,z,size,ra,dec)
+                    else:
+                        print "%6.3f, %6.3f" % (ra,dec)
+
+                    # Download files to folder
+                    locstring = location.split('/')[-1]
+                    urllib.urlretrieve(location, '%sgz2_%4.2fz_%02ikpc_%s_%s' % (simfile_path,z,size,ind_short,locstring))
+
+                else:
+                    if verbose:
+                        print "No examples found in GZ2 for %s, z = %4.2f, size = %2i kpc" % (ind_name,z,size)
+                    else:
+                        print '0.0, 0.0'
+
+
+    return None    
+
+def make_movie_frames(data):
+
+    # Pull images of example morphologies for a range of sizes, luminosities, and redshifts in GZ2
+
+    edgeon       = (data['t02_edgeon_a04_yes_flag'] == 1)
+    el_cigar     = (data['t07_rounded_a18_cigar_shaped_flag'] == 1)
+    el_between   = (data['t07_rounded_a17_in_between_flag'] == 1)
+    el_round     = (data['t07_rounded_a16_completely_round_flag'] == 1)
+    sp_tight     = (data['t10_arms_winding_a28_tight_flag'] == 1)
+    sp_medium    = (data['t10_arms_winding_a29_medium_flag'] == 1)
+    sp_loose     = (data['t10_arms_winding_a30_loose_flag'] == 1)
+    sp_bar       = (data['t03_bar_a06_bar_flag'] == 1)
+    sp_nobar     = (data['t03_bar_a07_no_bar_flag'] == 1)
+    sp_bulge_no  = (data['t02_edgeon_a05_no_flag'] == 1) & (data['t05_bulge_prominence_a10_no_bulge_debiased'] >= 0.5)
+    sp_bulge_ju  = (data['t02_edgeon_a05_no_flag'] == 1) & (data['t05_bulge_prominence_a11_just_noticeable_debiased'] >= 0.5)
+    sp_bulge_ob  = (data['t02_edgeon_a05_no_flag'] == 1) & (data['t05_bulge_prominence_a12_obvious_debiased'] >= 0.5)
+    sp_bulge_do  = (data['t02_edgeon_a05_no_flag'] == 1) & (data['t05_bulge_prominence_a13_dominant_debiased'] >= 0.4)
+    ring         = (data['t08_odd_feature_a19_ring_debiased'] >= 0.5) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+    lens         = (data['t08_odd_feature_a20_lens_or_arc_debiased'] >= 0.3) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+    disturbed    = (data['t08_odd_feature_a21_disturbed_debiased'] >= 0.5) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+    irregular    = (data['t08_odd_feature_a22_irregular_debiased'] >= 0.5) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+    other        = (data['t08_odd_feature_a23_other_debiased'] >= 0.5) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+    dustlane     = (data['t08_odd_feature_a38_dust_lane_debiased'] >= 0.5) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+    merger       = (data['t08_odd_feature_a24_merger_debiased'] >= 0.5) & (data['t06_odd_a14_yes_debiased'] >= 0.5)
+
+    morphs = (edgeon, el_cigar, el_between, el_round, sp_tight, sp_medium, sp_loose, sp_bar, sp_nobar, sp_bulge_no, sp_bulge_ju, sp_bulge_ob, sp_bulge_do, ring, lens, disturbed, irregular, other, dustlane, merger)
+
+    moviepath = gz_path + 'movie/sorted1000/'
+
+    npercat = 50
+    for midx,m in enumerate(morphs):
+        loc = sample(data['location'][m],npercat)
+        for lidx,location in enumerate(loc):
+            urllib.urlretrieve(location, '%sgz2_2000_%04i.jpg' % (moviepath,(midx*npercat + lidx)))
+
+    return None    
