@@ -5046,4 +5046,4 @@ def make_movie_frames(data):
         for lidx,location in enumerate(loc):
             urllib.urlretrieve(location, '%sgz2_2000_%04i.jpg' % (moviepath,(midx*npercat + lidx)))
 
-    return None    
+    return None
