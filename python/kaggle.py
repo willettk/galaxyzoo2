@@ -7,6 +7,10 @@ from astropy.table import Table
 
 def split_datasets():
 
+    # Create the test vs. training datasets for the Kaggle GZ2 competition, based
+    # on random selection of GZ2 galaxies according to Steven Bamford's weighted Voronoi tessellation
+    # by redshift, size, and luminosity. 
+
     p = pyfits.open('/Users/willettk/Astronomy/Research/GalaxyZoo/kaggle/kaggle_gz2_wvt.fits')
     wvt = p[1].data
     p.close()
@@ -21,12 +25,11 @@ def split_datasets():
 
     unique_redshift_bins = np.unique(wvt_reduced['REDSHIFT_SIMPLE_BIN'])
 
-    ngal = len(wvt_reduced)
+    # Goal size for test sample
     n_test = 80000
-    #n_training = ngal - n_test
-    #n_test_private = round(n_test * 0.75)
-    #n_test_public = n_test - n_test_private
+    ngal = len(wvt_reduced)
 
+    # Test sample should be 75% private, 25% public
     f_test = n_test / float(ngal)
     f_training = 1. - f_test
     f_test_private = 0.75
@@ -36,9 +39,13 @@ def split_datasets():
     public = []
     training = []
 
+    # Loop over redshift bins, since WVT bin naming is not unique
+
     for zb in unique_redshift_bins:
         wvt_zbin = wvt_reduced[wvt_reduced['REDSHIFT_SIMPLE_BIN'] == zb]
         wvt_bins = np.unique(wvt_zbin['WVT_BIN'])
+
+        # Loop over WVT bin
 
         for wb in wvt_bins:
             wb_temp = list((wvt_zbin[wvt_zbin['WVT_BIN'] == wb])['dr7objid'])
@@ -48,15 +55,13 @@ def split_datasets():
             slice_training = int(math.floor(lt*f_training))
             slice_private  = int(math.floor((lt - slice_training) * f_test_private) + slice_training)
 
-            #training = np.append(training,wb_temp[:slice_training])
-            #private = np.append(private,wb_temp[slice_training:slice_private])
-            #public = np.append(public,wb_temp[slice_private:])
             training.extend(wb_temp[:slice_training])
             private.extend(wb_temp[slice_training:slice_private])
             public.extend(wb_temp[slice_private:])
 
 
-    # Save as CSV file
+    # Save data as CSV file
+
     d_all = training + private + public
     s_all = ['training']*len(training)+['test_private']*len(private)+['test_public']*len(public)
     data = Table({'dr7objid': d_all,

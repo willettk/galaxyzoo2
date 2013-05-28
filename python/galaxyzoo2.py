@@ -5047,3 +5047,124 @@ def make_movie_frames(data):
             urllib.urlretrieve(location, '%sgz2_2000_%04i.jpg' % (moviepath,(midx*npercat + lidx)))
 
     return None
+
+def na_binparse(inp,bit):
+
+    bitl = long(bit)
+    inval=np.array(inp,dtype='int64')
+    outarr = []
+    for i in inval:
+        outarr.append((i & 2L**bitl)/(2L**bitl))
+    
+    return np.array(outarr)
+    
+def na10_bars():
+
+    p = pyfits.open(gz_path+'cjl/gz2_nair.fits')
+    na10 = p[1].data
+    p.close()
+
+    color1 = (228/255., 26/255., 28/255.) 
+    color2 = (55/255., 126/255., 184/255.)
+    color3 = (77/255., 175/255., 74/255.) 
+    color4 = (152/255., 78/255., 163/255.)
+
+    fig = plt.figure(22,figsize=(9,8))
+    fig.clf()
+
+    # Plot 1
+
+    ax1 = fig.add_subplot(221)
+
+    binsize = 0.05
+    bins = np.arange(0,1,binsize)
+
+    NED_10votes = (na10['t01_smooth_or_features_a02_features_or_disk_debiased'] > 0.227) & (na10['t02_edgeon_a05_no_debiased'] > 0.519) & ((na10['t03_bar_a06_bar_weight_2'] + na10['t03_bar_a07_no_bar_weight_2']) >= 10)
+    NED_20votes = (na10['t01_smooth_or_features_a02_features_or_disk_debiased'] > 0.430) & (na10['t02_edgeon_a05_no_debiased'] > 0.715) & ((na10['t03_bar_a06_bar_weight_2'] + na10['t03_bar_a07_no_bar_weight_2']) >= 20)
+
+    barvariable = 't03_bar_a06_bar_weighted_fraction_2'
+    barvariable = 't03_bar_a06_bar_debiased'
+    na10_NED = na10[NED_20votes]
+    bar_na = na10_NED['Bar']
+    bar_gz = na10_NED[barvariable]
+
+    nabinarr = []
+
+    for b in bins:
+    	na_bar   = (bar_gz >= b) & (bar_gz < (b+binsize)) & (bar_na > 0)
+    	na_nobar = (bar_gz >= b) & (bar_gz < (b+binsize)) & (bar_na == 0)
+    	nabinarr.append(float(na_bar.sum())/(na_bar.sum() + na_nobar.sum()))
+
+    ax1.scatter(bins+binsize,np.array(nabinarr),color='red')
+    ax1.plot([0,1],'k--',lw=2)
+    ax1.set_xlim(0,1)
+    ax1.set_ylim(0,1)
+    ax1.set_xlabel('GZ2 bar vote fraction',fontsize=20)
+    ax1.set_ylabel('fraction of barred galaxies in NA10',fontsize=14)
+
+    # Plot 2
+
+    ax2 = fig.add_subplot(222)
+
+    nbins = 10
+    data_bar = na10_NED[na10_NED['Bar'] > 0][barvariable]
+    data_nobar = na10_NED[na10_NED['Bar'] == 0][barvariable]
+    histML(data_bar,   bins=nbins, ax=ax2, alpha = 0.6, histtype='stepfilled', lw=1, color=color1,  range=(0,1))
+    histML(data_nobar, bins=nbins, ax=ax2, alpha = 0.6, histtype='stepfilled', lw=1, color=color2,  range=(0,1))
+
+    ax2.set_ylim(0,2000)
+    ax2.set_xlabel('GZ2 bar vote fraction', fontsize=20)
+    ax2.set_ylabel('number of galaxies', fontsize=20)
+
+    #for label in ax2.get_xticklabels() + ax2.get_yticklabels():
+    #    label.set_fontsize(16)
+
+    legfont = FontProperties()
+    legfont.set_size('large')
+    plt.legend(('NA10 bar','NA10 no bar'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+    
+    # Plot 3
+
+    ax3 = fig.add_subplot(223)
+
+    nbins = 10
+    data_bar = na10_NED[na10_NED['Bar'] > 0][barvariable]
+    data_strong = na10_NED[na_binparse(na10_NED['Bar'],1).astype(bool)][barvariable]
+    data_intermediate = na10_NED[na_binparse(na10_NED['Bar'],2).astype(bool)][barvariable]
+    data_weak = na10_NED[na_binparse(na10_NED['Bar'],3).astype(bool)][barvariable]
+    histML(data_bar,   bins=nbins, ax=ax3, alpha = 0.6, histtype='stepfilled', lw=1, color='grey', range=(0,1))
+    histML(data_strong, bins=nbins, ax=ax3, alpha = 1.0, histtype='step',       lw=3, color=color2, range=(0,1))
+    histML(data_intermediate, bins=nbins, ax=ax3, alpha = 1.0, histtype='step',       lw=3, color=color3, range=(0,1))
+    histML(data_weak, bins=nbins, ax=ax3, alpha = 1.0, histtype='step',       lw=3, color=color4, range=(0,1))
+
+    ax3.set_ylim(0,400)
+    ax3.set_xlabel('GZ2 bar vote fraction', fontsize=20)
+    ax3.set_ylabel('number of galaxies', fontsize=20)
+
+    legfont.set_size('medium')
+    plt.legend(('NA10 all bars','strong','intermediate','weak'), 'upper left', shadow=True, fancybox=True, prop=legfont)
+    
+    # Plot 4
+
+    ax4 = fig.add_subplot(224)
+
+    nbins = 10
+    data_bar = na10_NED[na10_NED['Bar'] > 0][barvariable]
+    data_peanut = na10_NED[na_binparse(na10_NED['Bar'],5).astype(bool)][barvariable]
+    data_nuclear = na10_NED[na_binparse(na10_NED['Bar'],6).astype(bool)][barvariable]
+    histML(data_bar,   bins=nbins, ax=ax4, alpha = 0.6, histtype='stepfilled', lw=1, color='grey', range=(0,1))
+    histML(data_nuclear, bins=nbins, ax=ax4, alpha = 1.0, histtype='step',       lw=3, color=color2, range=(0,1))
+    histML(data_peanut, bins=nbins, ax=ax4, alpha = 1.0, histtype='stepfilled',lw=1, color=color3, range=(0,1))
+
+    ax4.set_ylim(0,400)
+    ax4.set_xlabel('GZ2 bar vote fraction', fontsize=20)
+    ax4.set_ylabel('number of galaxies', fontsize=20)
+
+    legfont.set_size('medium')
+    plt.legend(('NA10 all bars','Peanut','Nuclear'), 'upper left', shadow=True, fancybox=True, prop=legfont)
+    
+    fig.tight_layout()
+    fig.savefig(paper_figures_path+'na_bars.pdf', dpi=200)
+
+    return np.median(np.concatenate((data_peanut,data_nuclear)))
+
