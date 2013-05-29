@@ -5168,3 +5168,218 @@ def na10_bars():
 
     return np.median(np.concatenate((data_peanut,data_nuclear)))
 
+def efigi_rings():
+
+    p = pyfits.open('/Users/willettk/Astronomy/Research/GalaxyZoo/cjl/gz2_efigi_debiased.fits')
+    efigi = p[1].data
+    p.close()
+
+    efigi = efigi[efigi['t06_odd_a14_yes_weight'] > 10]
+
+    efigi_ring = np.maximum(efigi['Outer_Ring'],np.maximum(efigi['Inner_Ring'],efigi['Pseudo_Ring']))
+    gz2_ring   = efigi['t08_odd_feature_a19_ring_debiased']
+
+    efigi_bins = np.linspace(0,1,6)
+    gz2_bins = np.arange(0,1.1,0.1)
+
+    h,xedges,yedges = np.histogram2d(efigi_ring,gz2_ring,bins=(efigi_bins,gz2_bins))
+    h_norm = h 
+
+    fig = plt.figure(23,figsize=(9,8))
+    fig.clf()
+
+    # Plot 1
+
+    ax = fig.add_subplot(111)
+
+    im = ax.imshow(h_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=np.max(h_norm),
+                           interpolation='nearest',origin='lower')
+    ax.set_aspect('auto')
+    ax.set_xlabel('EFIGI ring attribute',fontsize=20)
+    ax.set_ylabel('GZ2 ring vote fraction',fontsize=20)
+    ax.set_xticks(np.linspace(0,1,5))
+
+    cb = plt.colorbar(im,orientation='vertical')
+    cb.set_label('number of galaxies',fontsize=16)
+
+    #fig.tight_layout()
+    fig.savefig(paper_figures_path+'efigi_rings.pdf', dpi=200)
+
+    return None
+
+def efigi_mergers():
+
+    p = pyfits.open('/Users/willettk/Astronomy/Research/GalaxyZoo/cjl/gz2_efigi_debiased.fits')
+    efigi = p[1].data
+    p.close()
+
+    efigi = efigi[efigi['t06_odd_a14_yes_weight'] > 10]
+
+    #efigi_merger = np.maximum(efigi['Contamination'],efigi['Perturbation'])
+    efigi_merger = efigi['Perturbation']
+    gz2_merger   = efigi['t08_odd_feature_a24_merger_debiased']
+
+    #print np.corrcoef(efigi_merger,gz2_merger)
+
+    efigi_bins = np.linspace(0,1,6)
+    gz2_bins = np.arange(0,1.1,0.1)
+
+    h,xedges,yedges = np.histogram2d(efigi_merger,gz2_merger,bins=(efigi_bins,gz2_bins))
+    h_norm = h 
+
+    fig = plt.figure(24,figsize=(9,8))
+    fig.clf()
+
+    # Plot 1
+
+    ax = fig.add_subplot(111)
+
+    im = ax.imshow(h_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=np.max(h),
+                           interpolation='nearest',origin='lower')
+    ax.set_aspect('auto')
+    ax.set_xlabel('EFIGI perturbation attribute',fontsize=24)
+    ax.set_ylabel('GZ2 merger vote fraction',fontsize=24)
+    ax.set_xticks(np.linspace(0,1,5))
+
+    cb = plt.colorbar(im,orientation='vertical')
+    cb.set_label('number of galaxies',fontsize=24)
+
+    #fig.tight_layout()
+    fig.savefig(paper_figures_path+'efigi_mergers.pdf', dpi=200)
+
+    return None
+
+
+def efigi_bulge(efigi):
+
+    #p = pyfits.open('/Users/willettk/Astronomy/Research/GalaxyZoo/cjl/gz2_efigi_debiased.fits')
+    #efigi = p[1].data
+    #p.close()
+
+    NED_20votes = (efigi['t01_smooth_or_features_a02_features_or_disk_debiased'] > 0.430) & (efigi['t02_edgeon_a05_no_debiased'] > 0.715) & (efigi['t02_edgeon_a05_no_weight'] >= 20) & np.logical_not((efigi['Bulge_to_Total'] == 0.5) & (efigi['Bulge_to_Total_inf'] == 0.0) & (efigi['Bulge_to_Total_sup'] == 1.0))
+
+    efigi_NED = efigi[NED_20votes]
+
+    efigi_bulge = efigi_NED['Bulge_to_Total']
+    efigi_arm_curvature = efigi_NED['Arm_Curvature']
+    gz2_b1   = efigi_NED['t05_bulge_prominence_a10_no_bulge_debiased']
+    gz2_b2   = efigi_NED['t05_bulge_prominence_a11_just_noticeable_debiased']
+    gz2_b3   = efigi_NED['t05_bulge_prominence_a12_obvious_debiased']
+    gz2_b4   = efigi_NED['t05_bulge_prominence_a13_dominant_debiased']
+    gz2_a1   = efigi_NED['t10_arms_winding_a28_tight_debiased']
+    gz2_a2   = efigi_NED['t10_arms_winding_a29_medium_debiased']
+    gz2_a3   = efigi_NED['t10_arms_winding_a30_loose_debiased']
+
+    efigi_bins = np.linspace(0,1,6)
+    gz2_bins = np.arange(0,1.1,0.1)
+
+    h1,xedges,yedges = np.histogram2d(efigi_bulge,gz2_b1,bins=(efigi_bins,gz2_bins))
+    h2,xedges,yedges = np.histogram2d(efigi_bulge,gz2_b2,bins=(efigi_bins,gz2_bins))
+    h3,xedges,yedges = np.histogram2d(efigi_bulge,gz2_b3,bins=(efigi_bins,gz2_bins))
+    h4,xedges,yedges = np.histogram2d(efigi_bulge,gz2_b4,bins=(efigi_bins,gz2_bins))
+    h1_norm = h1 
+    h2_norm = h2 
+    h3_norm = h3 
+    h4_norm = h4 
+
+    h1a,xedges,yedges = np.histogram2d(efigi_arm_curvature,gz2_a1,bins=(efigi_bins,gz2_bins))
+    h2a,xedges,yedges = np.histogram2d(efigi_arm_curvature,gz2_a2,bins=(efigi_bins,gz2_bins))
+    h3a,xedges,yedges = np.histogram2d(efigi_arm_curvature,gz2_a3,bins=(efigi_bins,gz2_bins))
+    h1a_norm = h1a 
+    h2a_norm = h2a 
+    h3a_norm = h3a 
+
+    vmax = np.max((h1,h2,h3,h4,h1a,h2a,h3a))
+
+    fig = plt.figure(25,figsize=(9,18))
+    fig.clf()
+
+    # Plot 1
+    
+    ylabelsize = 35
+
+    ax1 = fig.add_subplot(421)
+    im = ax1.imshow(h1_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax1.set_aspect('auto')
+    ax1.set_xlabel('EFIGI bulge/total ratio',fontsize=20)
+    ax1.set_ylabel(r'$p_{no bulge}$',fontsize=ylabelsize)
+    ax1.set_xticks(np.linspace(0,1,5))
+
+    ax2 = fig.add_subplot(423)
+    im = ax2.imshow(h2_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax2.set_aspect('auto')
+    ax2.set_xlabel('EFIGI bulge/total ratio',fontsize=20)
+    ax2.set_ylabel(r'$p_{just noticeable}$',fontsize=ylabelsize)
+    ax2.set_xticks(np.linspace(0,1,5))
+
+    ax3 = fig.add_subplot(425)
+    im = ax3.imshow(h3_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax3.set_aspect('auto')
+    ax3.set_xlabel('EFIGI bulge/total ratio',fontsize=20)
+    ax3.set_ylabel(r'$p_{obvious}$',fontsize=ylabelsize)
+    ax3.set_xticks(np.linspace(0,1,5))
+
+    ax4 = fig.add_subplot(427)
+    im = ax4.imshow(h4_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax4.set_aspect('auto')
+    ax4.set_xlabel('EFIGI bulge/total ratio',fontsize=20)
+    ax4.set_ylabel(r'$p_{dominant}$',fontsize=ylabelsize)
+    ax4.set_xticks(np.linspace(0,1,5))
+
+    ax5 = fig.add_subplot(422)
+    im = ax5.imshow(h1a_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax5.set_aspect('auto')
+    ax5.set_xlabel('EFIGI arm curvature',fontsize=20)
+    ax5.set_ylabel(r'$p_{tight}$',fontsize=ylabelsize)
+    ax5.set_xticks(np.linspace(0,1,5))
+
+    ax6 = fig.add_subplot(424)
+    im = ax6.imshow(h2a_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax6.set_aspect('auto')
+    ax6.set_xlabel('EFIGI arm curvature',fontsize=20)
+    ax6.set_ylabel(r'$p_{medium}$',fontsize=ylabelsize)
+    ax6.set_xticks(np.linspace(0,1,5))
+
+    ax7 = fig.add_subplot(426)
+    im = ax7.imshow(h3a_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=vmax,
+                           interpolation='nearest',origin='lower')
+    ax7.set_aspect('auto')
+    ax7.set_xlabel('EFIGI arm curvature',fontsize=20)
+    ax7.set_ylabel(r'$p_{loose}$',fontsize=ylabelsize)
+    ax7.set_xticks(np.linspace(0,1,5))
+
+    cax = fig.add_axes([0.60, 0.15, 0.35, 0.05])
+    cb = plt.colorbar(im,cax=cax,orientation='horizontal')
+    cb.set_label('number of galaxies',fontsize=16)
+    cb.set_ticks(np.arange(0,800,100))
+
+    fig.tight_layout()
+    fig.savefig(paper_figures_path+'efigi_bulgearms.pdf', dpi=200)
+
+    return None
+
+
