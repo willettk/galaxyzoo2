@@ -1,4 +1,4 @@
-\begin{thebibliography}{50}
+\begin{thebibliography}{48}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -62,10 +62,6 @@
 \bibitem[{{Davis} \& {Hayes}(2013)}]{dav13}
 {Davis} D., {Hayes} W., 2013, ArXiv e-prints
 
-\bibitem[{{de~Lapparent}, {Baillard} \& {Bertin}(2011){de~Lapparent},
-  {Baillard}, \& {Bertin}}]{del11a}
-{de~Lapparent} V., {Baillard} A., {Bertin} E., 2011, \aap, 532, A75
-
 \bibitem[{{de~Vaucouleurs} {et~al}\mbox{.}(1991){de~Vaucouleurs},
   {de~Vaucouleurs}, {Corwin}, {Buta}, {Paturel}, \& {Fouqu{\'e}}}]{dev91}
 {de~Vaucouleurs} G., {de~Vaucouleurs} A., {Corwin}, Jr. H.~G., {Buta} R.~J.,
@@ -111,6 +107,12 @@
   {Tasca}, {Soucail}, \& {Le F{\`e}vre}}]{hue08}
 {Huertas-Company} M., {Rouan} D., {Tasca} L., {Soucail} G., {Le F{\`e}vre} O.,
   2008, \aap, 478, 971
+
+\bibitem[{{Jacob} {et~al}\mbox{.}(2010){Jacob}, {Katz}, {Berriman}, {Good},
+  {Laity}, {Deelman}, {Kesselman}, {Singh}, {Su}, {Prince}, \&
+  {Williams}}]{jac10}
+{Jacob} J.~C. {et~al.}, 2010, {Montage: An Astronomical Image Mosaicking
+  Toolkit}. Astrophysics Source Code Library
 
 \bibitem[{{Kaviraj} {et~al}\mbox{.}(2012){Kaviraj}, {Ting}, {Bureau},
   {Shabala}, {Crockett}, {Silk}, {Lintott}, {Smith}, {Keel}, {Masters},
@@ -159,15 +161,8 @@
   \& {Thomas}}]{mas11c}
 {Masters} K.~L. {et~al.}, 2011, \mnras, 411, 2026
 
-\bibitem[{{Nair} \& {Abraham}(2010{\natexlab{a}})}]{nai10}
-{Nair} P.~B., {Abraham} R.~G., 2010{\natexlab{a}}, \apjs, 186, 427
-
-\bibitem[{{Nair} \& {Abraham}(2010{\natexlab{b}})}]{nai10a}
-{Nair} P.~B., {Abraham} R.~G., 2010{\natexlab{b}}, \apjl, 714, L260
-
-\bibitem[{{Nair}, {van den Bergh} \& {Abraham}(2010){Nair}, {van den Bergh}, \&
-  {Abraham}}]{nai10b}
-{Nair} P.~B., {van den Bergh} S., {Abraham} R.~G., 2010, \apj, 715, 606
+\bibitem[{{Nair} \& {Abraham}(2010)}]{nai10}
+{Nair} P.~B., {Abraham} R.~G., 2010, \apjs, 186, 427
 
 \bibitem[{{Nieto-Santisteban}, {Szalay} \& {Gray}(2004){Nieto-Santisteban},
   {Szalay}, \& {Gray}}]{nie04}
