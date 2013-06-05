@@ -193,7 +193,7 @@ The first GZ2 task is a slightly modified version of GZ1, identifying whether th
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/flowchart.pdf}
-\caption{Flowchart of the classification tasks for GZ2, beginning at the top centre. Tasks are colour-coded by their relative depths in the decision tree. Tasks outlined in brown are asked of every galaxy. Tasks outlined in green, blue, and purple are (respectively) one, two or three steps below branching points in the decision tree. Table~\ref{tbl-tree} gives a description of the responses that correspond to the icons shown here. 
+\caption{Flowchart of the classification tasks for GZ2, beginning at the top centre. Tasks are colour-coded by their relative depths in the decision tree. Tasks outlined in brown are asked of every galaxy. Tasks outlined in green, blue, and purple are (respectively) one, two or three steps below branching points in the decision tree. Table~\ref{tbl-tree} describes the responses that correspond to the icons in this diagram.
 \label{fig-flowchart}}
 \end{figure*}
 
@@ -259,7 +259,7 @@ The GZ2 tree has 11 classification tasks with a total of 37 possible responses (
       & {\it                               }  & can't tell       & 05 \\
 \hline
  \end{tabular}
- \caption{The GZ2 decision tree, comprising 11 tasks and 37 responses. The `Task' number is an abbreviation only and does {\em not} necessarily represent the order of the task within the decision tree. The texts in `Question' and `Responses' are displayed to volunteers during classification, along with the icons in Figure~\ref{fig-flowchart}. `Next' gives the subsequent task for the chosen response. \label{tbl-tree}}
+ \caption{The GZ2 decision tree, comprising 11 tasks and 37 responses. The `Task' number is an abbreviation only and does {\em not} necessarily represent the order of the task within the decision tree. The text in `Question' and `Responses' are displayed to volunteers during classification, along with the icons in Figure~\ref{fig-flowchart}. `Next' gives the subsequent task for the chosen response. \label{tbl-tree}}
 \end{table}
 
 Data from the classifications were stored in a live Structured Query Language (SQL) database. In addition to the morphology classifications, the database also recorded a timestamp, user identifier, and image identifier for each classification. 
@@ -285,9 +285,9 @@ The last GZ2 classifications were collected on 2010-04-29, with the project span
 \section{Data reduction} \label{sec-datareduction}
 
 \subsection{Multiple classifications}
-In a small percentage of cases, individuals classified the same image more than once. In order to treat each vote as an independent measurement, such multiple classifications were removed from the data, keeping only their votes from the last submitted classification. Repeat classifications occurred for only $\sim1\%$ of all galaxies. The removal of the repeats only altered the final vote fractions (thus changing the morphological classification) for $\lesssim0.01\%$ of the sample.  
+In a small percentage of cases, individuals classified the same image more than once. In order to treat each vote as an independent measurement, classifications repeatd by the same user were removed from the data, keeping only their votes from the last submission. Repeat classifications occurred for only $\sim1\%$ of all galaxies. The removal of the repeats only altered the final vote fractions (thus changing the morphological classification) for $\lesssim0.01\%$ of the sample.  
 
-\subsection{Consistency and individual user weighting}\label{ssec-consistency}
+\subsection{Individual user weighting and combining classifications}\label{ssec-consistency}
 
 The next step is to reduce the influence of potentially unreliable classifiers (whose classifications are consistent with random selection). To do so, an iterative weighting scheme (similar to that used for GZ1) is applied. First, we calculated the vote fraction ($f_r = n_{r}/n_{t}$) for every response to every task for every galaxy, weighting each user's vote equally. Here, $n_r$ is the number of votes for a given response and $n_{t}$ is the total number of votes for that task. Each vote is compared to the vote fraction to calculate a user's consistency $\kappa$:
 
@@ -328,17 +328,17 @@ w = \min \left(1.0,(\bar{\kappa} / 0.6)^{8.5} \right)
 \label{eqn-weight}
 \end{equation}
 
-\noindent For this function, $w=1$ for $\sim95\%$ of classifiers and $w<0.01$ for only $\sim1\%$ of classifiers. The vast majority of classifiers are thus treated equally; there is no up-weighting of the most consistent classifiers. The top panel of Figure~\ref{fig-consistency} also shows that the lowest-weighted classifiers on average completed only a handful ($<10$) of objects. This effect demonstrates either learning during classification, or the systematic loss of inconsistent people during their career as classifiers; further work on user behaviour is needed to distinguish between the two possibilities.
+\noindent For this function, $w=1$ for $\sim95\%$ of classifiers and $w<0.01$ for only $\sim1\%$ of classifiers. The vast majority of classifiers are thus treated equally; there is no up-weighting of the most consistent classifiers. The top panel of Figure~\ref{fig-consistency} also shows that the lowest-weighted classifiers completed only a handful ($<10$) of objects on average. This may demonstrate either that the volunteers are becoming more accurate as they classify more galaxies, or that inconsistent people are less likely to remain engaged with the project; further work on user behaviour is needed to distinguish between the two possibilities.
 
-After computing $\kappa$, vote fractions were recalculated using the new user weights, and then repeated a third time to ensure convergence. For each task, this produces both a weighted number of votes and a weighted vote fraction for each task. These weighted data are used exclusively hereafter when discussing votes and vote fractions; for brevity, we typically drop the term ``weighted''. 
+After computing $\kappa$, vote fractions were recalculated using the new user weights, and then repeated a third time to ensure convergence. For each task, individual classifications are combined to produce the total vote count and a vote fraction for each task. The weighted votes and vote fractions generated by Equation~\ref{eqn-weight} are used exclusively hereafter when discussing GZ2 votes and vote fractions; for brevity, we typically drop the term ``weighted''. 
 
 \subsection{Classification bias}\label{ssec-classificationbias}
 
-Vote fractions are also adjusted for what is termed {\it classification bias}. The overall effect of this bias is a change in observed morphology fractions as a function of redshift {\em independent of any true evolution in galaxy properties}, a trend also seen in the Galaxy~Zoo~1 data \citep{bam09}. The SDSS survey is expected to be shallow enough to justify an assumption of no evolution, and so the presumed cause is that more distant galaxies, on average, are both smaller and dimmer in the cutout images. As a result, finer morphological features are more difficult to identify. We note that this effect is not limited to crowd-sourced classifications; expert classifications must also suffer from bias to some degree, although smaller sample sizes make this difficult to quantify. 
+The vote fractions are also adjusted for what is termed {\it classification bias}. The overall effect of this bias is a change in observed morphology fractions as a function of redshift {\em independent of any true evolution in galaxy properties}, a trend also seen in the Galaxy~Zoo~1 data \citep{bam09}. The SDSS survey is expected to be shallow enough to justify an assumption of no evolution, and so the presumed cause is that more distant galaxies, on average, are both smaller and dimmer in the cutout images. As a result, finer morphological features are more difficult to identify. We note that this effect is not limited to crowd-sourced classifications; expert classifications must also suffer from bias to some degree, although smaller sample sizes make this difficult to quantify. 
 
-Figure~\ref{fig-type_fractions} demonstrates the effect of classification bias for the GZ2 classification tasks. The average vote fraction for each response is shown as a function of redshift; the fraction of votes for finer morphological features (such as identification of disk galaxies, spiral structure, or galactic bars) decreases at higher redshift. The trend is strongest for the initial classification of smooth and feature/disk galaxies, but almost all tasks exhibit some level of change. 
+Figure~\ref{fig-type_fractions} demonstrates the effect of classification bias for the GZ2 tasks. The average vote fraction for each response is shown as a function of redshift; the fraction of votes for finer morphological features (such as identification of disk galaxies, spiral structure, or galactic bars) decreases at higher redshift. The trend is strongest for the initial task of separating smooth and feature/disk galaxies, but almost all tasks exhibit some level of change. 
 
-Part of the observed trends in type fractions at high redshifts is due to the nature of a magnitude-limited sample; high-redshift galaxies must be more luminous to be detected in the SDSS and are thus more likely to be giant red ellipticals. However, there is clear evidence of classification bias even in luminosity-limited samples for GZ2. Since this bias contaminates any potential studies of galaxy demographics over the sample volume, it must be corrected to the fullest possible extent. 
+Part of the observed trends in type fractions at high redshifts is due to the nature of a magnitude-limited sample; high-redshift galaxies must be more luminous to be detected in the SDSS and are thus most likely to be giant red ellipticals. However, there is clear evidence of classification bias in GZ2 even in luminosity-limited samples. Since this bias contaminates any potential studies of galaxy demographics over the sample volume, it must be corrected to the fullest possible extent. 
 
 \begin{figure*}
 \includegraphics[angle=0,width=7.0in]{figures/gz2_type_fractions.pdf}
@@ -346,11 +346,11 @@ Part of the observed trends in type fractions at high redshifts is due to the na
 \label{fig-type_fractions}}
 \end{figure*}
 
-\citet{bam09} corrected for classification bias in the GZ1 data, but only for the elliptical and combined spiral variables. Their approach was to bin the galaxies as a function of absolute magnitude (\mr), the physical Petrosian half-light radius (\rfifty), and redshift. They then computed the average elliptical-to-spiral ratio for each (\mr,\rfifty) bin in the lowest redshift slice with significant numbers of galaxies; this yields a local baseline relation which gives the (presumably) unbiased morphology as a function of the galaxies' {\em physical}, rather than {\em observed} parameters. From the local relation, they derived a correction for each (\mr,\rfifty,$z$) bin and then adjusted the vote fractions for the individual galaxies in each bin. The validity of this approach is justified in part since debiased vote fractions result in a consistent morphology-density relation over a range of redshifts \citep{bam09}. We modify and extend this technique for the GZ2 classifications as described below. 
+\citet{bam09} corrected for classification bias in the GZ1 data for the elliptical and combined spiral variables. Their approach was to bin the galaxies as a function of absolute magnitude (\mr), the physical Petrosian half-light radius (\rfifty), and redshift. They then computed the average elliptical-to-spiral ratio for each (\mr,\rfifty) bin in the lowest redshift slice with significant numbers of galaxies; this yields a local baseline relation which gives the (presumably) unbiased morphology as a function of the galaxies' {\em physical}, rather than {\em observed} parameters. From the local relation, they derived a correction for each (\mr,\rfifty,$z$) bin and then adjusted the vote fractions for the individual galaxies in each bin. The validity of this approach is justified in part since debiased vote fractions result in a consistent morphology-density relation over a range of redshifts \citep{bam09}. We modify and extend this technique for the GZ2 classifications. 
 
-There are two major differences between the GZ1 and GZ2 data. First, GZ2 has a decision tree, rather than a single question and response for each vote. This means that all tasks, with the exception of the first, depend on responses to previous tasks in the decision tree. For example, the bar question is only asked if the user classifies a galaxy as having ``features or disk'' and as ``not edge-on''. Thus, the value of the vote fraction for this example task only addresses the total bar vote fraction {\em among galaxies that a user has classified as disks and are not edge-on}, and not as a function of the general population. 
+There are two major differences between the GZ1 and GZ2 data. First, GZ2 has a decision tree, rather than a single question and response for each vote. This means that all tasks, with the exception of the first, depend on responses to previous tasks in the decision tree. For example, the bar question is only asked if the user classifies a galaxy as having ``features or disk'' and as ``not edge-on''. Thus, the value of the vote fraction for this example only addresses the total bar vote fraction {\em among galaxies that a user has classified as disks \underline{and} are not edge-on}, and not as a function of the total galaxy population. 
 
-For a galaxy to be used in deriving a correction, this method requires both a minimum weighted vote fraction for the preceding response(s) and a minimum number of votes for the task in question (Table~\ref{tbl-thresholds}). While this threshold increases the number of bins with large variances, it is critical for reproducing accurate baseline measurements of individual morphologies. The correction derived from well-classified galaxies is then applied to the vote fractions for {\em all} galaxies in the sample. 
+For a galaxy to be used in deriving a bias correction, this method requires both a minimum weighted vote fraction for the preceding response(s) and a minimum number of votes for the task in question (Table~\ref{tbl-thresholds}). While this threshold increases the number of bins with large variances, it is critical for reproducing accurate baseline measurements of individual morphologies. The correction derived from well-classified galaxies is then applied to the vote fractions for {\em all} galaxies in the sample. 
 
 \begin{table}
 \centering
@@ -385,7 +385,7 @@ For a galaxy to be used in deriving a correction, this method requires both a mi
 
 The second major difference is that the adjustment of the GZ1 vote fractions assumed that the single task was essentially binary. Since almost every vote in GZ1 was for a response of either ``elliptical'' or ``spiral'' (either anticlockwise, clockwise, or edge-on), this ratio was employed as the sole metric. No systematic debiasing was done for the other GZ1 response options (``star/don't know'' or ``merger''), and the method of adjusting the vote fractions assumes that these other options do not significantly affect the classification bias for the most popular responses. This is not possible for GZ2: many tasks have more than two possible responses and represent a continuum of relative feature strength, rather than a binary choice.
 
-Vote fractions for each galaxy are adjusted for classification bias using the following method. The method relies on the assumption that for a galaxy of a given physical brightness and size, a sample of other galaxies with similar brightnesses and sizes will (statistically) share the same average mix of morphologies. This is quantified using the ratio of vote fractions $(f_i/f_j)$ for responses $i$ and $j$. We assume that the true (that is, unbiased) ratio of likelihoods for each task $(p_i/p_j)$ is related to the measured ratio via a single multiplicative constant $K_{j,i}$:
+The debiasing method relies on the assumption that for a galaxy of a given physical brightness and size, a sample of other galaxies with similar brightnesses and sizes will (statistically) share the same average mix of morphologies. This is quantified using the ratio of vote fractions $(f_i/f_j)$ for some pair of responses $i$ and $j$. We assume that the true (that is, unbiased) ratio of likelihoods for each task $(p_i/p_j)$ is related to the measured ratio via a single multiplicative constant $K_{j,i}$:
 
 \begin{equation}
 \frac{p_i}{p_j} = \frac{f_i}{f_j}\times K_{j,i}.
@@ -410,12 +410,12 @@ p_i + p_j + p_k + \dots = 1,
 \begin{eqnarray}
 p_i &=& \frac{1}{1/p_i} \times \frac{1}{p_i + p_j + p_k + \dots} \\
 p_i &=& \frac{1}{p_i/p_i + p_j/p_i + p_k/p_i + \dots} \\
-p_i &=& \frac{1}{\sum\limits_{j\ne i}{(p_j/p_i)} + 1} \\
-p_i &=& \frac{1}{\sum\limits_{j\ne i}{K_{j,i} (f_j/f_i)} + 1}.
+p_i &=& \frac{1}{1 + \sum\limits_{j\ne i}{(p_j/p_i)}} \\
+p_i &=& \frac{1}{1 + \sum\limits_{j\ne i}{K_{j,i} (f_j/f_i)}}.
 \label{eqnarray-adjprob2}
 \end{eqnarray}
 
-The corrections for each pair of tasks can be directly determined from the data. At the lowest sampled redshift bin, $\frac{p_i}{p_j} = \frac{f_i}{f_j}$ and $K_{j,i}=1$. From Equation~\ref{eqn-kdef}:
+The corrections for each pair of tasks can be directly determined from the data. At the lowest redshift bin, $\frac{p_i}{p_j} = \frac{f_i}{f_j}$ and $K_{j,i}=1$. From Equation~\ref{eqn-kdef}:
 
 \begin{eqnarray}
 \left(\frac{f_i}{f_j}\right)_{z=0} &=& \left(\frac{f_i}{f_j}\right)_{z=z^\prime}\times K_{j,i} \\
@@ -424,7 +424,7 @@ K_{j,i} &=& \frac{\left(f_i/f_j\right)_{z=z^\prime} }{ \left(f_i/f_j\right)_{z=0
 \label{eqnarray-adjprob3}
 \end{eqnarray}
 
-\noindent This can be simplified by defining $C_{j,i}\equiv\text{log}_{10}(K_{j,i})$:
+\noindent This can be simplified by defining $C_{j,i}\equiv\text{log}_{10}(K_{j,i})$ and substituting into (\ref{eqnarray-adjprob3}):
 
 \begin{eqnarray}
 %C_{j,i} &=& \text{log}~\left[\left(\frac{f_i}{f_j}\right)_{z=z^\prime} / \left(\frac{f_i}{f_j}\right)_{z=0}\right] \\
@@ -434,9 +434,10 @@ C_{j,i} &=& \text{$log_{10}$}~\left(\frac{f_i}{f_j}\right)_{z=0} - \text{log$_{1
 
 \noindent The correction $C_{j,i}$ for any bin is thus the difference between $f_i/f_j$ at the desired redshift and that of a local baseline, if the ratios between vote fractions are expressed as logarithms.  
 
-The local baselines and subsequent corrections are derived from the GZ2 main sample data. Since determining the baseline ratio relies on absolute magnitude and physical size, only galaxies in the main sample with spectroscopic redshifts (86\%) are used. Corrections also use data only from galaxies with sufficient numbers of responses to determine their morphology; this threshold is different for each task (Table~\ref{tbl-thresholds}).  
+Local morphology baselines and subsequent corrections for GZ2 are derived from the main sample data. Since determining the baseline ratio relies on absolute magnitude and physical size, only galaxies in the main sample with spectroscopic redshifts (86\%) are used. Corrections also use data only from galaxies with sufficient numbers of responses to determine their morphology. We apply the thresholds in Table~\ref{tbl-thresholds} ($N\geq20$) to identify the well-answered galaxies for each task.
 
-The vote fractions for each task response are binned according to three parameters: the absolute magnitude \mr, the Petrosian $r$-band half-light radius \rfifty, and redshift $z$. Bins for \mr~range from $-24$ to $-16$ in steps of 0.25~mag, for \rfifty~from 0 to 15~kpc in steps of 0.5~kpc, and for $z$ from $0.01$ to $0.26$ in steps of 0.01. These bin ranges and step sizes are chosen to maximize the parameter space covered by the bias correction. Only bins with at least 20~galaxies are considered. %The value of each bin in the cube is the sum of the vote fractions for that response. For each pair of responses $(i,j)$ to a question, we compute log$(f_j/f_i)$ in every (\mr,\rfifty,\redshift) bin. The local baseline relation is established by selecting the value in the non-empty bin(s) for the lowest-redshift slice at a given (\mr,\rfifty). 
+Bins for \mr~range from $-24$ to $-16$ in steps of 0.25~mag, for \rfifty~from 0 to 15~kpc in steps of 0.5~kpc, and for $z$ from $0.01$ to $0.26$ in steps of 0.01. These bin ranges and step sizes are chosen to maximize the parameter space covered by the bias correction. Only bins with at least 20~galaxies are used in deriving a correction. 
+%The value of each bin in the cube is the sum of the vote fractions for that response. For each pair of responses $(i,j)$ to a question, we compute log$(f_j/f_i)$ in every (\mr,\rfifty,\redshift) bin. The local baseline relation is established by selecting the value in the non-empty bin(s) for the lowest-redshift slice at a given (\mr,\rfifty). 
 
 Since each unique pair of responses to a question will have a different local baseline, there are $\binom{n}{2}$ correction terms for a task with $n$ responses. For $n=2$, this method is identical to that described in \citet{bam09}. 
 
@@ -446,7 +447,7 @@ Since each unique pair of responses to a question will have a different local ba
 \label{fig-baselines}}
 \end{figure*}
 
-The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-baselines} for the first two responses in each task. To derive a correction for bins not covered at low redshift, we attempted to fit each baseline ratio with an analytic, smoothly-varying function. The baseline ratio for the ``smooth'' and ``features/disk'' responses to Task~01 is functionally very similar to the GZ1 relation \citep[Figure~A5 in][]{bam09}, as expected. This ratio can be fit with an analytic function: 
+The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-baselines} for the first two responses in each task. To derive a correction for bins not covered at low redshift, we attempted to fit each baseline ratio with an analytic, smoothly-varying function. The baseline ratio for the responses to Tasks~01 and 07 is functionally very similar to the GZ1 relation \citep[Figure~A5 in][]{bam09}. This ratio can be fit with an analytic function: 
 
 \begin{equation}
 \frac{f_j}{f_i}[R_{50},M_r] = \frac{s_6}{1 + exp[(\alpha - M_r)/\beta]} + s_7
@@ -460,7 +461,7 @@ The baseline morphology ratios for the GZ2 tasks are shown in Figure~\ref{fig-ba
 \beta  &=& s_4 + s_5(x_0 - s_3),
 \end{eqnarray}
 
-\noindent where $\{s_1,s_2,s_3,s_4,s_5,s_6,s_7,s_8,s_9\}$ are minimised to fit the data. The only other task that had baseline ratios well fit by an expression of this form was Task~07 (the roundedness of smooth galaxies). We adopted the same approach for this task and were able to fit the behavior of all three pairs of responses with the same functional form. 
+\noindent where $\{s_1,s_2,s_3,s_4,s_5,s_6,s_7,s_8,s_9\}$ are minimised to fit the data. %The only other task that had baseline ratios well fit by an expression of this form was Task~07 (the roundedness of smooth galaxies). We adopted the same approach for this task and were able to fit the behavior of all three pairs of responses with the same functional form. 
 
 None of the other tasks are well-fit by a function of the form in Equation~\ref{eqn-sb}. For these, a simpler function is used where both \mr~and \rfifty~vary linearly:
 
@@ -469,7 +470,7 @@ None of the other tasks are well-fit by a function of the form in Equation~\ref{
 \label{eqn-tilt}
 \end{equation}
 
-\noindent where $\{t_1,t_2,t_3,t_4,t_5\}$ are the parameters to be minimized. Equation~\ref{eqn-tilt} is fit to all other tasks where enough non-zero bins exist to get a good fit. Finally, for pairs of responses with only a few sampled bins, we instead used the difference between the local ratio and the measured ratio at higher redshift. Galaxies falling in bins that are not well-sampled are assigned a correction of $C_{i,j}=0$ for that term; this is necessary to avoid overfitting based on only a few noisy bins. 
+\noindent where $\{t_1,t_2,t_3,t_4,t_5\}$ are the parameters to be minimized. Equation~\ref{eqn-tilt} is fit to all other tasks where enough non-zero bins exist to get a good fit. Finally, for pairs of responses with only a few sampled bins, we instead directly measurd the difference bin-by-bin between the local ratio and the measured ratio at higher redshift. Galaxies falling in bins that are not well-sampled are assigned a correction of $C_{i,j}=0$ for that term; this is necessary to avoid overfitting based on only a few noisy bins. 
 
 %The baseline ratio of the edge-on task for disk galaxies (upper right, Figure~\ref{fig-baselines}) is still a reasonably strong function of both \mr~and \rfifty; however, the form of Equation~\ref{eqn-sb} produces a poor fit to the data. The bar and spiral structure questions for not edge-on disk galaxies (lower panels, Figure~\ref{fig-baselines}) have very different behavior; the bar/no~bar ratio shows no strong dependence on either \mr~or \rfifty, where the spiral/no~spiral ratio resembles that for Task~01. 
 
@@ -479,9 +480,9 @@ The success of this method is good for most GZ2 tasks and responses. Figure~\ref
 
 \subsection{Angular separation bias}\label{ang-bias}
 
-The vote fractions also suffer from a bias which depends on the angular separation between galaxies. For some classifications, participants perceive a galaxy`s morphology differently when it has a close apparent companion. \citet{cas13} found that this bias is particularly strong for Task~08 (``odd features''), and in particular the ``merger'' classification. The mean merger vote fractions of both physically close galaxies with similar redshifts and projected pairs with very different redshifts increase strongly as a function of decreasing angular separation. This results in projected pairs of non-interacting galaxies being classified as mergers. To determine an unbiased estimate of the mean probability for a given classification, \citet{cas13} subtract the mean probabilities of projected pairs (with very different redshifts) from physically close pairs (with similar redshifts) for each projected separation bin. This results in a residual probability which is considered to represent the true change in morphology due to strong tidal interaction. While such a correction can be applied in a statistical way to the mean vote fractions for a given classification, applying such a correction to the individual vote fractions is not as straightforward.
+The vote fractions also suffer from a bias which depends on the angular separation between galaxies. For some classifications, participants perceive a galaxy`s morphology differently when it has a close apparent companion. \citet{cas13} found that this bias is particularly strong for Task~08 (``odd features''), and in particular the ``merger'' classification. The mean merger vote fractions of both physically close galaxies with similar redshifts and projected pairs with very different redshifts increase strongly as a function of decreasing angular separation. This results in projected pairs of non-interacting galaxies being classified as mergers. To determine an unbiased estimate of the mean probability for a given classification, \citet{cas13} subtracted the mean probabilities of projected pairs (with very different redshifts) from physically close pairs (with similar redshifts) for each projected separation bin. This results in a residual probability which is considered to represent the true change in morphology due to strong tidal interaction. While such a correction can be applied in a statistical way to the mean vote fractions for a given classification, applying such a correction to the individual vote fractions is not as straightforward.
 
-The vote fractions presented in this data release have not been corrected for angular separation bias and readers using GZ2 data to study very close pairs are advised to keep in this in mind, particularly for Task~08. Fortunately, the angular separation bias is minimal for the rest of the classifications and can usually be ignored. For a detailed discussion of the angular separation bias, and how individual classifications are affected, the reader is referred to \citet{cas13}.
+The vote fractions presented in this data release have not been corrected for angular separation bias and readers using GZ2 data to study very close pairs are advised to keep in this in mind, particularly for Task~08. Fortunately, the angular separation bias is minimal for the rest of the classifications and can usually be ignored. A detailed discussion of the angular separation bias (and how it affects individual classifications) is given in \citet{cas13}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%    Catalogue       %%%%%%%%%%%%%
