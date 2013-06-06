@@ -5261,6 +5261,7 @@ def efigi_bulge(efigi):
     #p.close()
 
     NED_20votes = (efigi['t01_smooth_or_features_a02_features_or_disk_debiased'] > 0.430) & (efigi['t02_edgeon_a05_no_debiased'] > 0.715) & (efigi['t02_edgeon_a05_no_weight'] >= 20) & np.logical_not((efigi['Bulge_to_Total'] == 0.5) & (efigi['Bulge_to_Total_inf'] == 0.0) & (efigi['Bulge_to_Total_sup'] == 1.0))
+    NED= (gz2data['t01_smooth_or_features_a02_features_or_disk_debiased'] > 0.430) & (gz2data['t02_edgeon_a05_no_debiased'] > 0.715) & (gz2data['t02_edgeon_a05_no_weight'] >= 20) 
 
     efigi_NED = efigi[NED_20votes]
 
