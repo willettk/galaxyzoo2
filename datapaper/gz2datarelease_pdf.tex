@@ -53,7 +53,7 @@
   Brooke D. Simmons$^{2}$,
   Kevin R.V. Casteels$^{7}$,
   Edward M. Edmondson$^{5}$,
-  Lucy Fortson$^{1}$,
+  Lucy F. Fortson$^{1}$,
   Sugata Kaviraj$^{2,8}$,
   William C. Keel$^{9}$,
   Thomas Melvin$^{5}$,
@@ -62,7 +62,8 @@
   Kevin Schawinski$^{11}$,
   Robert J. Simpson$^{2}$,
   Ramin A. Skibba$^{12}$,
-  Arfon M. Smith$^{2,3}$
+  Arfon M. Smith$^{3}$,
+  Daniel Thomas$^{5,6}$
   \\
   }\\
 $^{1}$School of Physics and Astronomy, University of Minnesota, 116 Church St. SE, Minneapolis, MN 55455, USA \\
@@ -71,7 +72,7 @@ $^{3}$Adler Planetarium, 1300 S. Lake Shore Drive, Chicago, IL 60605, USA \\
 $^{4}$Center for Astronomy and Particle Theory, University of Nottingham, University Park, Nottingham NG7 2RD, UK \\
 $^{5}$Institute of Cosmology and Gravitation, University of Portsmouth, Dennis Sciama Building, Portsmouth PO1 3FX, UK \\
 $^{6}$SEPnet, South East Physics Network, UK \\
-$^{7}$Departament d'Astronomia i Meteorologia, Universitat de Barcelona, Mart\'i Franques 1, E-08028 Barcelona, Spain \\
+$^{7}$Institut de Ci\`encies del Cosmos, Universitat de Barcelona (UB-IEEC), Mart\'i i Franqu\`es 1, E-08028 Barcelona, Spain \\
 $^{8}$Centre for Astrophysics Research, University of Hertfordshire, College Lane, Hatfield AL10 9AB, UK \\
 $^{9}$Department of Physics and Astronomy, University of Alabama, Box 870324, Tuscaloosa, AL 35487, USA \\
 $^{10}$Department of Physics and Astronomy, The Johns Hopkins University, Homewood Campus, Baltimore, MD 21218, USA \\
@@ -547,7 +548,7 @@ Alternatively, utilisers of the catalogue can set their own thresholds for the d
 
 The second common use case for the morphologies is the direct use of the likelihoods. While thresholds on the likelihoods are appropriate for some studies, many classifications do not exceed $p>0.8$ for any available response, especially when more than two responses are available. These intermediate classifications are a combination of genuine physical attributes of the galaxy (vote fractions of $p_{smooth}=0.5,p_{features/disk}=0.5$ may accurately characterize a galaxy with both strong bulge and disk components) in addition to limitations in accuracy from the image quality and variance among individual classifiers. The problem is that thresholding only samples a small portion of the vote distributions.
 
-In order to use data for the {\it entire} sample, the debiased likelihoods for each response can be treated as probabilistic weights. As an example, consider the type fractions from Task~01 shown in Figure~\ref{fig-task01}. The left hand side shows the average fraction of morphological classes at each redshift only defining a ``class'' as exceeding some vote fraction threshold; as a result, more than half the galaxies are left ``unclassified'', with no strong majority. The panel on the right in Figure~\ref{fig-task01} uses the likelihoods directly. A galaxy with $p_{smooth}=0.6$, $p_{features/disk}=0.3$, and $p_{star/artifact}=0.1$ contributes 0.6 of a ``vote'' to smooth, 0.3 to features/disk, and 0.1 to star/artifact. This approach is generally suitable for studying morphology dependence on global variables, such as environment or color. Further examples of using the likelihoods as weights can be found in \citet{bam09} and \citet{ski12}.
+In order to use data for the {\it entire} sample, the debiased likelihoods for each response can be treated as probabilistic weights. As an example, consider the type fractions from Task~01 shown in Figure~\ref{fig-task01}. The left hand side shows the average fraction of morphological classes at each redshift only defining a ``class'' as exceeding some vote fraction threshold; as a result, more than half the galaxies are left ``unclassified'', with no strong majority. The panel on the right in Figure~\ref{fig-task01} uses the likelihoods directly. A galaxy with $p_{smooth}=0.6$, $p_{features/disk}=0.3$, and $p_{star/artifact}=0.1$ contributes 0.6 of a ``vote'' to smooth, 0.3 to features/disk, and 0.1 to star/artifact. This approach is generally suitable for studying morphology dependence on global variables, such as environment or colour. Further examples of using the likelihoods as weights can be found in \citet{bam09} and \citet{ski12}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%    Comparison       %%%%%%%%%%%%%
@@ -977,7 +978,7 @@ The final catalog consists of five tables, comprising morphological classificati
 
 We have compared the GZ2 classifications in detail to several other morphological catalogs. Early and late-type classifications are consistent with results from the original Galaxy~Zoo, especially for galaxies in the clean samples. Expert catalogs \citep{nai10,bai11} show good agreement for galaxies with medium to strong bars; GZ2 is less confident in identifying expert-classified weak and/or nuclear bars. In ringed galaxies, GZ2 recovers the majority of outer rings, but relatively few inner or nuclear rings due to the design of the GZ2 question. Pairs and interacting galaxies are more difficult to reliably cross-match in a clean sample, although \citet{cas13} have already shown that the GZ2 ``loose winding arms'' parameter is a reliable proxy for interaction. The GZ2 bulge dominance parameter strongly correlates with the Hubble T-type from both expert catalogs. Adding GZ2 measurements of the spiral arm tightness, though, does not increase the T-type classification accuracy. Automated classifications from \citet{hue11} agree well with GZ2 in separating elliptical and late-type spirals, although identification of S0 galaxies still represents a challenge. 
 
-GZ2 contains more than an order of magnitude more galaxies than the largest comparable expert-classified catalogues (NA10, EFIGI) while still classifying detailed morphological features not replicable by automated classifications. GZ2 data have already been used to demonstrate a relationship between bar fraction and the colour, gas fractions, and bulge size of disk galaxies \citep{mas11c,mas12a}, as well as studies of the bar color and length itself \citep{hoy11}. The size of the catalogs has allowed for the discovery and study of comparatively rare objects, such as early-type dust lane galaxies \citep{kav12a} and bulgeless AGN hosts \citep{sim13}. Direct use of the GZ2 likelihoods has also been used to quantify the environmental dependence on morphology, showing a correlation for barred and bulge-dominated galaxies \citep{ski12} and identifying reliable signatures of interaction from GZ2 data \citep{cas13}. 
+GZ2 contains more than an order of magnitude more galaxies than the largest comparable expert-classified catalogues (NA10, EFIGI) while still classifying detailed morphological features not replicable by automated classifications. GZ2 data have already been used to demonstrate a relationship between bar fraction and the colour, gas fractions, and bulge size of disk galaxies \citep{mas11c,mas12a}, as well as studies of the bar colour and length itself \citep{hoy11}. The size of the catalogs has allowed for the discovery and study of comparatively rare objects, such as early-type dust lane galaxies \citep{kav12a} and bulgeless AGN hosts \citep{sim13}. Direct use of the GZ2 likelihoods has also been used to quantify the environmental dependence on morphology, showing a correlation for barred and bulge-dominated galaxies \citep{ski12} and identifying reliable signatures of interaction from GZ2 data \citep{cas13}. 
 
 The success of the Galaxy~Zoo project has already shown that volunteer classification is a robust method for analysis of large data sets; this public release of the detailed Galaxy~Zoo~2 catalogue intends to build on this further, both from their inherent scientific value and as training sets for refining methods of automatic classification techniques. 
 
@@ -986,13 +987,10 @@ The success of the Galaxy~Zoo project has already shown that volunteer classific
 %%%%%%%%%%%%
 
 \section*{Acknowledgments}
-The data in this paper are the result of the efforts of the Galaxy~Zoo~2 volunteers, without whom none of this work would be possible. Their efforts are individually acknowledged at \url{http://authors.galaxyzoo.org}. 
+The data in this paper are the result of the efforts of the Galaxy~Zoo~2 volunteers, without whom none of this work would be possible. Their efforts are individually acknowledged at \url{http://authors.galaxyzoo.org}. Please contact the author(s) to request access to research materials discussed in this paper. 
 
-The development of Galaxy Zoo 2 was supported by The Leverhulme Trust. CJL acknowledges support from the Science and Technology Facilities Council (STFC) Science in Society program. KS gratefully acknowledges support from Swiss National Science Foundation Grant PP00P2\_138979/1. TM acknowledges funding from the STFC ST/J500665/1.
-
-Boilerplate for individual grants, Zooniverse support, etc.
-
-STFC numbers for everyone in the UK.
+The development of Galaxy Zoo 2 was supported by The Leverhulme Trust. KWW and LFF would like to acknowledge support from the US National Science Foundation 
+under grant DRL-0941610. CJL acknowledges support from the Science and Technology Facilities Council (STFC) Science in Society program. KS gratefully acknowledges support from Swiss National Science Foundation Grant PP00P2\_138979/1. TM acknowledges funding from the STFC ST/J500665/1. RCN was partially supported by STFC grant ST/K00090X/1. BDS acknowledges support from Worcester College, Oxford, and from the Oxford Martin School program on computational cosmology.
 
 This research made use of Montage, funded by the National Aeronautics and Space Administration's Earth Science Technology Office, Computation Technologies Project, under Cooperative Agreement Number NCC5-626 between NASA and the California Institute of Technology. Montage is maintained by the NASA/IPAC Infrared Science Archive. It also made extensive use of the Tool for OPerations on Catalogues And Tables (TOPCAT), which can be found at \url{http://www.starlink.ac.uk/topcat/} \citep{tay05,tay11}. 
 
