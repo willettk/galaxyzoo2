@@ -1,0 +1,39 @@
+Hi Kyle
+
+Great to see this nearly done - very minor changes in the tex file attached, all of them cosmetic.
+
+A couple of quick questions : 
+
+1. On p5, you say 
+
+'The removal of the repeats only altered the final vote fractions (thus changing the morphological classifications) for <0.01% of the sample.
+
+I found this slightly confusing. I think you're saying that they only significantly altered the final vote fractions (e.g. by changing the classifications) in a few cases? Surely the vote fractions themselves must have been changed in all cases?
+
+2. I don't think we ever say how the thresholds in table 3 were arrived at. Presumably it was just through experimentation and expert inspection but we should say that. 
+
+3. Section 5.2.0 includes the statement that 
+
+'A 70% confidence limit is estimate by setting upper and lower limits on the same five point scale'
+
+but I'm not sure what this means - the paper has just been talking about using a five point scale for weakness or strength of features. That section also seems to end with a paragraph that doesn't need to be there (beginning 'Comparison of GZ2 data..'
+
+4. I agree with Karen that NED isn't the best choice of acronym. NEO isn't good either! 
+
+5. In section 5.2.4, when you talk about 'the missing population that NA10 classify as having spiral structure but for which GZ2 cannot distinguish the arms' have you looked at any? i.e. are we sure NA10 are right and us wrong. 
+
+6. In the end of 5.2.4 when you're pointing out that bulges are more important than anything else in sorting out spirals I think you should add a sentence which concludes that little piece - something like : 
+
+'Classifications of late-type galaxies into subcategories (Sa, Sb and Sc) by these other methods js therefore shown to be dominated by bulge classification, and to pay little attention to the windiness of spiral arms, despite the original definition of these categories.
+
+Or something - it's all there already but it's worth hammering home.
+
+6. Section 5.3 - is it a boundary between 'regions' (rather than 'points' of N-dimensional space?
+
+That's it - well done on what is truly an excellent paper.
+
+What's the plan for astro-ph, and thus when do we need to get the data on data.galaxyzoo.org?
+
+Cheers
+
+Chris

@@ -1,0 +1,16 @@
+Sorry to be a typography pedant, but variable subscripts that are labels should be typeset in roman, especially as without this LaTeX thinks they are variables and puts too much space between each letter.  It's MNRAS style too, so the typesetter would fix this in the proof, so we may as well match.  So, $p_{features/disk}$ should be $p_\mathrm{features/disk}$.  I've taken the liberty of changing this everywhere on sharelatex (I changed it for all p_, f_, N_ and \Delta_, except where the subscript was i, j or k, as it's acceptable for indices like that to be italics).
+
+I know so many little changes will make diff go crazy, so I hope you can still find other edits I've made (if you happen to be using git to merge, the approach I suggest is to branch from the version you put on sharelatex, add my version to that branch then merge that branch into the head of your master branch, so my changes don't overwrite any edits you've made, including variations on Karen's edits).
+
+I added a further sentence of explanation about the "extra" sample.  I also included a reference to 2002AJ....123..485S, but didn't add it to the .bib file as it seems to be auto-generated.
+
+A few small edits here and there, until the bias correction equations.  I have fixed the spacing around equations (just don't leave a blank line if the equation belongs in the same paragraph as surrounding text).  MNRAS style is for equations to be left aligned, so I've turned that option on.
+
+Numbers should generally have $$ around them, especially if they contain a point, e.g. $0.6$.  I've added them where I've noticed, but it's not exactly essential!
+
+Added a few references to Casteels et al. as a source of examples on how to use vote fractions in different ways.
+
+I haven't really gone through the last half of the paper in detail, but I have looked it over and it looks good.  The new plots are pretty!
+
+I know it's been a long slog, but you really have done a terrific job with this paper.  It reads well, and is detailed but still clear. The analysis all feels rock solid.  It will make it easy for others (and us) to use the GZ2 data with confidence.
+

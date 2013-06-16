@@ -1,0 +1,58 @@
+The Galaxy~Zoo project \citep{lin08} originally launched in 2007 with the goal of obtaining morphological classifications for the nearly one million galaxies drawn from the Sloan Digital Sky Survey \citep[SDSS;][]{yor00} Main Galaxy Sample (Strauss et al. 2002). This scale of effort was made possible by combining classifications from hundreds of thousands of volunteers via an internet site\footnote{Archived at \url{http://zoo1.galaxyzoo.org}}. As the first ever experiment in volunteer galaxy morphology classification, only the most basic morphological distinctions were requested, enabling the separation of systems into basic categories of ``elliptical" (or ``early-type") and ``spiral" (or ``late-type") galaxies, and the identification of merging systems. However, following the success of this project (for which the data was publicly released in Lintott et al. 2011), the same methodology of asking for volunteer classifications was launched in 2009 with a more complex classification system. This paper presents data and results from this second incarnation of Galaxy Zoo, which we will call Galaxy~Zoo~2 (GZ2)\footnote{The Galaxy Zoo 2 site is archived at \url{http://zoo2.galaxyzoo.org}}. These data comprise detailed morphologies for more than 300,000 of the largest and brightest of the SDSS MGS galaxies.
+
+While the morphological distinction used in the original Galaxy~Zoo (GZ1) -- that which divides spiral and elliptical systems -- is the most fundamental, the motivation for Galaxy Zoo 2 was that galaxies demonstrate a much wider variety of morphological features. There is a long history of enhanced classifications (see Buta 2011 for a recent historical review), but the most well known approach to classification \citep{hub26,hub36} included a division between barred and unbarred spirals, creating the famous `tuning fork' diagram. Further distinctions ordered ellipticals based on their shape and spirals based on a combination of the tightness and distinction of spiral arms and size of central bulge. Along the spiral or late-type sequence, these finer morphological distinctions are found to be correlated with physical parameters of the systems being studied (Robert \& Haynes 1994), with spirals getting on average redder, more massive and less gas rich the ``earlier" (closer to the ``early-types" in the sequence) they get. 
+
+ It is clear that morphological features can reveal physical processes which have shaped the evolution of the galaxy. Most obviously merger features reveal ongoing gravitational interaction, but even the presence of a central bulge in a disc galaxy is likely to indicate a history of mass assembly through significant mergers (\citealt{mar12} and references therein). On the other hand galactic bars and rings reveal details of slower, secular evolution and stellar orbital resonances, for example, bars are known to drive gas inwards and are related to the growth of a central bulge \citep[reviews are given in \citealt{kor04} and][]{mas11c}. Information on morphological features are thus an essential element if the assembly and evolution history of galaxies is to be fully understood.
+
+Traditional morphological classification relied on the careful inspection of small numbers of images by experts \citep[e.g., ][]{san61,dev91}, however the sheer size of modern data sets like the SDSS MGS make this approach impractical. Detailed classifications of only subsets of SDSS images have been done though huge efforts of a small number of experts. \citet{fuk07} and \citet{bai11} determined modified Hubble types for samples of 2253 and 4458 galaxies, respectively, and the largest detailed professional effort to date was undertaken by \citet{nai10}, who provide classifications of 14,034 galaxies. Galaxy~Zoo~2 includes more than an order of magnitude more systems than any of these efforts, and furthermore each galaxy has a large number of independent inspections. The size of this sample allows for a more complete study of small-scale morphological features and their correlation with many other galaxy properties (e.g. mass, stellar and gaseous content, environment) and better statistics for the rarest objects, while having many independent classifications for each galaxy yields estimates of the classification likelihood (and in some cases strength of the feature in question). 
+
+The use of proxies for morphology --- such as colour, concentration index, spectral features, surface brightness profile, structural features, spectral energy distribution or some combination of these --- has become common practice in astronomy. However these proxies are not an adequate substitute for full morphological classification. Each proxy has an unknown and possibly biased relation with the morphological features under study (e.g. most ellipticals are red and most spirals are blue, but interesting subsets of these morphological types are found with the opposite colour, Masters et al. 2010, Schawinski et al. 2010). With a sufficiently large set of galaxies, the diversity of the local population can be fully sampled, and the relationship between morphology and the proxies discussed above can be fully identified. 
+
+Automated morphological classification is becoming much more sophisticated, driven in part by the availability of large training sets from the original Galaxy~Zoo \citep{ban10,hue11,dav13}. However these methods also do not yet provide an adequate substitute for classification by eye. In particular, as \citet{lin11} note, such efforts typically use proxies for morphology as their input (especially colour), meaning they suffer from the objections raised above to the use of these morphological proxies. The release of the Galaxy Zoo 2 dataset will be of interest to those developing such machine learning and computer vision systems. 
+
+The GZ2 results were made possible by the participation of hundreds of thousands of volunteer `citizen scientists'. The original Galaxy~Zoo demonstrated the utility of this method in producing both large-scale catalogues as well as serendipitous discoveries of individual objects (see \citealt{lin11}, or Fortson et al. 2012 for a review of Galaxy~Zoo~1 results). Since then, this method has been expanded beyond simple galaxy shape classifications to include supernova identification \citep{smi11}, exoplanet discovery \citep{fis12,sch12} and a census of bubbles associated with star formation in the Milky~Way \citep{sim12a}, as well as a variety of ``big data" problems outside of astronomy\footnote{See \url{www.thezooniverse.org} for the full collection}. 
+
+Several results based on early Galaxy Zoo 2 data have already been published. \citet{mas11c,mas12a} use GZ2 bar classifications to measure a clear increase in bar fraction for galaxies with redder colours, lower gas fractions, and more prominent bulges. \citet{hoy11} showed that the bars themselves are both redder and longer in redder disk galaxies. \citet{ski12} demonstrated that a significant correlation exists between barred and bulge-dominated galaxies at separations from 0.15--3~Mpc. \citet{kav12a} used GZ2 to study early-type galaxies with visible dust lanes, while \citet{sim13} discovered a population of AGN host galaxies with no bulge, illustrating how black holes can grow and accrete via secular processes. Finally, \citet{cas13} quantify morphological signatures of interaction (including mergers, spiral arms, and bars) for galaxy pairs in the SDSS. 
+
+This paper is organised as follows. Section~\ref{sec-description} describes the sample selection and method for collecting morphological classifications. Section~\ref{sec-datareduction} outlines the data reduction and debiasing process, and Section~\ref{sec-catalogue} describes the tables that comprise the public data release. Section~\ref{sec-comparison} is a detailed comparison of GZ2 to four additional morphological catalogues that were created with SDSS imaging. We summarise our results in Section~\ref{sec-conclusion}. 
+
+This paper uses the WMAP9 cosmological parameters of $H_0=71.8$~km/s/Mpc, $\Omega_m = 0.273$, and $\Omega_\Lambda = 0.727$ \citep{hin12}. 
+
+
+If you don't have these references: 
+
+\bibitem[Fortson et al.(2012)]{2012amld.book..213F} Fortson, L., Masters, K., Nichol, R., et al.\ 2012, Advances in Machine Learning and Data Mining  for Astronomy, 213 (arXiv:1104.5513)
+
+\bibitem[Roberts \& Haynes(1994)]{1994ARA&A..32..115R} Roberts, M.~S., \& Haynes, M.~P.\ 1994, \araa, 32, 115 
+-------
+
+Comments (also see in pdf attached): 
+
+Still have big concern over missing redshifts, and things in GZ2 not cross matched with GZ1…. 
+In my opinion we cannot use NED as acronym for "Not edge-on". 
+
+Need Hubble 1926 in intro. Hubble 1936 in Section 5.2.4
+
+For second paragraph of Section 5.2.1
+
+"Masters et al. 2012 provided an analysis of the comparison between bar classifications in NA10 and the RC3 and the GZ2 bar classifications (albeit before the redshift bias corrections had been applied). They found good agreement, particularly finding that values of fbar>0.5 found almost all strongly barred NA10 and RC3 galaxies, and that fbar<0.2 was found to correlate strongly with galaxies identied as unbarred by NA10 and RC3." 
+
+For end of 5.2.1
+
+"We also note that the strong correlation between pbar and EFIGI bar strength suggests that pbar may be used directly (with caution) as a measure of bar strength in GZ2 galaxies."
+
+Suggested last paragraph: 
+
+"The scientific productivity of the Galaxy Zoo project has already shown that the use of multiple independent volunteer classifications is a robust method for the analysis of large data sets of galaxy images. This public release of the detailed Galaxy Zoo 2 catalogue intends to build on this success, by demonstrating the reliability and benefit of these classifications over both expert classifications and automated classifications. We publicy release these Galaxy Zoo 2 classifications both as a rich data set to exploit to study galaxy evolution, and as training sets for refining method of automated classification techniques."   
+
+--------------
+
+Just to be clear - I don't want you to delay submitting over my concerns about missing redshifts, we should just convince ourselves it's not a problem (or find the problem) before this is actually accepted. So go ahead and submit if you're otherwise ready.
+
+ I'm serious that we can't used NED for "not edge-on" though. Sorry to whoever came up with that. I can't think of a single word which captures Face-on and inclined but not edge-on discs..... - I guess FOI galaxies is no good either... I think I suggested NE galaxies in the text which is a quick change (why the D anyway... doesn't that break acronym rules).... 
+
+The technical term for an inclination smaller than 90 deg (which is edge-on) is an acute inclination - "acutely inclined galaxies" (AIG) would cover it technically.... but doesn't sound quite right either. 
+
+Think "oblique" or "exposed" were the best two suggestions from my twitter stream.... 
+
+ And I also echo that it's an awesome paper. :) 
