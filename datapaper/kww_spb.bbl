@@ -1,4 +1,4 @@
-\begin{thebibliography}{50}
+\begin{thebibliography}{49}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -48,9 +48,6 @@
 
 \bibitem[{{Buta} \& {Combes}(1996)}]{but96}
 {Buta} R., {Combes} F., 1996, \fcp, 17, 95
-
-\bibitem[{{Buta}(2013)}]{but13}
-{Buta} R.~J., 2013, ArXiv e-prints
 
 \bibitem[{{Casteels} {et~al}\mbox{.}(2013){Casteels}, {Bamford}, {Skibba},
   {Masters}, {Lintott}, {Keel}, {Schawinski}, {Nichol}, \& {Smith}}]{cas13}
