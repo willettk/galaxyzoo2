@@ -1,4 +1,4 @@
-\begin{thebibliography}{50}
+\begin{thebibliography}{52}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 
 \bibitem[{{Abazajian} {et~al}\mbox{.}(2009){Abazajian}, {Adelman-McCarthy},
@@ -21,10 +21,6 @@
   {Fouqu{\'e}}, {Arnouts}, {Mellier}, {Pell{\'o}}, {Leborgne}, {Prugniel},
   {Makarov}, {Makarova}, {McCracken}, {Bijaoui}, \& {Tasca}}]{bai11}
 {Baillard} A. {et~al.}, 2011, \aap, 532, A74
-
-\bibitem[{{Baldwin}, {Phillips} \& {Terlevich}(1981){Baldwin}, {Phillips}, \&
-  {Terlevich}}]{bal81}
-{Baldwin} J.~A., {Phillips} M.~M., {Terlevich} R., 1981, \pasp, 93, 5
 
 \bibitem[{{Bamford} {et~al}\mbox{.}(2009){Bamford}, {Nichol}, {Baldry}, {Land},
   {Lintott}, {Schawinski}, {Slosar}, {Szalay}, {Thomas}, {Torki}, {Andreescu},
@@ -50,7 +46,8 @@
 {Buta} R., {Combes} F., 1996, \fcp, 17, 95
 
 \bibitem[{{Buta}(2013)}]{but13}
-{Buta} R.~J., 2013, ArXiv e-prints
+{Buta} R.~J., 2013, {Galaxy Morphology}, {Oswalt} T.~D., {Keel} W.~C., eds.,
+  Springer
 
 \bibitem[{{Casteels} {et~al}\mbox{.}(2013){Casteels}, {Bamford}, {Skibba},
   {Masters}, {Lintott}, {Keel}, {Schawinski}, {Nichol}, \& {Smith}}]{cas13}
@@ -82,6 +79,13 @@
   {Sharzer}, {Defouw}, {Hajduk}, {Neal}, {Nemec}, {Schuepbach}, \&
   {Zimmermann}}]{fis12}
 {Fischer} D.~A. {et~al.}, 2012, \mnras, 419, 2900
+
+\bibitem[{{Fortson} {et~al}\mbox{.}(2012){Fortson}, {Masters}, {Nichol},
+  {Borne}, {Edmondson}, {Lintott}, {Raddick}, {Schawinski}, \&
+  {Wallin}}]{for12}
+{Fortson} L. {et~al.}, 2012, {Galaxy Zoo: Morphological Classification and
+  Citizen Science}, {Way} M.~J., {Scargle} J.~D., {Ali} K.~M., {Srivastava}
+  A.~N., eds., CRC Press, Taylor \& Francis Group, pp. 213--236
 
 \bibitem[{{Fukugita} {et~al}\mbox{.}(2007){Fukugita}, {Nakamura}, {Okamura},
   {Yasuda}, {Barentine}, {Brinkmann}, {Gunn}, {Harvanek}, {Ichikawa}, {Lupton},
@@ -178,6 +182,9 @@
   Analysis Software and Systems (ADASS) XIII, {Ochsenbein} F., {Allen} M.~G.,
   {Egret} D., eds., p. 666
 
+\bibitem[{{Roberts} \& {Haynes}(1994)}]{rob94}
+{Roberts} M.~S., {Haynes} M.~P., 1994, \araa, 32, 115
+
 \bibitem[{{Sandage}(1961)}]{san61}
 {Sandage} A., 1961, {The Hubble atlas of galaxies}. {Carnegie Institute of
   Washington}
@@ -216,6 +223,37 @@
   {Arcavi}, {Howell}, {Bloom}, {Jacobsen}, {Kulkarni}, {Law}, {Ofek}, \&
   {Walters}}]{smi11}
 {Smith} A.~M. {et~al.}, 2011, \mnras, 412, 1309
+
+\bibitem[{{Stoughton} {et~al}\mbox{.}(2002){Stoughton}, {Lupton}, {Bernardi},
+  {Blanton}, {Burles}, {Castander}, {Connolly}, {Eisenstein}, {Frieman},
+  {Hennessy}, {Hindsley}, {Ivezi{\'c}}, {Kent}, {Kunszt}, {Lee}, {Meiksin},
+  {Munn}, {Newberg}, {Nichol}, {Nicinski}, {Pier}, {Richards}, {Richmond},
+  {Schlegel}, {Smith}, {Strauss}, {SubbaRao}, {Szalay}, {Thakar}, {Tucker},
+  {Vanden Berk}, {Yanny}, {Adelman}, {Anderson}, {Anderson}, {Annis},
+  {Bahcall}, {Bakken}, {Bartelmann}, {Bastian}, {Bauer}, {Berman},
+  {B{\"o}hringer}, {Boroski}, {Bracker}, {Briegel}, {Briggs}, {Brinkmann},
+  {Brunner}, {Carey}, {Carr}, {Chen}, {Christian}, {Colestock}, {Crocker},
+  {Csabai}, {Czarapata}, {Dalcanton}, {Davidsen}, {Davis}, {Dehnen},
+  {Dodelson}, {Doi}, {Dombeck}, {Donahue}, {Ellman}, {Elms}, {Evans}, {Eyer},
+  {Fan}, {Federwitz}, {Friedman}, {Fukugita}, {Gal}, {Gillespie}, {Glazebrook},
+  {Gray}, {Grebel}, {Greenawalt}, {Greene}, {Gunn}, {de Haas}, {Haiman},
+  {Haldeman}, {Hall}, {Hamabe}, {Hansen}, {Harris}, {Harris}, {Harvanek},
+  {Hawley}, {Hayes}, {Heckman}, {Helmi}, {Henden}, {Hogan}, {Hogg}, {Holmgren},
+  {Holtzman}, {Huang}, {Hull}, {Ichikawa}, {Ichikawa}, {Johnston}, {Kauffmann},
+  {Kim}, {Kimball}, {Kinney}, {Klaene}, {Kleinman}, {Klypin}, {Knapp},
+  {Korienek}, {Krolik}, {Kron}, {Krzesi{\'n}ski}, {Lamb}, {Leger},
+  {Limmongkol}, {Lindenmeyer}, {Long}, {Loomis}, {Loveday}, {MacKinnon},
+  {Mannery}, {Mantsch}, {Margon}, {McGehee}, {McKay}, {McLean}, {Menou},
+  {Merelli}, {Mo}, {Monet}, {Nakamura}, {Narayanan}, {Nash}, {Neilsen},
+  {Newman}, {Nitta}, {Odenkirchen}, {Okada}, {Okamura}, {Ostriker}, {Owen},
+  {Pauls}, {Peoples}, {Peterson}, {Petravick}, {Pope}, {Pordes}, {Postman},
+  {Prosapio}, {Quinn}, {Rechenmacher}, {Rivetta}, {Rix}, {Rockosi}, {Rosner},
+  {Ruthmansdorfer}, {Sandford}, {Schneider}, {Scranton}, {Sekiguchi}, {Sergey},
+  {Sheth}, {Shimasaku}, {Smee}, {Snedden}, {Stebbins}, {Stubbs}, {Szapudi},
+  {Szkody}, {Szokoly}, {Tabachnik}, {Tsvetanov}, {Uomoto}, {Vogeley}, {Voges},
+  {Waddell}, {Walterbos}, {Wang}, {Watanabe}, {Weinberg}, {White}, {White},
+  {Wilhite}, {Wolfe}, {Yasuda}, {York}, {Zehavi}, \& {Zheng}}]{sto02}
+{Stoughton} C. {et~al.}, 2002, \aj, 123, 485
 
 \bibitem[{{Strauss} {et~al}\mbox{.}(2002){Strauss}, {Weinberg}, {Lupton},
   {Narayanan}, {Annis}, {Bernardi}, {Blanton}, {Burles}, {Connolly},
