@@ -1,0 +1,408 @@
+.zooniverse-dialog {
+  display: block;
+  font-size: 12px;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+.zooniverse-dialog .underlay {
+  background: rgba(0,0,0,0);
+  display: table;
+  width: 100%;
+  -webkit-transition: background-color 0.5s ease-in-out;
+  -moz-transition: background-color 0.5s ease-in-out;
+  -o-transition: background-color 0.5s ease-in-out;
+  -ms-transition: background-color 0.5s ease-in-out;
+  transition: background-color 0.5s ease-in-out;
+  height: 100%;
+}
+.zooniverse-dialog .underlay .container {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-perspective: 1000px;
+  -moz-perspective: 1000px;
+  -ms-perspective: 1000px;
+  perspective: 1000px;
+}
+.zooniverse-dialog .underlay .container .dialog {
+  background: #f4f4f4;
+  border-top: 5px solid #050505;
+  -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.5);
+  box-shadow: 0 3px 5px rgba(0,0,0,0.5);
+  color: #000;
+  display: inline-block;
+  max-width: 33%;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  padding: 30px;
+  position: relative;
+  text-align: left;
+  text-shadow: none;
+  -webkit-transform: translateY(-25%) rotateX(30deg) scale(0.75);
+  -moz-transform: translateY(-25%) rotateX(30deg) scale(0.75);
+  -o-transform: translateY(-25%) rotateX(30deg) scale(0.75);
+  -ms-transform: translateY(-25%) rotateX(30deg) scale(0.75);
+  transform: translateY(-25%) rotateX(30deg) scale(0.75);
+  -webkit-transition: opacity 0.25s ease-in-out, -webkit-transform 0.33s ease-in-out;
+  -moz-transition: opacity 0.25s ease-in-out, -moz-transform 0.33s ease-in-out;
+  -o-transition: opacity 0.25s ease-in-out, -o-transform 0.33s ease-in-out;
+  -ms-transition: opacity 0.25s ease-in-out, -ms-transform 0.33s ease-in-out;
+  transition: opacity 0.25s ease-in-out, transform 0.33s ease-in-out;
+}
+.zooniverse-dialog .underlay .container .dialog > form > button[name="close-dialog"] {
+  font-size: 16px;
+  height: 1em;
+  position: absolute;
+  right: 4px;
+  top: 0;
+  width: 1em;
+}
+.zooniverse-dialog.warning .underlay .container .dialog {
+  border: 5px solid #f90;
+}
+.zooniverse-dialog.error .underlay .container .dialog {
+  border: 5px solid #c30;
+}
+.zooniverse-dialog.showing .underlay {
+  background: rgba(0,0,0,0.5);
+}
+.zooniverse-dialog.showing .underlay .container .dialog {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+  -webkit-transform: translateY(0) rotateX(0) scale(1);
+  -moz-transform: translateY(0) rotateX(0) scale(1);
+  -o-transform: translateY(0) rotateX(0) scale(1);
+  -ms-transform: translateY(0) rotateX(0) scale(1);
+  transform: translateY(0) rotateX(0) scale(1);
+}
+.zooniverse-dialog button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+}
+.zooniverse-dialog a {
+  border: 0;
+  color: inherit;
+  text-decoration: underline;
+}
+.zooniverse-dialog a:hover {
+  color: inherit;
+}
+.zooniverse-dialog header {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.zooniverse-dialog header .zooniverse-logo {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAACUUlEQVR42rzWSYjOYRwH8M+MsdOUJUtZChEylsguBwdRlpMsJQ4i4SIkRSlSDhJxcrCcyNVBkW0kawoxpSZryDpIk3H5vdPj8c477yR+l/f9bc/3/1ufp6Kpqcm/pqpyjDp1rarBNAxDNT7jCWq/NzTeas2/omOXdqX0q7ABNSVsHuAgjrQVZDBOYUobsnIby/EwkY3F0soixuPwqI0AMD6imhH8RlzDlzySPniOPLyXOIub+IDumICFGFgE8AKGYBmu5CD3MTpz2IXdaGwhgq3Yk8m+oj8+QpquZUUAFmNnCQDYi/mZrEvU54/CP42CF2g3dpRRi6E4iQHol8jfoVcaycgM4G0LAD2iFj2CX4E7qI0a1Ce2PTE1BZmTHXaiCMBKPIviP8NV7McSbMI3HMt8ZqcTPyJTXs/4vjiKDsF3xuSI6m5iV5v5DUgj6ZYp32f88ASgQJWxYlL6UKQBmkEaMmV1EdCfmewH6lrx+5aCPM6Uk5L/83AeNwpO8bsmBrclP1G75hYeg3uJ8hUGYR9WYx2Oo3dMeD3eFGmOuuiyAs3CpXROnseUpqvkRXRPXRnzshaHE/5TIX3tqtpXpkVbkBh1j5RcLwNgJk5nsu2FbksjqY4c5p22JdLWEq2P+ySl19H2v62VKbEa6iOPxXJ9JqL6FB8yCYtiW+Q0KtZ+M8jm2LTbcADTcfkvrvS5OJcPVO/YMQdCdiW28f02Hv4YE3OAcu74TZHzISVs6nGoVN0qynkSdepaNT121cCox9c4/Mb3hsaLrb5W/se769cAaz6BAxgHPGwAAAAASUVORK5CYII=");
+  display: inline-block;
+  height: 25px;
+  margin-right: 5px;
+  position: relative;
+  top: -2px;
+  vertical-align: middle;
+  width: 25px;
+}
+.zooniverse-dialog .loader {
+  -webkit-animation: 1s zooniverse-progress linear infinite;
+  -moz-animation: 1s zooniverse-progress linear infinite;
+  -o-animation: 1s zooniverse-progress linear infinite;
+  -ms-animation: 1s zooniverse-progress linear infinite;
+  animation: 1s zooniverse-progress linear infinite;
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0.25, transparent), color-stop(0.25, #000), color-stop(0.5, #000), color-stop(0.5, transparent), color-stop(0.75, transparent), color-stop(0.75, #000));
+  background: -webkit-linear-gradient(left top, transparent 25%, #000 25%, #000 50%, transparent 50%, transparent 75%, #000 75%);
+  background: -moz-linear-gradient(left top, transparent 25%, #000 25%, #000 50%, transparent 50%, transparent 75%, #000 75%);
+  background: -o-linear-gradient(left top, transparent 25%, #000 25%, #000 50%, transparent 50%, transparent 75%, #000 75%);
+  background: -ms-linear-gradient(left top, transparent 25%, #000 25%, #000 50%, transparent 50%, transparent 75%, #000 75%);
+  background: linear-gradient(left top, transparent 25%, #000 25%, #000 50%, transparent 50%, transparent 75%, #000 75%);
+  -webkit-background-size: 25px 25px;
+  -moz-background-size: 25px 25px;
+  background-size: 25px 25px;
+  bottom: 0;
+  display: none;
+  left: 0;
+  opacity: 0.05;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=5)";
+  filter: alpha(opacity=5);
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+.zooniverse-dialog .loading .loader {
+  display: block;
+}
+.zooniverse-dialog label {
+  display: block;
+  margin: 10px 0;
+}
+.zooniverse-dialog input {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0 1px 0 #fff;
+  box-shadow: 0 1px 0 #fff;
+  font-size: 12px;
+  padding: 10px;
+}
+.zooniverse-dialog input:first-child {
+  width: 100%;
+}
+.zooniverse-dialog .explanation {
+  font-size: 10px;
+  margin: 5px 13px;
+  opacity: 0.75;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
+  filter: alpha(opacity=75);
+}
+.zooniverse-dialog .error-message {
+  color: #800000;
+  font-weight: bold;
+  text-align: center;
+}
+.zooniverse-dialog .action {
+  margin: 1em 0;
+  text-align: center;
+}
+.zooniverse-dialog .action button {
+  background: #fff;
+  border: 1px solid #bbb;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 0 #fff inset, 0 1px 3px rgba(0,0,0,0.25);
+  box-shadow: 0 1px 0 #fff inset, 0 1px 3px rgba(0,0,0,0.25);
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0 5px;
+  padding: 3px 10px;
+}
+.zooniverse-dialog .action button:active {
+  border-color: rgba(0,0,0,0.25);
+  -webkit-box-shadow: 0 100px rgba(0,0,0,0.125) inset;
+  box-shadow: 0 100px rgba(0,0,0,0.125) inset;
+}
+@-moz-keyframes zooniverse-progress {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 50px 0;
+  }
+}
+@-webkit-keyframes zooniverse-progress {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 50px 0;
+  }
+}
+@-o-keyframes zooniverse-progress {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 50px 0;
+  }
+}
+@-ms-keyframes zooniverse-progress {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 50px 0;
+  }
+}
+@keyframes zooniverse-progress {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 50px 0;
+  }
+}
+.zooniverse-top-bar {
+  background: #000;
+  color: #fff;
+  font: bold 11px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  text-shadow: 0 1px 1px #000;
+  top: 0;
+  z-index: 100;
+}
+.zooniverse-top-bar:before {
+  border-color: #000 #000 transparent transparent;
+  border-style: solid;
+  border-width: 20px 10px;
+  content: "";
+  height: 0;
+  position: absolute;
+  right: 100%;
+  top: 0;
+  width: 0;
+}
+.zooniverse-top-bar a {
+  border: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.zooniverse-top-bar button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  text-shadow: inherit;
+  text-transform: inherit;
+}
+.zooniverse-top-bar .no-user {
+  display: block;
+  margin: 4px 6px 0;
+}
+.zooniverse-top-bar .no-user .zooniverse,
+.zooniverse-top-bar .no-user .sign-in {
+  display: inline-block;
+  margin: 0 6px;
+  vertical-align: middle;
+}
+.zooniverse-top-bar .no-user .zooniverse {
+  font-size: 13px;
+}
+.zooniverse-top-bar .no-user .zooniverse .zooniverse-logo {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAACW0lEQVR42ryWX2jOYRTHt5GirdVYTG3UJkLN/MsYckGJC1yJKbmREisRFwopUsoSccUFciMXblys/Btb8zcrZG+R/ImRGbaSvD5PfX9vZ8fv/b3vmzj16Xmf8/w573POc87vKU6n00X/WobnM+lrb6qeZgFMgvKggh7oKKusu59rfXH/h56k8U2wDeoT5jyB43CqUCMT4QI0FuCVB9AMT41uBqwriZncAM8KNBBkpk61UP3tcAe++ZiMhbswzOnfwWW4B31QBrNgFdS4uTfhGtTCMmj37uqG6W7RfjgIP7OcYDcccroBGA9fQse6a32MgTWwL8FAkMOw0ulGKT5/BP6FAh5J+Pd784hFHZyHaqgy+k8wxp5kqjPwMYuBCsWiQv0N8DDki2LwyswdDfOtkaVus3MxBjbCawU/tLfhKKyFFhiEM27NEpvxU9xgp+uPg9MwQv2RME+nemTmdbh11fYkpW7ws+tPNgYiKVGJsdIXcwEyRr67wfIYo7+c7gekcqwbtEaeu8G55vcKaIOuaJHazfAmYV2RYpcx0uYGm+WeY3ARdqjMTIDZas9muRxWbtjAP4a3ytIo0C+lazBu6RVxskXXOJJ+lZghGe/zokrZnsojIRfBSac7YG9IJJdCxXQTr8CuHAa2Rm4x8l45NKSsNKo0hIxdHLNRSn+iU24oVZBXq1p4maaynzGyU5V2D7RCE9z6i0/6crjqE6pSNaZVunZV4+4CNw9pMMcbyOcb3yKf1ybMCS4+AUeyfuPzeRLxWmlSrapRPAa0eRevles5Xyv/4931W4ABAHD5k83VXALJAAAAAElFTkSuQmCC");
+  display: inline-block;
+  height: 25px;
+  margin-right: 5px;
+  position: relative;
+  top: -2px;
+  vertical-align: middle;
+  width: 25px;
+}
+.zooniverse-top-bar .no-user .sign-in {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+.zooniverse-top-bar .no-user .sign-in button {
+  padding: 10px 0;
+}
+.zooniverse-top-bar .current-user {
+  display: none;
+  margin-top: 5px;
+}
+.zooniverse-top-bar .current-user .messages,
+.zooniverse-top-bar .current-user .info,
+.zooniverse-top-bar .current-user .avatar,
+.zooniverse-top-bar .current-user .group {
+  display: inline-block;
+  margin: 0 6px;
+  vertical-align: middle;
+}
+.zooniverse-top-bar .current-user .messages {
+  margin-top: -3px;
+  opacity: 0.33;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=33)";
+  filter: alpha(opacity=33);
+}
+.zooniverse-top-bar .current-user .messages .message-count {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKBAMAAABLZROSAAAALVBMVEW+vr7Nzc3Q0NDR0dHW1tbb29vg4ODk5OTn5+fo6Ojt7e3v7+/29vb6+vr///8OFDOYAAAAOElEQVQIHWPY+w4CbjOU9YFZL9IZykvmAZkv3csZysuD1r17pVoOYpULnzEEkiBWKUM4lAWkCLIAEVwyE0jlImMAAAAASUVORK5CYII=") right center no-repeat;
+  display: inline-block;
+  padding-right: 24px;
+}
+.zooniverse-top-bar .current-user .info {
+  line-height: 1;
+  margin-top: -3px;
+}
+.zooniverse-top-bar .current-user .info .current-user-name {
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1;
+}
+.zooniverse-top-bar .current-user .info button {
+  font-size: 8px;
+  text-transform: uppercase;
+}
+.zooniverse-top-bar .current-user .avatar img {
+  height: 30px;
+  width: 30px;
+}
+.zooniverse-top-bar .current-user .group {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAQCAYAAAD9L+QYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2MDhGMkU3OUNCOTgxMUUyOTY3NEM2NzQzRjg4MTg5MSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo2MDhGMkU3QUNCOTgxMUUyOTY3NEM2NzQzRjg4MTg5MSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjYwOEYyRTc3Q0I5ODExRTI5Njc0QzY3NDNGODgxODkxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjYwOEYyRTc4Q0I5ODExRTI5Njc0QzY3NDNGODgxODkxIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+BKUAcAAAAbBJREFUeNqMlD1LA0EQhnOHCvEPWCkRCQiK6cTCIiCKvWBtGcEPSCOaJsQ/oChib0Bj4RcYQZFc7UcwBkGwUEQLG0MwhYgxvi/MwbLsZTPwMDc3M282s3vrNBqNkMUcMA/mQK/nec/wm2AjHo83bW4L2W0NLChxFKyDPrDYdFWy8i6QwKo64PexopIi9AhcvwE1/uMf6Eftk8QxMI38D/w23n+wqQdQLA1WwA0KxqRhVBXWzJU8bRJcSz91StDoZkFCVq6OKi3PX5aR+fkUaFfeU2+W4mFDU6f4S1ALEK5JPhSgEab4LqhriR3xFflnv1qecQJzrUic1fKce5biVyCjJC54zJT42NCclfe+sf5ciTP44VuKJ5UZ08ZBDhvC8x0BRTCjiTMuoiYi30EOTCj5VeSSrmyGozVPgQGwJcfRZFHJD0q9/uGlKF4NaOY8hy2nZQR8BuSqFM8bEmXM7B3+1SL+AlhXNuTOKH5iSPibdWoR9xd2ZNKgeAHcgW85Ym9yPGmHFvED8XvSVxcd6hWcFm5FXg1DhrvlHqOLNWt0W7gVl8CDsvFViZdtjf8CDADwXH2KGkAa9gAAAABJRU5ErkJggg==") right center no-repeat;
+  display: inline-block;
+  height: 20px;
+  opacity: 0.33;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=33)";
+  filter: alpha(opacity=33);
+  width: 24px;
+}
+.zooniverse-top-bar.signed-in .no-user {
+  display: none;
+}
+.zooniverse-top-bar.signed-in .current-user {
+  display: block;
+}
+.zooniverse-top-bar.has-messages .current-user .messages,
+.zooniverse-top-bar.has-group .current-user .group {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
+.zooniverse-top-bar .zooniverse-login-form button[name="sign-out"] {
+  display: none;
+}
+.zooniverse-footer {
+  background: url("data:image/png;base64,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") no-repeat;
+  font-size: 14px;
+  min-height: 200px;
+  padding-left: 200px;
+}
+.zooniverse-footer .title {
+  font-size: 18px;
+  margin-bottom: 1em;
+}
+.zooniverse-footer .projects {
+  font-size: 12px;
+  overflow: hidden;
+}
+.zooniverse-footer .projects .category {
+  float: left;
+  width: 25%;
+}
+.zooniverse-footer .projects .category .category-title {
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.zooniverse-footer .projects .category a {
+  color: inherit;
+  opacity: 0.67;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=67)";
+  filter: alpha(opacity=67);
+  text-decoration: none;
+}
+.zooniverse-footer .projects .category a:hover {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}

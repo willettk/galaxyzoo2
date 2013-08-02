@@ -1,0 +1,96 @@
+.container,
+.columns,
+body > .header {
+  margin: 0 auto;
+  width: 960px;
+}
+.columns {
+  zoom: 1;
+  padding: 30px 0 50px 0;
+}
+.columns:before,
+.columns:after {
+  content: "";
+  display: table;
+}
+.columns:after {
+  clear: both;
+}
+.columns > .column {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  float: left;
+}
+.columns > .column.narrow {
+  width: 25%;
+}
+.columns > .column.wide {
+  padding-left: 20px;
+  width: 75%;
+}
+h1 {
+  font-size: 30;
+  margin: 0.5em 0 0.15em 0;
+}
+h2 {
+  font-size: 24;
+  margin: 0.5em 0 0.15em 0;
+}
+p,
+td,
+li {
+  font-size: 14px;
+}
+body {
+  background: url("../images/background.jpg") no-repeat scroll 50% 0 #000;
+  color: #f2f2f2;
+  font-family: "Open Sans", sans-serif;
+}
+body > .header {
+  padding: 95px 0 15px 0;
+  text-align: center;
+}
+body > .header ul {
+  list-style: none;
+}
+body > .footer {
+  background: rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding: 30px 0;
+}
+a {
+  color: #00a8f1;
+}
+a:hover {
+  color: #79d6ff;
+}
+table {
+  width: 100%;
+}
+table td,
+table th {
+  padding: 3px 6px;
+}
+table td {
+  background: #151515;
+}
+table .banner,
+table th {
+  background: rgba(255,255,255,0.2);
+  font-weight: 700;
+  text-align: center;
+}
+.nav-container ul {
+  list-style: none;
+  padding-left: 15px;
+}
+.nav-container ul.nav > li {
+  margin: 0 0 7px 0;
+}
+.nav-container a {
+  cursor: pointer;
+}
+.nav-container a.active {
+  color: #fff;
+}

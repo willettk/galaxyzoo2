@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Galaxy Zoo Data</title>
+		<meta charset="utf-8">
+	  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700">
+	  <link rel="stylesheet" href="stylesheets/zooniverse.css">
+	  <link rel="stylesheet" href="stylesheets/application.css">
+	</head>
+
+	<body>
+		<div class="header">
+			<img src="images/logo.png"></img>
+		</div>
+
+		<div class="content">
+			<a name="zoo_1"></a>
+			<h1>Galaxy Zoo 1 data release</h1>
+
+			<p>The original <a href="http://zoo1.galaxyzoo.org">Galaxy Zoo</a> project ran from July 2007 until February 2009, before being replaced by <a href="http://zoo2.galaxyzoo.org">Galaxy Zoo 2</a> and then, in turn by <a href="http://hubble.galaxyzoo.org">Galaxy Zoo: Hubble</a>. Volunteers were asked to classify SDSS galaxies as belonging to one of six categories - elliptical, clockwise spiral, anticlockwise spiral, edge-on galaxies, 'star/don't know' or merger.</p>
+			<p>This webpage allows anyone to download the resulting classifications of nearly 900,000 galaxies drawn from the <a href="http://www.sdss.org">Sloan Digital Sky Survey</a>.</p>
+			<p>The project is described in <a href="http://adsabs.harvard.edu/abs/2008MNRAS.389.1179L">Lintott et al., 2008, MNRAS, 389, 1179</a> and the data release is described in <a href="http://arxiv.org/abs/1007.3265">Lintott et al. 2010</a>. Anyone making use of the data should cite at least one of these papers in any resulting publications.</p>
+			<p>Table 2 gives classifications of galaxies which have spectra included in SDSS Data Release 7. The fraction of the vote in each of the six categories is given, along with debiased votes in elliptical and spiral categories and flags identifying systems as classified as spiral, elliptical or uncertain.</p>
+
+			<table class="downloads">
+				<tr>
+					<td colspan="2" class="banner">Table 2</td>
+				</tr>
+				<tr>
+					<td>CSV (gzipped)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.csv.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.csv.gz</a></td>
+				</tr>
+				<tr>
+					<td>CSV (zip)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.csv.zip">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.csv.zip</a></td>
+				</tr>
+				<tr>
+					<td>FITS</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.fits">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.fits</a></td>
+				</tr>
+				<tr>	
+					<td>VO</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.vot.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table2.vot.gz</a></td>
+				</tr>
+			</table>
+
+			<br />
+			<p>Please note: The provided flags are there for the convenience of those who do not want to get into the details too much, they are based upon a threshold of 0.8. However, there is a complication in the debiasing. The classification bias depends on whether one uses the type likelihoods directly, or applies a threshold. The bias is worse if thresholds are used. I therefore applied bias corrections computed in consistent fashion. So, for the debiased type likelihoods I computed the bias correction based on the elliptical/spiral ratio using the likelihoods directly; for the type flags I debiased the raw type likelihoods using a correction based on the elliptical/spiral ratio determined after applying a 0.8 threshold, and then applied the same threshold to produce the flags. Therefore, the type flags do not correspond to simply applying a 0.8 threshold on the debiased type likelihoods, though for many galaxies these will agree.</p>
+			<p>Table 3 gives classifications of galaxies included in the Galaxy Zoo sample which did not have spectra available in SDSS Data Release 7. It is not possible to estimate the bias in the sample, and so only the fraction of the vote in each of the six categories is given.</p>
+
+			<table class="downloads">
+				<tr>
+					<td colspan="2" class="banner">Table 3</td>
+				</tr>
+				<tr>
+					<td>CSV (gzipped)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.csv.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.csv.gz</a></td>
+				</tr>
+				<tr>
+					<td>CSV (zip)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.csv.zip">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.csv.zip</a></td>
+				</tr>
+				<tr>
+					<td>FITS</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.fits">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.fits</a></td>
+				</tr>
+				<tr>	
+					<td>VO</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.vot.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table3.vot.gz</a></td>
+				</tr>
+			</table>
+
+			<br />
+			<p>Table 4 gives a series of measures of classification confidence.</p>
+
+			<table class="downloads">
+				<tr>
+					<td colspan="2" class="banner">Table 4</td>
+				</tr>
+				<tr>
+					<td>CSV (gzipped)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.csv.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.csv.gz</a></td>
+				</tr>
+				<tr>
+					<td>CSV (zip)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.csv.zip">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.csv.zip</a></td>
+				</tr>
+				<tr>
+					<td>FITS</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.fits">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.fits</a></td>
+				</tr>
+				<tr>	
+					<td>VO</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.vot.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table4.vot.gz</a></td>
+				</tr>
+			</table>
+
+			<br />	
+			<p>Tables 5 and 6 give the results from the bias study that introduced mirrored (table 5) and monochrome (table 6) images.</p>
+
+			<table class="downloads">
+				<tr>
+					<td colspan="2" class="banner">Table 5</td>
+				</tr>
+				<tr>
+					<td>CSV (gzipped)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.csv.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.csv.gz</a></td>
+				</tr>
+				<tr>
+					<td>CSV (zip)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.csv.zip">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.csv.zip</a></td>
+				</tr>
+				<tr>
+					<td>FITS</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.fits">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.fits</a></td>
+				</tr>
+				<tr>	
+					<td>VO</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.vot.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table5.vot.gz</a></td>
+				</tr>
+			</table>
+
+			<br />
+
+			<table class="downloads">
+				<tr>
+					<td colspan="2" class="banner">Table 6</td>
+				</tr>
+				<tr>
+					<td>CSV (gzipped)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.csv.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.csv.gz</a></td>
+				</tr>
+				<tr>
+					<td>CSV (zip)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.csv.zip">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.csv.zip</a></td>
+				</tr>
+				<tr>
+					<td>FITS</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.fits">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.fits</a></td>
+				</tr>
+				<tr>	
+					<td>VO</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.vot.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table6.vot.gz</a></td>
+				</tr>
+			</table>
+
+			<br />
+			<p>Table 7 gives the fraction of votes in each of the six categories, combining results from the main and bias studies.</p>
+
+			<table class="downloads">
+				<tr>
+					<td colspan="2" class="banner">Table 7</td>
+				</tr>
+				<tr>
+					<td>CSV (gzipped)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.csv.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.csv.gz</a></td>
+				</tr>
+				<tr>
+					<td>CSV (zip)</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.csv.zip">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.csv.zip</a></td>
+				</tr>
+				<tr>
+					<td>FITS</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.fits">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.fits</a></td>
+				</tr>
+				<tr>
+					<td>VO</td><td><a href="http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.vot.gz">http://galaxy-zoo-1.s3.amazonaws.com/GalaxyZoo1_DR_table7.vot.gz</a></td>
+				</tr>
+			</table>
+			<br />	
+
+			<h1>CASjobs</h1>
+			<p>These tables are also accessible via <a href="http://casjobs.sdss.org/CasJobs/">CASjobs</a>. They can be queried via:</p>
+			<p>
+				public.galaxyzoo.GalaxyZoo1_DR_table2<br />
+				public.galaxyzoo.GalaxyZoo1_DR_table3<br />
+				public.galaxyzoo.GalaxyZoo1_DR_table4<br />
+				public.galaxyzoo.GalaxyZoo1_DR_table5<br />
+				public.galaxyzoo.GalaxyZoo1_DR_table6<br />				
+				public.galaxyzoo.GalaxyZoo1_DR_table7<br />		
+			</p>
+
+			<br />
+
+			<h1>AGN host galaxies</h1><a name="agn"></a>
+			<p>This sample is presented in the Galaxy Zoo 1 paper on AGN host galaxies (<a href="http://adsabs.harvard.edu/abs/2010ApJ...711..284S" target="_blank">Schawinski et al., 2010, ApJ, 711, 284</a>). It is a volume-limited sample  of galaxies (0.02 < z < 0.05, M_z < -19.5 AB) with emission line classifications, stellar masses, velocity dispersions and GZ1 morphological classifications. When using this sample, please cite Schawinski et al. 2010 and Lintott et al. 2008, 2011.</p>
+			<p>Download here: <a href="http://galaxy-zoo-1.s3.amazonaws.com/schawinski_GZ_2010_catalogue.fits.gz">http://galaxy-zoo-1.s3.amazonaws.com/schawinski_GZ_2010_catalogue.fits.gz</a></p>
+			
+			<p>
+				Column definitions are as follows:<br />
+				OBJID - SDSS object ID<br />
+				RA, DEC - RA and Dec in J2000<br />
+				REDSHIFT - SDSS spectroscopic redshift<br />
+				GZ1_MORPHOLOGY - Galaxy Zoo 1 morphology according to the Land et al. (2008) "clean" criterion. GZ_morphology is an integer where 1-early type, 4-late type, 0-indeterminate, 3-merger<br />
+				BPT_CLASS - 0-no emission lines, 1-SF, 2-Composite, 3-Seyfert and 4-LINER (see Schawinski et al. 2010 for details)<br />
+				U,G,R,I,Z -SDSS modelMag extinction corrected but not k-corrected<br />
+				SIGMA, SIGMA_ERR - Stellar velocity dispersion measured using GANDALF<br />
+				LOG_MSTELLAR - log of stellar mass<br />
+				L_O3 - Extinction-corrected [OIII] luminosity
+			</p>
+		</div>
+
+		<div class="footer">
+			<div class="container"></div>
+		</div>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="js/zooniverse.js" type="text/javascript"></script>
+		<script src="js/application.js" type="text/javascript"></script>
+	</body>
+
+</html>
+
