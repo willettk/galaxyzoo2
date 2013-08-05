@@ -31,7 +31,7 @@
 ;       Written by K. Willett                Jun 12
 ;-
 
-pro gz2_bulge_rows, ps=ps, stop=stop
+pro gz2_bulge_rows, ps=ps, stop=stop, pitchangle = pitchangle
 
 fitsdir = '~/Astronomy/Research/GalaxyZoo/fits/'
 csvdir = '~/Astronomy/Research/GalaxyZoo/csv/'
@@ -77,8 +77,8 @@ spiralcount = 10
 !p.multi=[0,2,3]
 
 if keyword_set(ps) then begin
-	ps_start, filename=figdir+'spiraltightness_color.ps',/color, /quiet
-	cs=1.2
+	ps_start, filename=figdir+'spiraltightness_color.ps',/color, /quiet, xsize=10, ysize=7
+	cs=1.75
 	th=3
 	thickline=5
 	thinline=1
@@ -523,27 +523,31 @@ endfor
 
 al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
-if keyword_set(ps) then ps_end
+if keyword_set(ps) then ps_end,/pdf
 
 
 
 ; Colorful histogram for bulge prominence
 
-!p.multi=[0,2,4]
-
 if keyword_set(ps) then begin
-	ps_start, filename=figdir+'bulgeprominence_color.ps',/color, /quiet
-	cs=1.2
+	ps_start, filename=figdir+'bulgeprominence_color.ps',/color, /quiet, xsize=10, ysize=7.2
+	cs=1.75
+	legend_cs = 0.7
+	top_cs = 0.7
 	th=3
 	thickline=5
 	thinline=1
 endif else begin
 	cs=2
+	legend_cs = 1
+	top_cs = 1
 	th=1
 	th=3
 	thickline=1
 	thinline=1
 endelse
+
+!p.multi=[0,2,4]
 
 sd = where(na_ttype ge 7  and na_ttype le 10)
 sc = where(na_ttype ge 5  and na_ttype le 6)
@@ -620,12 +624,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; EFIGI No bulge
 
@@ -693,12 +697,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; Just noticeable bulges
 
@@ -766,12 +770,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; Just noticeable
 
@@ -838,12 +842,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; Obvious bulges
 
@@ -911,12 +915,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; Obvious
 
@@ -983,12 +987,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; Dominant bulge
 
@@ -1056,12 +1060,12 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
 ; Dominant
 
@@ -1128,14 +1132,14 @@ for i=0,9 do begin
 		cgcolorfill, [x0,x0,x1,x1,x0], [y0,y1,y1,y0,y0], color='blue'
 	endif
 
-	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=cs/2.
+	cgtext, (x0+x1)/2., 1.05, /data, strtrim(c_all,2), alignment=0.5, charsize=top_cs
 
 
 endfor
 
-al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
+al_legend, charsize=legend_cs, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomato','yellow','green','dark green','blue'], psym=28, /top, /right
 
-if keyword_set(ps) then ps_end
+if keyword_set(ps) then ps_end,/pdf
 
 
 
@@ -1284,182 +1288,188 @@ al_legend, charsize=cs/1.5, ['E','S0','Sa','Sb','Sc','Sd'],color=['black','tomat
 
 if keyword_set(ps) then ps_end
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Plot spiral tightness vs. pitch angle
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-gz2 = mrdfits(fitsdir+'gz2table.fits',1,/silent)
-pa_gz2 = mrdfits(fitsdir+'pitchangle_gz2.fits',1,/silent)
-
-; need to match gz2 structure against the pitch angle catalog; use SQL or TOPCAT
-
-gz_tight_wfraction = pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION
-gz_medium_wfraction = pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION
-gz_loose_wfraction = pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION
-gz_no_bulge_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A10_NO_BULGE_WEIGHTED_FRACTION
-gz_just_noticeable_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A11_JUST_NOTICEABLE_WEIGHTED_FRACTION
-gz_obvious_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A12_OBVIOUS_WEIGHTED_FRACTION
-gz_dominant_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A13_DOMINANT_WEIGHTED_FRACTION
-
-gz2_spiral_ind = where(pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount)
-
-wbulge = (0. * gz_no_bulge_wfraction + 0.33 * gz_just_noticeable_wfraction + 0.66 * gz_obvious_wfraction + 1.0 * gz_dominant_wfraction)
-wspiral = (0. * gz_tight_wfraction + 0.5 * gz_medium_wfraction + 1.0 * gz_loose_wfraction)
-
-;pitchanglefile = csvdir+'pitch_angle.csv'
-;readcol, pitchanglefile, $
-;	name, fit_state, chirality_maj, chirality_alenWtd, chirality_wtdPangSum, chirality_longestArc, axisRatio, minAxsLen, majAxsLen, majAxsAngle, contourBrtRatio, chirality_votes_maj, chirality_votes_alenWtd, alenWtdPangSum, chirality_longest_arc, top2_chirality_agreement, pa_longest, pa_avg, pa_avg_abs, pa_avg_domChiralityOnly, pa_alenWtd_avg, pa_alenWtd_avg_abs, pa_alenWtd_avg_domChiralityOnly, pa_totBrtWtd, pa_avgBrtWtd, $
-;	delimiter=',', $
-;	skipline=1, $
-;	/quiet, $
-; 	format='a, a, a, a, a, a, f, f, f, f, f, a, a, f, i, a, f, f, f, f, f, f, f, f, f'
-;
-;pitchangle_fitsname= fitsdir+'pitch_angle.fits'
-;
-;pa_sing = {name:name[0], fit_state:fit_state[0], chirality_maj:chirality_maj[0], chirality_alenWtd:chirality_alenWtd[0], chirality_wtdPangSum:chirality_wtdPangSum[0], chirality_longestArc:chirality_longestArc[0], axisRatio:axisRatio[0], minAxsLen:minAxsLen[0], majAxsLen:majAxsLen[0], majAxsAngle:majAxsAngle[0], contourBrtRatio:contourBrtRatio[0], chirality_votes_maj:chirality_votes_maj[0], chirality_votes_alenWtd:chirality_votes_alenWtd[0], alenWtdPangSum:alenWtdPangSum[0], chirality_longest_arc:chirality_longest_arc[0], top2_chirality_agreement:top2_chirality_agreement[0], pa_longest:pa_longest[0], pa_avg:pa_avg[0], pa_avg_abs:pa_avg_abs[0], pa_avg_domChiralityOnly:pa_avg_domChiralityOnly[0], pa_alenWtd_avg:pa_alenWtd_avg[0], pa_alenWtd_avg_abs:pa_alenWtd_avg_abs[0], pa_alenWtd_avg_domChiralityOnly:pa_alenWtd_avg_domChiralityOnly[0], pa_totBrtWtd:pa_totBrtWtd[0], pa_avgBrtWtd:pa_avgBrtWtd[0]}
-;pa = replicate(pa_sing,n_elements(name))
-;
-; pa.(0)=name
-; pa.(1)=fit_state
-; pa.(2)=chirality_maj
-; pa.(3)=chirality_alenWtd
-; pa.(4)=chirality_wtdPangSum
-; pa.(5)=chirality_longestArc
-; pa.(6)=axisRatio
-; pa.(7)=minAxsLen
-; pa.(8)=majAxsLen
-; pa.(9)=majAxsAngle
-; pa.(10)=contourBrtRatio
-; pa.(11)=chirality_votes_maj
-; pa.(12)=chirality_votes_alenWtd
-; pa.(13)=alenWtdPangSum
-; pa.(14)=chirality_longest_arc
-; pa.(15)=top2_chirality_agreement
-; pa.(16)=pa_longest
-; pa.(17)=pa_avg
-; pa.(18)=pa_avg_abs
-; pa.(19)=pa_avg_domChiralityOnly
-; pa.(20)=pa_alenWtd_avg
-; pa.(21)=pa_alenWtd_avg_abs
-; pa.(22)=pa_alenWtd_avg_domChiralityOnly
-; pa.(23)=pa_totBrtWtd
-; pa.(24)=pa_avgBrtWtd
-;
-;mwrfits, pa, pitchangle_fitsname
-
-pa = mrdfits(fitsdir+'pitch_angle.fits',1,/silent)
-
-;!p.multi=[0,1,2]
-;
-;cgplot, abs(pa_alenWtd_avg_domChiralityOnly[gz2_spiral_ind]), wspiral[gz2_spiral_ind], $
-;	psym = 16, $
-;	xtitle='Pitch angle', $
-;	ytitle='GZ2 spiral prominence'
-;
-;cgplot, abs(pa_alenWtd_avg_domChiralityOnly[gz2_spiral_ind]), wbulge[gz2_spiral_ind], $
-;	psym = 16, $
-;	xtitle='Pitch angle', $
-;	ytitle='GZ2 bulge prominence'
-
-; See whether plurality vote affects pitch angle
-
-!p.multi=[0,1,2]
-
-pa_gz2_tight_ind = where($
-	pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
-	pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION and $
-	pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION)
-
-pa_gz2_medium_ind = where($
-	pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
-	pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION and $
-	pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION)
-
-pa_gz2_loose_ind = where($
-	pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
-	pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION and $
-	pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION)
-
-
-pa_binsize = 2
-
-cghistoplot, abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly), $
-	binsize = pa_binsize, $
-	/outline, $
-	xr=[0,50], $
-	yr=[0,2000], $
-	xtitle='Pitch angle [deg]', $
-	datacolor='blue'
-
-cghistoplot, abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly), $
-	binsize = pa_binsize, $
-	/outline, $
-	/oplot, $
-	datacolor='green'
-
-cghistoplot, abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly), $
-	binsize = pa_binsize, $
-	/outline, $
-	/oplot, $
-	datacolor='red'
-
-kstwo, abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly), abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly), d,p & print,'KS2: tight and medium', d,p
-print,mean(abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly)), stddev(abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly))
-kstwo, abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly), abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly), d,p & print,'KS2: tight and loose', d,p
-print,mean(abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly)), stddev(abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly))
-kstwo, abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly), abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly), d,p & print,'KS2: medium and loose', d,p
-print,mean(abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly)), stddev(abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly))
-
-; Reproduce Figure 2 from Davis and Hayes
-
-anglebin = fillarr(pa_binsize,0,50)
-nang = n_elements(anglebin)
-
-tightproportion = fltarr(nang)
-mediumproportion = fltarr(nang)
-looseproportion = fltarr(nang)
-
-for i=0,nang-1 do begin
-	tight = where($
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+if keyword_set(pitchangle) then begin
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	; Plot spiral tightness vs. pitch angle
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+	
+	gz2 = mrdfits(fitsdir+'gz2table.fits',1,/silent)
+	pa_gz2 = mrdfits(fitsdir+'pitchangle_gz2.fits',1,/silent)
+	
+	; need to match gz2 structure against the pitch angle catalog; use SQL or TOPCAT
+	
+	gz_tight_wfraction = pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION
+	gz_medium_wfraction = pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION
+	gz_loose_wfraction = pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION
+	gz_no_bulge_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A10_NO_BULGE_WEIGHTED_FRACTION
+	gz_just_noticeable_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A11_JUST_NOTICEABLE_WEIGHTED_FRACTION
+	gz_obvious_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A12_OBVIOUS_WEIGHTED_FRACTION
+	gz_dominant_wfraction = pa_gz2.T05_BULGE_PROMINENCE_A13_DOMINANT_WEIGHTED_FRACTION
+	
+	gz2_spiral_ind = where(pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount)
+	
+	wbulge = (0. * gz_no_bulge_wfraction + 0.33 * gz_just_noticeable_wfraction + 0.66 * gz_obvious_wfraction + 1.0 * gz_dominant_wfraction)
+	wspiral = (0. * gz_tight_wfraction + 0.5 * gz_medium_wfraction + 1.0 * gz_loose_wfraction)
+	
+	;pitchanglefile = csvdir+'pitch_angle.csv'
+	;readcol, pitchanglefile, $
+	;	name, fit_state, chirality_maj, chirality_alenWtd, chirality_wtdPangSum, chirality_longestArc, axisRatio, minAxsLen, majAxsLen, majAxsAngle, contourBrtRatio, chirality_votes_maj, chirality_votes_alenWtd, alenWtdPangSum, chirality_longest_arc, top2_chirality_agreement, pa_longest, pa_avg, pa_avg_abs, pa_avg_domChiralityOnly, pa_alenWtd_avg, pa_alenWtd_avg_abs, pa_alenWtd_avg_domChiralityOnly, pa_totBrtWtd, pa_avgBrtWtd, $
+	;	delimiter=',', $
+	;	skipline=1, $
+	;	/quiet, $
+	; 	format='a, a, a, a, a, a, f, f, f, f, f, a, a, f, i, a, f, f, f, f, f, f, f, f, f'
+	;
+	;pitchangle_fitsname= fitsdir+'pitch_angle.fits'
+	;
+	;pa_sing = {name:name[0], fit_state:fit_state[0], chirality_maj:chirality_maj[0], chirality_alenWtd:chirality_alenWtd[0], chirality_wtdPangSum:chirality_wtdPangSum[0], chirality_longestArc:chirality_longestArc[0], axisRatio:axisRatio[0], minAxsLen:minAxsLen[0], majAxsLen:majAxsLen[0], majAxsAngle:majAxsAngle[0], contourBrtRatio:contourBrtRatio[0], chirality_votes_maj:chirality_votes_maj[0], chirality_votes_alenWtd:chirality_votes_alenWtd[0], alenWtdPangSum:alenWtdPangSum[0], chirality_longest_arc:chirality_longest_arc[0], top2_chirality_agreement:top2_chirality_agreement[0], pa_longest:pa_longest[0], pa_avg:pa_avg[0], pa_avg_abs:pa_avg_abs[0], pa_avg_domChiralityOnly:pa_avg_domChiralityOnly[0], pa_alenWtd_avg:pa_alenWtd_avg[0], pa_alenWtd_avg_abs:pa_alenWtd_avg_abs[0], pa_alenWtd_avg_domChiralityOnly:pa_alenWtd_avg_domChiralityOnly[0], pa_totBrtWtd:pa_totBrtWtd[0], pa_avgBrtWtd:pa_avgBrtWtd[0]}
+	;pa = replicate(pa_sing,n_elements(name))
+	;
+	; pa.(0)=name
+	; pa.(1)=fit_state
+	; pa.(2)=chirality_maj
+	; pa.(3)=chirality_alenWtd
+	; pa.(4)=chirality_wtdPangSum
+	; pa.(5)=chirality_longestArc
+	; pa.(6)=axisRatio
+	; pa.(7)=minAxsLen
+	; pa.(8)=majAxsLen
+	; pa.(9)=majAxsAngle
+	; pa.(10)=contourBrtRatio
+	; pa.(11)=chirality_votes_maj
+	; pa.(12)=chirality_votes_alenWtd
+	; pa.(13)=alenWtdPangSum
+	; pa.(14)=chirality_longest_arc
+	; pa.(15)=top2_chirality_agreement
+	; pa.(16)=pa_longest
+	; pa.(17)=pa_avg
+	; pa.(18)=pa_avg_abs
+	; pa.(19)=pa_avg_domChiralityOnly
+	; pa.(20)=pa_alenWtd_avg
+	; pa.(21)=pa_alenWtd_avg_abs
+	; pa.(22)=pa_alenWtd_avg_domChiralityOnly
+	; pa.(23)=pa_totBrtWtd
+	; pa.(24)=pa_avgBrtWtd
+	;
+	;mwrfits, pa, pitchangle_fitsname
+	
+	pa = mrdfits(fitsdir+'pitch_angle.fits',1,/silent)
+	
+	;!p.multi=[0,1,2]
+	;
+	;cgplot, abs(pa_alenWtd_avg_domChiralityOnly[gz2_spiral_ind]), wspiral[gz2_spiral_ind], $
+	;	psym = 16, $
+	;	xtitle='Pitch angle', $
+	;	ytitle='GZ2 spiral prominence'
+	;
+	;cgplot, abs(pa_alenWtd_avg_domChiralityOnly[gz2_spiral_ind]), wbulge[gz2_spiral_ind], $
+	;	psym = 16, $
+	;	xtitle='Pitch angle', $
+	;	ytitle='GZ2 bulge prominence'
+	
+	; See whether plurality vote affects pitch angle
+	
+	if ~keyword_set(ps) then begin
+	
+	!p.multi=[0,1,2]
+	
+	pa_gz2_tight_ind = where($
 		pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
 		pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION and $
-		pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION, $
-		ntight)
-
-	medium = where($
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+		pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION)
+	
+	pa_gz2_medium_ind = where($
 		pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
 		pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION and $
-		pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION, $
-		nmedium)
-
-	tight = where($
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+		pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION)
+	
+	pa_gz2_loose_ind = where($
 		pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
 		pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION and $
-		pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION, $
-		nloose)
-
-	all = where($
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
-		abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
-		pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount, $
-		nall)
-
-	tightproportion[i] = float(ntight) / float(nall)
-	mediumproportion[i] = float(nmedium) / float(nall)
-	looseproportion[i] = float(nloose) / float(nall)
-endfor
-
-
-cgplot, anglebin, tightproportion, color='blue', xtitle='Pitch angle [deg]', ytitle='GZ2 vote proportion',yr=[0,1]
-cgplot, anglebin, mediumproportion, color='green', /overplot
-cgplot, anglebin, looseproportion, color='red', /overplot
+		pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION)
+	
+	
+	pa_binsize = 2
+	
+	cghistoplot, abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly), $
+		binsize = pa_binsize, $
+		/outline, $
+		xr=[0,50], $
+		yr=[0,2000], $
+		xtitle='Pitch angle [deg]', $
+		datacolor='blue'
+	
+	cghistoplot, abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly), $
+		binsize = pa_binsize, $
+		/outline, $
+		/oplot, $
+		datacolor='green'
+	
+	cghistoplot, abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly), $
+		binsize = pa_binsize, $
+		/outline, $
+		/oplot, $
+		datacolor='red'
+	
+	kstwo, abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly), abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly), d,p & print,'KS2: tight and medium', d,p
+	print,mean(abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly)), stddev(abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly))
+	kstwo, abs(pa_gz2[pa_gz2_tight_ind].pa_alenWtd_avg_domChiralityOnly), abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly), d,p & print,'KS2: tight and loose', d,p
+	print,mean(abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly)), stddev(abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly))
+	kstwo, abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly), abs(pa_gz2[pa_gz2_medium_ind].pa_alenWtd_avg_domChiralityOnly), d,p & print,'KS2: medium and loose', d,p
+	print,mean(abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly)), stddev(abs(pa_gz2[pa_gz2_loose_ind].pa_alenWtd_avg_domChiralityOnly))
+	
+	; Reproduce Figure 2 from Davis and Hayes
+	
+	anglebin = fillarr(pa_binsize,0,50)
+	nang = n_elements(anglebin)
+	
+	tightproportion = fltarr(nang)
+	mediumproportion = fltarr(nang)
+	looseproportion = fltarr(nang)
+	
+	for i=0,nang-1 do begin
+		tight = where($
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+			pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
+			pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION and $
+			pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION, $
+			ntight)
+	
+		medium = where($
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+			pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
+			pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION and $
+			pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION, $
+			nmedium)
+	
+		tight = where($
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+			pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount and $
+			pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A29_MEDIUM_WEIGHTED_FRACTION and $
+			pa_gz2.T10_ARMS_WINDING_A30_LOOSE_WEIGHTED_FRACTION gt pa_gz2.T10_ARMS_WINDING_A28_TIGHT_WEIGHTED_FRACTION, $
+			nloose)
+	
+		all = where($
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) ge anglebin[i] and $
+			abs(pa_gz2.pa_alenWtd_avg_domChiralityOnly) lt anglebin[i]+pa_binsize and $
+			pa_gz2.T10_ARMS_WINDING_TOTAL_COUNT ge spiralcount, $
+			nall)
+	
+		tightproportion[i] = float(ntight) / float(nall)
+		mediumproportion[i] = float(nmedium) / float(nall)
+		looseproportion[i] = float(nloose) / float(nall)
+	endfor
+	
+	
+	cgplot, anglebin, tightproportion, color='blue', xtitle='Pitch angle [deg]', ytitle='GZ2 vote proportion',yr=[0,1]
+	cgplot, anglebin, mediumproportion, color='green', /overplot
+	cgplot, anglebin, looseproportion, color='red', /overplot
+	
+	endif
+endif
 
 if keyword_set(stop) then stop
 end

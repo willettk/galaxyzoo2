@@ -76,7 +76,7 @@ xrange=[min(zarr),max(zarr)*1.1]
 
 if keyword_set(ps) then begin
 
-	ps_start, filename=figsdir+'gz2_bias_demo_task01.eps', /color, /quiet, /encap, xsize=7, ysize=3.5
+	ps_start, filename=figsdir+'gz2_bias_demo_task01.ps', /color, /quiet, xsize=7, ysize=3.5
 	cs=1.2
 	legendcs = 0.9
 	th=3

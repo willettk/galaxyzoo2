@@ -40,7 +40,7 @@ set_plot,'x'
 device, retain=2
 
 gz2dir = '~/Astronomy/Research/GalaxyZoo/'
-figsdir = '~/Astronomy/Research/GalaxyZoo/gz2dropbox/figures/'
+figsdir = '~/Astronomy/Research/GalaxyZoo/datapaper/figures/'
 
 if n_elements(lowz) gt 0 then begin
 	coadd_all = mrdfits(gz2dir+'fits/coadd1_coadd2_sample.fits',1,/silent)
@@ -75,7 +75,7 @@ if keyword_set(ps) then begin
 
 	plotname='stripe82_coadd_compare_all.ps'
 
-	ps_start, filename=figsdir+plotname, /color, /quiet, encap = encap
+	ps_start, filename=figsdir+plotname, /color, /quiet
 	cs=1.2
 	legendcs = 0.9
 	th=3
@@ -165,7 +165,7 @@ for i=0,nw1-1 do begin
 	stddevarr[i] = stddev(delta_coadd)
 	tasknamearr[i] = string(taskno1,format='(i02)')
 
-	if i eq 27 then stop
+	;if i eq 27 then stop
 
 endfor
 print,''
@@ -178,9 +178,9 @@ if keyword_set(ps) then ps_end
 
 if keyword_set(ps) then begin
 
-	plotname='stripe82_coadd_compare.ps'
+	plotname='stripe82_coadd_compare.eps'
 
-	ps_start, filename=figsdir+plotname, /color, /quiet, encap = encap;, xsize=6, ysize=2
+	ps_start, filename=figsdir+plotname, /color, /quiet, xsize=10, ysize=5, /encap
 	cs=1.2
 endif else begin
 	cs=2

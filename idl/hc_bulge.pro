@@ -101,7 +101,7 @@ cgcontour, alog10(h4+1), x, y, /fill, levels=levels, c_colors=indgen(ncolors)+1,
 
 cgcolorbar,position=[0.46,0.50,0.60,0.54],title='log(N!Igal!N + 1)',ncolors=ncolors,charsize=cbsize
 
-if keyword_set(ps) then ps_end
+if keyword_set(ps) then ps_end,/pdf
 
 if keyword_set(stop) then stop
 

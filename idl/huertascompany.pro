@@ -439,6 +439,10 @@ if keyword_set(ps) then ps_end
 
 hc_bulge, ps=ps
 
+; Plot the HC probabilities as function of bar fraction
+
+hc_bar, ps=ps
+
 if keyword_set(stop) then stop
 
 end

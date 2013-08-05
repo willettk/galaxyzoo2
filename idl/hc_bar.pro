@@ -123,7 +123,7 @@ oploterror, binarr+bs/2., val_ab, err_ab, psym=-7, thick = th, errthick = th-2, 
 
 al_legend, /top, /right, ['E','S0','Sab','Scd'], color=['red','blue','dark green','purple'], charsize=lsize, thick=th, psym=[-5,-6,-7,-4]
 
-if keyword_set(ps) then ps_end
+if keyword_set(ps) then ps_end,/pdf
 
 if keyword_set(stop) then stop
 
