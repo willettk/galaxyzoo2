@@ -1387,6 +1387,9 @@ def get_task_dict(task):
           Keys to dictionary are number of votes, for previous task, 
           as determined by find99.pro
 
+      'legend_loc' : str
+          Location to place legend in plot_all_type_fractions
+
     """
 
     assert task in ('smooth','edgeon','bar','spiral','bulge',\
@@ -1400,7 +1403,7 @@ def get_task_dict(task):
                  'task_names_wf' : ('t01_smooth_or_features_a01_smooth_weighted_fraction',
                                     't01_smooth_or_features_a02_features_or_disk_weighted_fraction',
                                     't01_smooth_or_features_a03_star_or_artifact_weighted_fraction'),
-                 'var_str' : ('el','sp','ar'),
+                 'var_str' : ('smooth','features','artifact'),
                  'var_def' : 'task01',
                  'task_str' : task,
                  'ratio_type' : 'log',
@@ -1408,7 +1411,8 @@ def get_task_dict(task):
                  'min_classifications': 30, 
                  'min_galperbin': 20, 
                  'direct' : np.ones((3,3),bool),
-                 'funcname' : 'tilt'
+                 'funcname' : 'tilt',
+                 'legend_loc' : 'upper right'
                  }
 
     # Set parameters for various GZ2 tasks
@@ -1417,6 +1421,7 @@ def get_task_dict(task):
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
         task_dict['direct'][0,1] = False
         task_dict['funcname'] = 'sb'
+        task_dict['legend_loc'] = 'upper left'
  
     if task is 'edgeon':
         task_dict['task_name_count'] = 't02_edgeon_total_weight'
@@ -1428,6 +1433,7 @@ def get_task_dict(task):
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction')
         task_dict['direct']   = np.zeros((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
         task_dict['vf_prev'] = {'10':0.227,'20':0.430}
+        task_dict['legend_loc'] = 'center right'
  
     if task is 'bar':
         task_dict['task_name_count'] = 't03_bar_total_weight'
@@ -1450,6 +1456,7 @@ def get_task_dict(task):
         task_dict['dependent_tasks'] = ('t01_smooth_or_features_a02_features_or_disk_weighted_fraction','t02_edgeon_a05_no_weighted_fraction')
         task_dict['direct']   = np.ones((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
         task_dict['vf_prev'] = {'10':0.519,'20':0.715}
+        task_dict['legend_loc'] = 'center right'
  
     if task is 'odd':
         task_dict['task_name_count'] = 't06_odd_total_weight'
@@ -1460,6 +1467,7 @@ def get_task_dict(task):
         task_dict['ratio_type'] = 'log'
         task_dict['min_classifications'] = 30
         task_dict['direct']   = np.zeros((len(task_dict['var_str']),len(task_dict['var_str'])),bool)
+        task_dict['legend_loc'] = 'center right'
                      
     if task is 'bulge':
         task_dict['task_name_count'] = 't05_bulge_prominence_total_weight'
@@ -1557,6 +1565,7 @@ def get_task_dict(task):
         task_dict['direct'][0,2] = False
         task_dict['direct'][2,0] = False
         task_dict['vf_prev'] = {'10':0.326,'20':0.602}
+        task_dict['legend_loc'] = 'upper left'
 
     if task is 'odd_feature':
         task_dict['task_name_count'] = 't08_odd_feature_total_weight'
@@ -3018,24 +3027,74 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal
         font = FontProperties()
         legend_raw_str = []
         legend_adj_str = []
+        font.set_size('medium')
 
-        colorarr = ['r','b','m','g','c','y','k'][::-1]
-        for td_idx,task_str in enumerate(task_dict['var_str']):
-            linecolor = colorarr.pop()
-            ax1.plot(zplotbins, p_raw_typefrac_maglim[td_idx,:], color=linecolor, linestyle='-' ,linewidth=2)
-            legend_raw_str.append('raw %s' % task_str)
+        if idx == 7:
+            colorarr = ['r','b','m','g','c','y','k']
+            p1, = ax1.plot(zplotbins, p_raw_typefrac_maglim[0,:], color=colorarr[0], linestyle='-' ,linewidth=2)
+            p2, = ax1.plot(zplotbins, p_raw_typefrac_maglim[1,:], color=colorarr[1], linestyle='-' ,linewidth=2)
+            p3, = ax1.plot(zplotbins, p_raw_typefrac_maglim[2,:], color=colorarr[2], linestyle='-' ,linewidth=2)
+            p4, = ax1.plot(zplotbins, p_raw_typefrac_maglim[3,:], color=colorarr[3], linestyle='-' ,linewidth=2)
+            p5, = ax1.plot(zplotbins, p_raw_typefrac_maglim[4,:], color=colorarr[4], linestyle='-' ,linewidth=2)
+            p6, = ax1.plot(zplotbins, p_raw_typefrac_maglim[5,:], color=colorarr[5], linestyle='-' ,linewidth=2)
+            p7, = ax1.plot(zplotbins, p_raw_typefrac_maglim[6,:], color=colorarr[6], linestyle='-' ,linewidth=2)
 
-        colorarr = ['r','b','m','g','c','y','k'][::-1]
-        for td_idx,task_str in enumerate(task_dict['var_str']):
-            linecolor = colorarr.pop()
-            ax1.plot(zplotbins, p_adj_typefrac_maglim[td_idx,:], color=linecolor, linestyle='--' ,linewidth=4)
-            legend_adj_str.append('adj %s' % task_str)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[0,:], color=colorarr[0], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[1,:], color=colorarr[1], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[2,:], color=colorarr[2], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[3,:], color=colorarr[3], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[4,:], color=colorarr[4], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[5,:], color=colorarr[5], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[6,:], color=colorarr[6], linestyle='--' ,linewidth=4)
 
-        ax1.axvline(zlo, color='k', linestyle='--')
-        ax1.axvline(zhi, color='k', linestyle='--')
+            ax1.axvline(zlo, color='k', linestyle='--')
+            ax1.axvline(zhi, color='k', linestyle='--')
 
-        font.set_size('small')
-        plt.legend([s[4:] for s in legend_raw_str], 'upper right', shadow=True, fancybox=True, prop=font)
+            l1 = plt.legend([p1,p2,p3,p4], [s for s in task_dict['var_str'][:4]],loc='upper left',  shadow=True,fancybox=True,prop=font)
+            l2 = plt.legend([p5,p6,p7],    [s for s in task_dict['var_str'][4:]],loc='upper right',shadow=True,fancybox=True,prop=font)
+            plt.gca().add_artist(l1) # add l1 as a separate artist to the axes
+
+        elif idx == 10:
+            colorarr = ['r','b','m','g','c','y','k']
+            p1, = ax1.plot(zplotbins, p_raw_typefrac_maglim[0,:], color=colorarr[0], linestyle='-' ,linewidth=2)
+            p2, = ax1.plot(zplotbins, p_raw_typefrac_maglim[1,:], color=colorarr[1], linestyle='-' ,linewidth=2)
+            p3, = ax1.plot(zplotbins, p_raw_typefrac_maglim[2,:], color=colorarr[2], linestyle='-' ,linewidth=2)
+            p4, = ax1.plot(zplotbins, p_raw_typefrac_maglim[3,:], color=colorarr[3], linestyle='-' ,linewidth=2)
+            p5, = ax1.plot(zplotbins, p_raw_typefrac_maglim[4,:], color=colorarr[4], linestyle='-' ,linewidth=2)
+            p6, = ax1.plot(zplotbins, p_raw_typefrac_maglim[5,:], color=colorarr[5], linestyle='-' ,linewidth=2)
+
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[0,:], color=colorarr[0], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[1,:], color=colorarr[1], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[2,:], color=colorarr[2], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[3,:], color=colorarr[3], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[4,:], color=colorarr[4], linestyle='--' ,linewidth=4)
+            p1_maglim, = ax1.plot(zplotbins, p_adj_typefrac_maglim[5,:], color=colorarr[5], linestyle='--' ,linewidth=4)
+
+            ax1.axvline(zlo, color='k', linestyle='--')
+            ax1.axvline(zhi, color='k', linestyle='--')
+
+            l1 = plt.legend([p1,p2,p3], [s for s in task_dict['var_str'][:3]],loc='upper left', shadow=True,fancybox=True,prop=font)
+            l2 = plt.legend([p4,p5,p6], [s for s in task_dict['var_str'][3:]],loc='upper right',shadow=True,fancybox=True,prop=font)
+            plt.gca().add_artist(l1) # add l1 as a separate artist to the axes
+
+        else:
+
+            colorarr = ['r','b','m','g','c','y','k'][::-1]
+            for td_idx,task_str in enumerate(task_dict['var_str']):
+                linecolor = colorarr.pop()
+                ax1.plot(zplotbins, p_raw_typefrac_maglim[td_idx,:], color=linecolor, linestyle='-' ,linewidth=2)
+                legend_raw_str.append('raw %s' % task_str)
+
+            colorarr = ['r','b','m','g','c','y','k'][::-1]
+            for td_idx,task_str in enumerate(task_dict['var_str']):
+                linecolor = colorarr.pop()
+                ax1.plot(zplotbins, p_adj_typefrac_maglim[td_idx,:], color=linecolor, linestyle='--' ,linewidth=4)
+                legend_adj_str.append('adj %s' % task_str)
+
+            ax1.axvline(zlo, color='k', linestyle='--')
+            ax1.axvline(zhi, color='k', linestyle='--')
+
+            plt.legend([s[4:] for s in legend_raw_str], loc=task_dict['legend_loc'], shadow=True, fancybox=True, prop=font)
 
         ax1.set_xlim(-0.01,0.19)
         ax1.set_ylim(-0.01,1.01)
@@ -3905,8 +3964,8 @@ def make_tables(makefits=True,stripe82=False, depth='normal', photoz=False,latex
     goodt11 = (gzdata['t04_spiral_total_weight'] >= arms_number['min_classifications']) & (gzdata[arms_number['dependent_tasks'][-1]] >= arms_number['vf_prev'][str(vote_threshold)])
 
     cleanthresh_t01 = 0.8
-    cleanthresh_t02 = 0.5
-    cleanthresh_t03 = 0.5
+    cleanthresh_t02 = 0.8       # Changed from 0.5 on 02 Jul 2013
+    cleanthresh_t03 = 0.8       # Changed from 0.5 on 02 Jul 2013
     cleanthresh_t04 = 0.8
     cleanthresh_t05 = 0.8
     cleanthresh_t06 = 0.8
@@ -3954,14 +4013,23 @@ def make_tables(makefits=True,stripe82=False, depth='normal', photoz=False,latex
     flag_t11_a36 = ((adj_t11_a36 >= cleanthresh_t11) & goodt11).astype(int)
     flag_t11_a37 = ((adj_t11_a37 >= cleanthresh_t11) & goodt11).astype(int)
 
-    
+    # Add the string classification requested by Buta
+
+    plurality_str = []
+    for a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a38, a25, a26, a27, a28, a29, a30, a31, a32, a33, a34, a36, a37 in zip(adj_t01_a01, adj_t01_a02, adj_t01_a03, adj_t02_a04, adj_t02_a05, adj_t03_a06, adj_t03_a07, adj_t04_a08, adj_t04_a09, adj_t05_a10, adj_t05_a11, adj_t05_a12, adj_t05_a13, adj_t06_a14, adj_t06_a15, adj_t07_a16, adj_t07_a17, adj_t07_a18, adj_t08_a19, adj_t08_a20, adj_t08_a21, adj_t08_a22, adj_t08_a23, adj_t08_a24, adj_t08_a38, adj_t09_a25, adj_t09_a26, adj_t09_a27, adj_t10_a28, adj_t10_a29, adj_t10_a30, adj_t11_a31, adj_t11_a32, adj_t11_a33, adj_t11_a34, adj_t11_a36, adj_t11_a37):
+        plurality_str.append(gz2string([a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a38, a25, a26, a27, a28, a29, a30, a31, a32, a33, a34, a36, a37]))
+
+    rastring = [ra_deg_to_sex(ra) for ra in gzdata['RA']]
+    decstring = [dec_deg_to_sex(dec) for dec in gzdata['DEC']]
+
     if makefits:
         col_objid = pyfits.Column(name = 'dr7objid', format='K', array=gzdata['objid'])
         col_ra = pyfits.Column(name = 'ra', format='E7.3', array=gzdata['RA'])
         col_dec = pyfits.Column(name = 'dec', format='E7.3', array=gzdata['DEC'])
-        col_rastring = pyfits.Column(name = 'rastring', format='A11', array=[ra_deg_to_sex(ra) for ra in gzdata['RA']])
-        col_decstring = pyfits.Column(name = 'decstring', format='A11', array=[dec_deg_to_sex(dec) for dec in gzdata['DEC']])
+        col_rastring = pyfits.Column(name = 'rastring', format='A11', array=rastring)
+        col_decstring = pyfits.Column(name = 'decstring', format='A11', array=decstring)
         col_sample = pyfits.Column(name = 'sample', format='A20', array=gzdata['sample'])
+        col_gz2class = pyfits.Column(name = 'gz2class', format='A20', array=plurality_str)
         col_n_class = pyfits.Column(name = 'total_classifications', format='I4', array=gzdata['t01_smooth_or_features_total_count'])
         col_n_votes = pyfits.Column(name = 'total_votes', format='I4', array=gzdata['total_count'])
 
@@ -4210,6 +4278,7 @@ def make_tables(makefits=True,stripe82=False, depth='normal', photoz=False,latex
                                     col_rastring,
                                     col_decstring,
                                     col_sample,
+                                    col_gz2class,
                                     col_n_class,
                                     col_n_votes,
                                     col_t01_a01_ct, 
@@ -4443,17 +4512,14 @@ def make_tables(makefits=True,stripe82=False, depth='normal', photoz=False,latex
     if latex:
         print " "
         for idx,gzline in enumerate(gzdata[:10]):
-            print "%s & %8s & %3i & %3i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i \\\\" % \
-                  (gzline['objid'], \
-                  gzline['sample'], 
-                  #gzline['RA'],gzline['DEC'],
+            print "%s & %10s & %10s & %10s & %3i & %3i & %3i & %5.1f & %5.3f & %5.3f & %5.3f & %i \\\\" % \
+                  (gzline['objid'], 
+                  ra_deg_to_sex(gzline['ra']),dec_deg_to_sex(gzline['dec']),
+                  plurality_str[idx],
                   gzline['t01_smooth_or_features_total_count'], gzline['total_count'],
                   gzline['t01_smooth_or_features_a01_smooth_count'],   gzline['t01_smooth_or_features_a01_smooth_weight'],
                   gzline['t01_smooth_or_features_a01_smooth_fraction'],gzline['t01_smooth_or_features_a01_smooth_weighted_fraction'],
-                  adj_t01_a01[idx], flag_t01_a01[idx],
-                  gzline['t01_smooth_or_features_a02_features_or_disk_count'],   gzline['t01_smooth_or_features_a02_features_or_disk_weight'],
-                  gzline['t01_smooth_or_features_a02_features_or_disk_fraction'],gzline['t01_smooth_or_features_a02_features_or_disk_weighted_fraction'],
-                  adj_t01_a02[idx], flag_t01_a02[idx])
+                  adj_t01_a01[idx], flag_t01_a01[idx])
         print " "
 
     if imagelist:
@@ -4587,28 +4653,33 @@ def which_file_str(arg):
     else:
         return ''
 
-def ra_deg_to_sex(ra):
+def ra_deg_to_sex(ra,delimiter=':'):
 
     """
-    ra_deg_to_sex, dec_deg_to_sex are adapted from https://code.google.com/p/agpy/source/browse/trunk/agpy/ratosexagesimal.py 
+    adapted from https://code.google.com/p/agpy/source/browse/trunk/agpy/ratosexagesimal.py 
     """
 
     r = ra/15.
     deg = r - (r % 1)
     deg -= (deg % 1)
     min = (r % 1) * 60.
-    sec = (min % 1) * 60
+    sec = (min % 1) * 60.
     min -= (min % 1)
-    rs = "%02i:%02i:%05.2f" % (deg,min,sec)
+    rs = "%02i%s%02i%s%05.2f" % (deg,delimiter,min,delimiter,sec)
     return rs
 
-def dec_deg_to_sex(dec):
+def dec_deg_to_sex(dec,delimiter=':'):
+
+    """
+    adapted from https://code.google.com/p/agpy/source/browse/trunk/agpy/ratosexagesimal.py 
+    """
+
     deg = np.sign(dec) * (abs(dec) - (abs(dec) % 1))
     deg -= (deg%1)
     min = (abs(dec) % 1) * 60.
     sec = (min % 1) * 60
     min -= (min % 1)
-    decs = "%+03i:%02i:%04.1f" % (deg,min,sec)
+    decs = "%+03i%s%02i%s%04.1f" % (deg,delimiter,min,delimiter,sec)
     return decs
 
 def specobjid_cleanup():
@@ -5011,7 +5082,11 @@ def simulation_example_gals(data,verbose=False):
 
     return None    
 
-def make_movie_frames(data):
+def make_movie_frames(npercat=50):
+
+    p = pyfits.open('%s/debiased_main_specz_sample.fits' % fits_path_main)
+    data = p[1].data
+    p.close()
 
     # Pull images of example morphologies for a range of sizes, luminosities, and redshifts in GZ2
 
@@ -5038,13 +5113,15 @@ def make_movie_frames(data):
 
     morphs = (edgeon, el_cigar, el_between, el_round, sp_tight, sp_medium, sp_loose, sp_bar, sp_nobar, sp_bulge_no, sp_bulge_ju, sp_bulge_ob, sp_bulge_do, ring, lens, disturbed, irregular, other, dustlane, merger)
 
-    moviepath = gz_path + 'movie/sorted1000/'
+    nframes = npercat * len(morphs)
+    moviepath = gz_path + 'movie/sorted%i' % nframes
+    if ~os.path.isdir(moviepath):
+        os.mkdir(moviepath)
 
-    npercat = 50
     for midx,m in enumerate(morphs):
         loc = sample(data['location'][m],npercat)
         for lidx,location in enumerate(loc):
-            urllib.urlretrieve(location, '%sgz2_2000_%04i.jpg' % (moviepath,(midx*npercat + lidx)))
+            urllib.urlretrieve(location, '%s/gz2_%i_%04i.jpg' % (moviepath,nframes,(midx*npercat + lidx)))
 
     return None
 
@@ -5167,6 +5244,95 @@ def na10_bars():
     fig.savefig(paper_figures_path+'na_bars.pdf', dpi=200)
 
     return np.median(np.concatenate((data_peanut,data_nuclear)))
+
+def efigi_rings():
+
+    p = pyfits.open('/Users/willettk/Astronomy/Research/GalaxyZoo/cjl/gz2_efigi_debiased.fits')
+    efigi = p[1].data
+    p.close()
+
+    efigi = efigi[efigi['t06_odd_a14_yes_weight'] > 10]
+
+    efigi_ring = np.maximum(efigi['Outer_Ring'],np.maximum(efigi['Inner_Ring'],efigi['Pseudo_Ring']))
+    gz2_ring   = efigi['t08_odd_feature_a19_ring_debiased']
+
+    efigi_bins = np.linspace(0,1,6)
+    gz2_bins = np.arange(0,1.1,0.1)
+
+    h,xedges,yedges = np.histogram2d(efigi_ring,gz2_ring,bins=(efigi_bins,gz2_bins))
+    h_norm = h 
+
+    fig = plt.figure(23,figsize=(9,8))
+    fig.clf()
+
+    # Plot 1
+
+    ax = fig.add_subplot(111)
+
+    im = ax.imshow(h_norm.T,extent=(efigi_bins.min(),efigi_bins.max(),gz2_bins.min(),gz2_bins.max()),
+                           cmap = cm.gist_heat_r,
+                           vmin=0.,vmax=np.max(h_norm),
+                           interpolation='nearest',origin='lower')
+    ax.set_aspect('auto')
+    ax.set_xlabel('EFIGI ring attribute',fontsize=20)
+    ax.set_ylabel('GZ2 ring vote fraction',fontsize=20)
+    ax.set_xticks(np.linspace(0,1,5))
+
+    cb = plt.colorbar(im,orientation='vertical')
+    cb.set_label('number of galaxies',fontsize=16)
+
+    #fig.tight_layout()
+    fig.savefig(paper_figures_path+'efigi_rings.pdf', dpi=200)
+
+    return None
+
+def na10_mergers():
+
+    p = pyfits.open(gz_path+'cjl/gz2_nair.fits')
+    na10 = p[1].data
+    p.close()
+
+    color1 = (228/255., 26/255., 28/255.) 
+    color2 = (55/255., 126/255., 184/255.)
+    color3 = (77/255., 175/255., 74/255.) 
+    color4 = (152/255., 78/255., 163/255.)
+
+    fig = plt.figure(26,figsize=(9,8))
+    fig.clf()
+
+    mergervariable = 't08_odd_feature_a24_merger_weighted_fraction_2'
+
+    NED_20votes = (na10['t06_odd_a14_yes_debiased'] > 0.223) & ((na10['total_weight']) >= 20)
+
+    na10_odd = na10[NED_20votes]
+    # Plot 1
+
+    ax1 = fig.add_subplot(111)
+
+    nbins = 10
+    data_pair = na10_odd[na10_odd['Pair'] > 0][mergervariable]
+    data_dist = na10_odd[na10_odd['dist'] > 0][mergervariable]
+    data_undist = na10_odd[na10_odd['dist'] == 0][mergervariable]
+    histML(data_undist, bins=nbins, ax=ax1, alpha = 1.0, histtype='step', lw=1, color='black',range=(0,1))
+    histML(data_dist,   bins=nbins, ax=ax1, alpha = 1.0, histtype='step', lw=5, linestyle='dashed', color=color2, range=(0,1))
+    histML(data_pair,   bins=nbins, ax=ax1, alpha = 1.0, histtype='step', lw=5, color=color3, range=(0,1))
+
+    #ax1.set_ylim(0,400)
+    ax1.set_xlabel('GZ2 '+r'$f_{merger}$', fontsize=30)
+    ax1.set_ylabel('number of galaxies', fontsize=30)
+    ax1.set_yscale('log')
+
+    for label in ax1.get_xticklabels() + ax1.get_yticklabels():
+        label.set_fontsize(30)
+
+    legfont = FontProperties()
+    legfont.set_size('x-large')
+    plt.legend(('Undisturbed','Disturbed','Pairs'), 'upper right', shadow=True, fancybox=True, prop=legfont)
+    
+    fig.tight_layout()
+    fig.savefig(paper_figures_path+'na_mergers_new.pdf', dpi=200)
+    
+    return None
 
 def efigi_rings():
 
@@ -5383,4 +5549,94 @@ def efigi_bulge(efigi):
 
     return None
 
+def gz2string(datarow):
 
+    """ Determine a string for the consensus GZ2 classification of a
+        galaxy's morphology.
+
+    Parameters
+    ----------
+    datarow : astropy.io.fits.fitsrec.FITS_record
+        Iterated element (row) of a final
+        GZ2 table, containing all debiased probabilities
+        and vote counts
+
+
+    Returns
+    -------
+    char: str
+        String giving the plurality classification from GZ2
+        eg, '
+
+    Notes
+    -------
+
+    """
+
+    #weights = tuple(datarow[9::6])
+    weights = datarow
+
+    # Three branches
+
+    max_t1 = weights[:3].index(np.max(weights[:3]))
+
+    char = ''
+    # Smooth galaxies
+    if max_t1 == 0:
+        char += 'E'
+        # Roundness
+        char += ('r','i','c')[weights[15:18].index(np.max(weights[15:18]))]
+
+    # Features/disk galaxies
+    if max_t1 == 1:
+        char += 'S'
+
+        edgeon = weights[3:5]
+        # Edge-on disks
+        if edgeon[0] >= edgeon[1]:
+            char += 'e'
+            # Bulge shape
+            char += ('r','b','n')[weights[25:28].index(np.max(weights[25:28]))]
+        # Not edge-on disks
+        else:
+            if weights[5] > weights[6]:
+                # Barred galaxies
+                char += 'B'
+            # Bulge prominence
+            char += ('d','c','b','a')[weights[9:13].index(np.max(weights[9:13]))]
+            if weights[7] > weights[8]:
+                # Arms number
+                char += ('1','2','3','4','+','?')[weights[31:37].index(np.max(weights[31:37]))]
+                # Arms winding
+                char += ('t','m','l')[weights[28:31].index(np.max(weights[28:31]))]
+
+    # Odd features
+    if weights[13] >= weights[14]:
+        char += '(%s)' % ('r','l','d','i','o','m','u')[weights[18:25].index(np.max(weights[18:25]))]
+
+    # Star/artifact
+    if max_t1 == 2:
+        char = 'A'
+
+    return char
+
+def row_json(datarow,fileno):
+
+    import json
+    from subprocess import call
+
+    counts = tuple(datarow[8::6])
+
+    #taskno = (3,2,2,2,4,2,3,7,3,3,6)
+
+    s = '{ "name": " ", "children": [ { "name": " ", "children": [ {"name": "smooth", "size": %i}, {"name": "features/disk", "size": %i}, {"name": "star/artifact", "size": %i} ] }, { "name": " ", "children": [ {"name": "Edge-on", "size": %i}, {"name": "Not edge-on", "size": %i} ] }, { "name": " ", "children": [ {"name": "Bar", "size": %i}, {"name": "No bar", "size": %i} ] }, { "name": " ", "children": [ {"name": "Spiral", "size": %i}, {"name": "No spiral", "size": %i} ] }, { "name": " ", "children": [ {"name": "no bulge", "size": %i}, {"name": "just noticeable", "size": %i}, {"name": "obvious", "size": %i}, {"name": "dominant", "size": %i} ] }, { "name": " ", "children": [ {"name": "something odd", "size": %i}, {"name": "nothing odd", "size": %i} ] }, { "name": " ", "children": [ {"name": "round", "size": %i}, {"name": "in-between", "size": %i}, {"name": "cigar-shaped", "size": %i} ] }, { "name": " ", "children": [ {"name": "ringed", "size": %i}, {"name": "lens or arc", "size": %i}, {"name": "disturbed", "size": %i}, {"name": "irregular", "size": %i}, {"name": "other", "size": %i}, {"name": "merger", "size": %i}, {"name": "dust lane", "size": %i} ] }, { "name": " ", "children": [ {"name": "rounded bulge", "size": %i}, {"name": "boxy bulge", "size": %i}, {"name": "no bulge", "size": %i} ] }, { "name": " ", "children": [ {"name": "tight", "size": %i}, {"name": "medium", "size": %i}, {"name": "loose", "size": %i} ] }, { "name": " ", "children": [ {"name": "1 arm", "size": %i}, {"name": "2 arms", "size": %i}, {"name": "3 arms", "size": %i}, {"name": "4 arms", "size": %i}, {"name": "5+ arms", "size": %i}, {"name": "? arms", "size": %i} ] } ] }' % counts
+
+    deskdir = '/Users/willettk/Desktop/jsons/'
+    filename = '%sgz2_%02i.json' % (deskdir,fileno)
+    obj = open(filename, 'wb')
+    obj.write(s)
+    obj.close()
+
+    #ret = call(["scp","%s" % filename,"willett@lucifer1.spa.umn.edu:public_html/vis/newtest.json"])
+
+    return None
