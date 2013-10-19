@@ -1,7 +1,7 @@
 """
 
 This code is intended to reduce data from Galaxy Zoo 2, and to 
-reproduce the tables, figures, and data in Willett et al. (in prep). It
+reproduce the tables, figures, and data in Willett et al. (2013). It
 relies on the aggregate GZ2 data tables created by Steven Bamford, as well
 as other metadata retrieved from the SDSS CasJobs server. 
 
@@ -24,7 +24,7 @@ from random import sample
 
 from itertools import chain
 from astropy.io import fits as pyfits
-from astroML.plotting import hist as histML
+#from astroML.plotting import hist as histML
 
 # From Steven Bamford's Python modules
 import cosmology
@@ -47,7 +47,6 @@ gz2_maglim_data_file = fits_path_main+'gz2_original_extra_s82norm_r17_table_samp
 gz2_full_data_file = fits_path_main+'gz2_original_extra_s82norm_table_sample.fits'
 gz2_both_data_file = fits_path_main+'gz2main_table_sample.fits'
 gz2_stripe82_data_file = fits_path_main+'gz2_stripe82_normal.fits'
-
 
 # Global parameters for data reduction
 min_ratio = -2.0
@@ -4559,6 +4558,7 @@ def get_cat(photoz=False,stripe82=False,depth='normal',final_tables=False,sample
     """
 
     if sample:
+        # Works for specz table only. Must be pre-matched in TOPCAT.
         p = pyfits.open(fits_path_main+'debiased_main_specz_sample.fits')
     elif final_tables:
         if stripe82:
@@ -5640,3 +5640,220 @@ def row_json(datarow,fileno):
     #ret = call(["scp","%s" % filename,"willett@lucifer1.spa.umn.edu:public_html/vis/newtest.json"])
 
     return None
+
+def aapf_plot(task_dict, zlo = 0.01, zhi=0.085, zwidth=0.02, stripe82=False, depth='normal', ploterrors=False, photoz=False, plotadj=True, xmax=0.25):
+
+    """ Plot the mean type fractions for all responses for each task
+        as a function of redshift. Left plot shows all galaxies,
+        right plot is a magnitude-limited sample. 
+
+    Parameters
+    ----------
+    task_dict : dict
+        Dictionary specifying parameters for the reduction of each
+        GZ2 task. Called from `get_task_dict`.
+
+    zlo : float
+        minimum redshift range to plot
+
+    zhi : float
+        redshift at which to set the magnitude limit for the sample,
+        based on the apparent magnitude sensitivity at that redshift
+
+    zwidth : float
+        width of the redshift bins
+
+    stripe82 : bool
+        When `True`, plot the results for the Stripe 82 spectroscopic sample
+
+    ploterrors : bool
+        When `True`, plot error bars on each type fraction
+
+
+    Returns
+    -------
+    None
+
+    Notes
+    -------
+
+
+    """
+
+    # Load data 
+
+    if stripe82:
+        file_str = s82_dict[depth]['str']
+        p = pyfits.open(s82_dict[depth]['file'])
+        vote_threshold = s82_dict[depth]['vt']
+        mag_lim = s82_dict[depth]['maglim']
+    elif photoz:
+        p = pyfits.open(gz2_photoz_data_file)
+        file_str = 'photoz_'
+        vote_threshold = vt_mainsample
+        mag_lim = appmag_lim_main
+    else:
+        p = pyfits.open(gz2_maglim_data_file)
+        file_str = ''
+        vote_threshold = vt_mainsample
+        mag_lim = appmag_lim_main
+
+    gzdata_all = p[1].data
+    p.close()
+
+    if photoz:
+        gzdata = gzdata_all
+        redshift = gzdata['photoz']
+        mr = (gzdata['PETROMAG_R'] - gzdata['EXTINCTION_R']) - cosmology.dmod_flat(redshift)
+        r50_kpc = gzdata['PETROR50_R'] * cosmology.ang_scale_flat(redshift)
+    else:
+        gzdata = gzdata_all[np.isfinite(gzdata_all['REDSHIFT'])]
+        redshift = gzdata['REDSHIFT']
+        mr = gzdata['PETROMAG_MR']
+        r50_kpc = gzdata['PETROR50_R_KPC']
+
+    centers_redshift, centers_mag, centers_size,edges_redshift, edges_mag, edges_size = get_bins(task_dict, stripe82, depth)
+
+    task_counts = gzdata[task_dict['task_name_count']]
+
+    zplotbins = np.arange(min(edges_redshift[0],zlo),edges_redshift[-1],zwidth)
+
+    ntask = len(task_dict['var_str'])
+
+    corrgoodarr = pickle.load(open(pkl_path+'%s_%scorrgoodarr.pkl' % (task_dict['var_def'],file_str),'rb')) 
+    p_raw = pickle.load(open(pkl_path+'%s_%sraw_probabilities.pkl' % (task_dict['var_def'],file_str),'rb')) 
+    p_adj = pickle.load(open(pkl_path+'%s_%sadj_probabilities.pkl' % (task_dict['var_def'],file_str),'rb')) 
+
+    assert len(gzdata) == p_adj.shape[1], \
+        'Size of metadata (%i) does not match the adjusted probabilities (%i)' % (len(gzdata),p_adj.shape[1])
+
+    # Empty arrays for the binned type fractions
+
+    p_raw_typefrac            = np.zeros((ntask,len(zplotbins)))
+    p_adj_typefrac            = np.zeros_like(p_raw_typefrac)
+    p_raw_typefrac_maglim     = np.zeros_like(p_raw_typefrac)
+    p_adj_typefrac_maglim     = np.zeros_like(p_raw_typefrac)
+    p_raw_typefrac_err        = np.zeros_like(p_raw_typefrac)
+    p_adj_typefrac_err        = np.zeros_like(p_raw_typefrac)
+    p_raw_typefrac_err_maglim = np.zeros_like(p_raw_typefrac)
+    p_adj_typefrac_err_maglim = np.zeros_like(p_raw_typefrac)
+
+    """
+    Take the mean of the raw likelihoods for each galaxy per redshift bin
+    """
+
+    maglimval = mag_lim - cosmology.dmod_flat(zhi)
+
+    # Create the two samples
+    
+    """
+    # Old method
+    n_all = np.sum((task_counts > task_dict['min_classifications']) & corrgoodarr)
+    n_maglim = np.sum((mr < maglimval) & (task_counts > task_dict['min_classifications']) & corrgoodarr)
+    """
+
+    # Begin new method
+
+    if task_dict['var_def'] not in ('task01','task06'):
+        probarr_prevtask = gzdata[task_dict['dependent_tasks'][-1]] if isinstance(task_dict['dependent_tasks'],tuple) else gzdata[task_dict['dependent_tasks']]
+        votearr_thistask = gzdata[task_dict['task_name_count']]
+        taskprob_good = (probarr_prevtask >= task_dict['vf_prev'][str(vote_threshold)]) & (votearr_thistask >= vote_threshold)
+    else:
+        votearr_thistask = gzdata[task_dict['task_name_count']]
+        taskprob_good = votearr_thistask >= vote_threshold
+
+    """
+    n_all = np.sum(taskprob_good & corrgoodarr)
+    n_maglim = np.sum((mr < maglimval) & taskprob_good & corrgoodarr)
+    """
+    n_all = np.sum(taskprob_good)
+    n_maglim = np.sum((mr < maglimval) & taskprob_good)
+
+    # End new method
+
+    # Loop over redshift bin and find the type fractions at each slice
+
+    for idx,zbin in enumerate(zplotbins):
+
+        gals_in_bin = (redshift >= zbin) & \
+                      (redshift < (zbin+zwidth)) & \
+                      taskprob_good
+                      #corrgoodarr & \
+                      #(task_counts > task_dict['min_classifications']) & \         Old method
+
+        p_raw_typefrac[:,idx] = np.mean(p_raw[:,gals_in_bin],axis=1)
+        p_adj_typefrac[:,idx] = np.mean(p_adj[:,gals_in_bin],axis=1)
+        p_raw_typefrac_err[:,idx] = np.std(p_raw[:,gals_in_bin],axis=1)
+        p_adj_typefrac_err[:,idx] = np.std(p_adj[:,gals_in_bin],axis=1)
+
+        gals_in_bin_maglim = (redshift >= zbin) & \
+                      (redshift < (zbin+zwidth)) & \
+                      (mr < maglimval) & \
+                      taskprob_good
+                      #corrgoodarr & \
+                      #(task_counts > task_dict['min_classifications']) & \         Old method
+
+        p_raw_typefrac_maglim[:,idx] = np.mean(p_raw[:,gals_in_bin_maglim],axis=1)
+        p_adj_typefrac_maglim[:,idx] = np.mean(p_adj[:,gals_in_bin_maglim],axis=1)
+        p_raw_typefrac_err_maglim[:,idx] = np.std(p_raw[:,gals_in_bin_maglim],axis=1)
+        p_adj_typefrac_err_maglim[:,idx] = np.std(p_adj[:,gals_in_bin_maglim],axis=1)
+
+    pickle.dump(p_raw_typefrac,        open(pkl_path+'%s_%sraw_typefrac.pkl' % (task_dict['var_def'],file_str),'wb')) 
+    pickle.dump(p_adj_typefrac,        open(pkl_path+'%s_%sadj_typefrac.pkl' % (task_dict['var_def'],file_str),'wb')) 
+    pickle.dump(p_raw_typefrac_maglim, open(pkl_path+'%s_%sraw_typefrac_maglim.pkl' % (task_dict['var_def'],file_str),'wb')) 
+    pickle.dump(p_adj_typefrac_maglim, open(pkl_path+'%s_%sadj_typefrac_maglim.pkl' % (task_dict['var_def'],file_str),'wb')) 
+
+    # Plot results
+
+    fig = plt.figure(12, (8,7))
+    fig.clf()
+    legend_raw_str = []
+    legend_adj_str = []
+
+    ax1 = fig.add_subplot(111)
+
+    font = FontProperties()
+    font.set_size(16)
+
+    '''
+    colorarr = ['r','b','m','g','c','y','k'][::-1]
+    for idx,task_str in enumerate(task_dict['var_str']):
+        linecolor = colorarr.pop()
+        ax1.plot(zplotbins, p_raw_typefrac[idx,:], color=linecolor, linestyle='-' ,linewidth=2)
+        legend_raw_str.append('raw %s' % task_str)
+    '''
+
+    if plotadj:
+        colorarr = ['r','b','m','g','c','y','k'][::-1]
+        lstylearr = ['-','--','-.','-','--','-.']
+        lwidtharr = [1,2,3,4,5,6]
+        for idx,task_str in enumerate(task_dict['var_str']):
+            linecolor,lstyle,lwidth = colorarr.pop(), lstylearr.pop(),lwidtharr.pop()
+            ax1.plot(zplotbins, p_adj_typefrac[idx,:], color=linecolor, linestyle=lstyle,linewidth=lwidth)
+            legend_adj_str.append('adj %s' % task_str)
+
+    if ploterrors:
+        ax1.errorbar(zplotbins, p_raw_typefrac[idx,:], yerr = p_raw_typefrac_err[idx,:], 
+           color=linecolor, linestyle='-' ,linewidth=2,elinewidth=1)
+        if plotadj:
+            ax1.errorbar(zplotbins, p_adj_typefrac[idx,:], yerr = p_adj_typefrac_err[idx,:], 
+               color=linecolor, linestyle='-' ,linewidth=4,elinewidth=1)
+
+
+    ax1.axvline(zhi, color='k', linestyle='--')
+
+    plt.legend(('1 arm','2 arms','3 arms','4 arms','5+ arms',"Can't tell"), 'upper right', shadow=True, fancybox=True, prop=font, ncol=2)
+
+    ax1.set_xlim(-0.01,xmax)
+    ax1.set_ylim(-0.01,1.0)
+    ax1.set_xlabel('redshift',fontsize=18)
+    ax1.set_ylabel('fraction of spiral galaxies',fontsize=18)
+    rc(('xtick','ytick'), labelsize=18)
+    #ax1.text(0.15,1.0,'%i galaxies' % n_maglim)
+
+    fig.tight_layout()
+
+    fig.savefig('/Users/willettk/Astronomy/proposals/nsf_aapf/images/type_fractions.pdf', dpi=200)
+
+    return None
+
