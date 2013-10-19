@@ -5,6 +5,15 @@ reproduce the tables, figures, and data in Willett et al. (2013). It
 relies on the aggregate GZ2 data tables created by Steven Bamford, as well
 as other metadata retrieved from the SDSS CasJobs server. 
 
+Please reference the following publication if using any/all of this code:
+
+    Willett, K. W., C. J. Lintott, S. P. Bamford, K. L. Masters, B. D. Simmons, K.
+    R. V. Casteels, E. M. Edmondson, L. F. Fortson, S. Kaviraj, W. C. Keel, T.
+    Melvin, R. C. Nichol, M. J. Raddick, K. Schawinski, R. J. Simpson, R. A.
+    Skibba, A. M. Smith, and D. Thomas, 2013: "Galaxy Zoo 2: detailed morphological
+    classifications for 304 122 galaxies from the Sloan Digital Sky Survey". 2013,
+    MNRAS, 435, 2835–2860.
+
 """
 
 import gc
