@@ -10,10 +10,9 @@ Please reference the following publication if using any/all of this code:
     Willett, K. W., C. J. Lintott, S. P. Bamford, K. L. Masters, B. D. Simmons, K.
     R. V. Casteels, E. M. Edmondson, L. F. Fortson, S. Kaviraj, W. C. Keel, T.
     Melvin, R. C. Nichol, M. J. Raddick, K. Schawinski, R. J. Simpson, R. A.
-    Skibba, A. M. Smith, and D. Thomas, 2013: "Galaxy Zoo 2: detailed morphological
-    classifications for 304 122 galaxies from the Sloan Digital Sky Survey". 2013,
-    MNRAS, 435, 2835–2860.
-
+    Skibba, A. M. Smith, and D. Thomas, 2013: Galaxy Zoo 2: detailed morphological
+    classifications for 304 122 galaxies from the Sloan Digital Sky Survey. 2013,
+    MNRAS, 435, 2835-2860
 """
 
 import gc
@@ -2857,7 +2856,7 @@ def plot_all_baselines(paperplot=False,stripe82=False,depth='normal',plot_type='
     bulge_shape = get_task_dict('bulge_shape')
     rounded = get_task_dict('rounded')
 
-    tasklist = (smooth,edgeon,bar,spiral,bulge,odd,rounded,odd_feature,bulge_shape,arms_winding,arms_number)
+    tasklist = [smooth,edgeon,bar,spiral,bulge,odd,rounded,odd_feature,bulge_shape,arms_winding,arms_number]
     nx_plot, ny_plot = 3,4
     left_plot = (0,4,8)
     bottom_plot = (8,9,10,11)
@@ -2996,7 +2995,7 @@ def plot_all_type_fractions(zlo = 0.01, zhi=0.085, stripe82=False, depth='normal
     bulge_shape = get_task_dict('bulge_shape')
     rounded = get_task_dict('rounded')
 
-    tasklist = (smooth,edgeon,bar,spiral,bulge,odd,rounded,odd_feature,bulge_shape,arms_winding,arms_number)
+    tasklist = [smooth,edgeon,bar,spiral,bulge,odd,rounded,odd_feature,bulge_shape,arms_winding,arms_number]
     nx_plot, ny_plot = 3,4
     left_plot = (0,4,8)
     bottom_plot = (8,9,10,11)
@@ -3158,7 +3157,7 @@ def posterplot_debiasing(zlimval=0.085,stripe82=False, depth='normal'):
     bar = get_task_dict('bar')
     spiral = get_task_dict('spiral')
 
-    tasklist = (smooth,edgeon,bar,spiral)
+    tasklist = [smooth,edgeon,bar,spiral]
 
     if stripe82:
         mag_lim = s82_dict[depth]['maglim']
@@ -3301,7 +3300,7 @@ def poster_table(stripe82=False, depth='normal'):
     spiral = get_task_dict('spiral')
     odd = get_task_dict('odd')
 
-    tasklist = (smooth,edgeon,bar,spiral,odd)
+    tasklist = [smooth,edgeon,bar,spiral,odd]
 
     p = pyfits.open(gz2_maglim_data_file)
     gzdata = p[1].data
