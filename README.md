@@ -1,12 +1,14 @@
 galaxyzoo2
 ==========
 
-*This repo is currently intended for exclusive use by the Galaxy Zoo science team. Please do not download any of the data or code without the express permission of Dr. Kyle Willett.*
+*This repo was created and is maintained by the Galaxy Zoo science team. If you wish to use any of the data or code, please cite Willett et al. (2013), MNRAS, 435, 2835.*
 
-The draft of the data release paper (gz2datarelease.pdf), along with associated files, is in the datapaper/ folder. This folder also includes the gallery of examples from GZ2 (gz2\_gallery.pdf). 
+A fully reduced version of the catalog is hosted at http://data.galaxyzoo.org, along with other Galaxy Zoo products.
+
+The draft of Willett et al. (2013) (gz2datarelease.pdf), along with associated files, is in the datapaper/ folder. This folder also includes the gallery of examples from GZ2 (gz2\_gallery.pdf). 
 
 Data reduction and analysis codes are stored in idl/ and python/.
 
-The final catalog products are stored in the tables/ directory. Tables 3-5 (which match their numbering in the paper) are stored as zipped CSV, FITS, and VOTable files. Let me know if there are other formats we'd advocate as being of potential use. 
+The final catalog products are stored in the tables/ directory. Tables 3-5 (which match their numbering in the paper) are stored as zipped CSV, FITS, and VOTable files. 
 
-I update this repo regularly, but please feel free to fork and to send pull requests if you have a GitHub account. Email me if you have any questions!
+Please feel free to fork and to send pull requests if you have a GitHub account. Email me if you have any questions!
