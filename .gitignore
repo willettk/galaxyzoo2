@@ -1,0 +1,10 @@
+*.swo
+*.swp
+"Icon\r"
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.aux
+*.blg
+*.dvi
