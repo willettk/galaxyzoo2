@@ -1,0 +1,13 @@
+If you have Numeric for python and PGPLOT installed, and the PGPLOT_DIR 
+environmental variable pointing to the directory containing the 
+libpgplot.a and libcpgplot.a files, it should be possible to install 
+ppgplot with 1 line:
+ # python setup.py install
+If the pgplot libraries are in some other directory, or you don't feel 
+like setting the PGPLOT_DIR, try this:
+ # python setup.py build_ext -L/usr/local/pgplot
+ # python setup.py install
+
+Assuming /usr/local/pgplot is the directory where PGPLOT is installed.
+
+Have fun ! :)

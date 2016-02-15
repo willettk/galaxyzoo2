@@ -1,0 +1,3 @@
+Version 1.1:
+ * better install script, uses PGPLOT_DIR for library dir
+

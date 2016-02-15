@@ -1,0 +1,776 @@
+
+P-PGPLOT FUNCTION REFERENCE:
+
+Nick Patavalis
+Athens, 8 Feb 1997
+
+Here is a list of the Python functions provided by ppgplot, along with
+their prototypes (calling conventions) and a very short (single-line)
+description of their operation. The order is alphabetical. Look after
+the end of the function-list for some comments on the notation, and
+other random notes. For more information on the functions's operation
+refer to the original PGPLOT documentation.
+
+EDIT BY M.A. Breddels(maartenbred at hotmail d0t com):
+	I've added these function, documentation in the same style as the original
+	author
+
+	FUNCTION: pgqinf
+	PROTOTYPE: pgqinf(string: item)
+	DESCRIPTION: inquire PGPLOT general information
+	RETURN: string: value
+
+	FUNCTION: pgpoly
+	PROTOTYPE: pgpoly(vector: x, y)
+	DESCRIPTION: draw a polygon, using fill-area attributes
+	RETURN:
+
+	-----
+
+	FUNCTION: pgqvp
+	PROTOTYPE: pgqvp(int: units)
+	DESCRIPTION: inquire viewport size and position
+	RETURN: flota: x1, x2, y1, y2
+
+	-----
+
+	FUNCTION: pgqvsz
+	PROTOTYPE: pgqvsz(int: units)
+	DESCRIPTION: inquire size of view surface
+	RETURN: x1, x2, y1, y2
+
+	-----
+
+	FUNCTION: pgsclp
+	PROTOTYPE: pgsclp(int state)
+	DESCRIPTION: enable or disable clipping at edge of viewport
+	RETURN:
+
+	-----
+
+	FUNCTION: pgqclp
+	PROTOTYPE: pgqclp()
+	DESCRIPTION: inquire clipping status
+	RETURN: int: state
+
+	-----
+
+	FUNCTION: pgqtxt
+	PROTOTYPE: pgqtxt(real: x, y, angle, just, string: text)
+	DESCRIPTION: find bounding box of text string
+	RETURN: 4 (real: x,y) tuple, bottomleft, topleft, topright, bottomright
+
+	-----
+
+	FUNCTION: pgconf
+	PROTOTYPE: pgconf(matrix: a, int: idim, jdim, i1, i2, j1, j2,
+		           real: c1, c2, matrix: tr)
+	DESCRIPTION: fill between two contours
+	RETURN:
+
+FUNCTION: pgarro
+PROTOTYPE: pgarro (real: x1, y1, x2, y2)
+DESCRIPTION: draw an arrow
+
+-----
+
+FUNCTION: pgask
+PROTOTYPE: pgask (bool: t)
+DESCRIPTION: control new page prompting
+
+-----
+
+FUNCTION: pgband
+PROTOTYPE: pgband (int: mode, [posn, real: xref, yref]) 
+DESCRIPTION: read cursor position, with anchor
+
+-----
+
+FUNCTION: pgbbuf
+PROTOTYPE: pgbbuf ()
+DESCRIPTION: begin batch of output (buffer)
+
+-----
+
+FUNCTION: pgbeg
+PROTOTYPE: pgbeg ([string: device, int: xnsub, ynsub])
+DESCRIPTION: begin PGPLOT, open output device
+
+-----
+
+FUNCTION: pgbin
+PROTOTYPE: pgbin (int: nbin, vector: x, data, [bool: center])
+DESCRIPTION: histogram of binned data
+
+-----
+
+FUNCTION: pgbin_s
+PROTOTYPE: pgbin_s (vector: data, [real: x1, x2, bool: center])
+DESCRIPTION: histogram of binned data. Simplified interface
+
+-----
+
+FUNCTION: pgbox
+PROTOTYPE: pgbox ([string: xopt, real: xtick, int: nxsub, 
+		          string: yopt, real: ytick, int: nysub])
+DESCRIPTION: draw labeled frame around viewport
+
+-----
+
+FUNCTION: pgcirc
+PROTOTYPE: pgcirc (real: x, y, radius)
+DESCRIPTION: draw a filled or outline circle
+
+-----
+
+FUNCTION: pgclos
+PROTOTYPE: pgclos ()
+DESCRIPTION: close the selected graphics device
+
+-----
+
+FUNCTION: pgconb
+PROTOTYPE: pgconb (matrix: a, int: cd, rd, c1, c2, r1, r2,
+		           vector: c, int: nc,
+		           vector: tr, [real: blank])
+DESCRIPTION: contour map of a 2D data array, with blanking
+
+-----
+
+FUNCTION: pgconb_s
+PROTOTYPE: pgconb_s (matrix: a, int: nc, 
+                     [vector: c, real: x1, y1, x2, y2, real: blank])
+DESCRIPTION: contour map of a 2D data array, with blanking. 
+    Simplified interface
+
+-----
+
+FUNCTION: pgconl
+PROTOTYPE: pgconl (matrix: a, int: cd, rd, c1, c2, r1, r2, real: c, 
+		           vector: tr, string: label, int: intval, minint)
+DESCRIPTION: label contour map of a 2D data array
+
+-----
+
+FUNCTION: pgconl_s
+PROTOTYPE: pgconl_s (matrix: a, real: c, string: label,
+				     int: intval, minint, real: x1, x2, y1, y2)
+DESCRIPTION: label contour map of a 2D data array. Simplified interface
+
+-----
+
+FUNCTION: pgcons
+PROTOTYPE: pgcons (matrix: a, int: cd, rd, c1, c2, r1, r2, 
+		           vector: c, int: nc, 
+		           vector: tr)
+DESCRIPTION: contour map of a 2D data array (fast algorithm)
+
+-----
+
+FUNCTION: pgcons_s
+PROTOTYPE: pgcons_s (matrix: a, int: nc, 
+                     [vector: c, real: x1, y1, x2, y2])
+DESCRIPTION: contour map of a 2D data array (fast algorithm). 
+    Simplified interface
+
+-----
+
+FUNCTION: pgcont
+PROTOTYPE: pgcont (matrix: a, int: cd, rd, c1, c2, r1, r2, 
+		           vector: c, int: nc,
+		           vector: tr)
+DESCRIPTION: contour map of a 2D data array (contour-following)
+
+-----
+
+FUNCTION: pgcont_s
+PROTOTYPE: pgcont_s (matrix: a, int: nc, 
+                     [vector: c, real: x1, y1, x2, y2])
+DESCRIPTION: contour map of a 2D data array (contour-following). 
+    Simplified interface
+
+-----
+
+FUNCTION: pgctab
+PROTOTYPE: pgctab (vector: l, r, g, b, [int: nc, real: contra, bright])
+DESCRIPTION: install the color table to be used by pgimag
+
+-----
+
+FUNCTION: pgdraw
+PROTOTYPE: pgdraw (real: x, y)
+DESCRIPTION: draw a line from the current pen position to a point
+
+-----
+
+FUNCTION: pgebuf
+PROTOTYPE: pgebuf ()
+DESCRIPTION: end batch of output (buffer)
+
+-----
+
+FUNCTION: pgend
+PROTOTYPE: pgend ()
+DESCRIPTION: terminate PGPLOT
+
+-----
+
+FUNCTION: pgenv 
+PROTOTYPE: pgenv (real: xmin, xmax, ymin, ymax, [int: just, int: axis])
+DESCRIPTION: set window and viewport and draw labeled frame
+
+-----
+
+FUNCTION: pgeras
+PROTOTYPE: pgeras ()
+DESCRIPTION: erase all graphics from current page
+
+-----
+
+FUNCTION: pgetxt
+PROTOTYPE: pgetxt ()
+DESCRIPTION: erase text from graphics display
+
+-----
+
+FUNCTION: pggray
+PROTOTYPE: pggray (matrix: a, int: cd, rd, c1, c2, r1, r2, 
+		           real: fg, bg, vector: tr) 
+DESCRIPTION: gray-scale map of a 2D data array
+
+-----
+
+FUNCTION: pggray_s
+PROTOTYPE: pggray_s (matrix: a, [real: fg, bg, x1, y1, x2, y2])
+DESCRIPTION: gray-scale map of a 2D data array. Simplified interface
+
+-----
+
+FUNCTION: pghi2d 
+PROTOTYPE: pghi2d (matrix: data, int: cd, rd, c1, c2, r1, r2, vector: x,
+		           int: ioff, real: bias, bool: center, vector: ylims)
+DESCRIPTION: cross-sections through a 2D data array
+
+-----
+
+FUNCTION: pghi2d_s
+PROTOTYPE: pghi2d_s (matrix: data, real: x1, x2, 
+                     [int: ioff, real: bias, bool: center])
+DESCRIPTION: cross-sections through a 2D data array. Simplified interface
+
+-----
+
+FUNCTION: pghist
+PROTOTYPE: pghist (int: n, vector: data, real: datamin, datamax, 
+                   int: nbin, [pgflag])
+DESCRIPTION: histogram of unbinned data
+
+-----
+
+FUNCTION: pghist_s
+PROTOTYPE: pghist_s (vector: data, int: nbin, 
+                     [int: pgflag, real: datamin, datamax])
+DESCRIPTION: histogram of unbinned data. Simplified interface
+
+-----
+
+FUNCTION: pgiden
+PROTOTYPE: pgiden ()
+DESCRIPTION: write username, date, and time at bottom of plot
+
+-----
+
+FUNCTION: pgimag
+PROTOTYPE: pgimag (matrix: a, int: cd, rd, c1, c2, r1, r2, 
+		           real: fg, bg, vector: tr)
+DESCRIPTION: color image from a 2D data array
+
+-----
+
+FUNCTION: pgimag_s
+PROTOTYPE: pgimag_s (matrix: a, [real: fg, bg, x1, y1, x2, y2])
+DESCRIPTION: color image from a 2D data array. Simplified interface
+
+-----
+
+FUNCTION: pglab 
+PROTOTYPE: pglab ([string: xlabel, ylabel, toplabel])
+DESCRIPTION: write labels for x-axis, y-axis, and top of plot
+
+-----
+
+FUNCTION: pgldev
+PROTOTYPE: pgldev ()
+DESCRIPTION: list available device types
+
+-----
+
+FUNCTION: pglen
+PROTOTYPE: pglen (string: text, [int: units])
+DESCRIPTION: find length of a string in a variety of units
+
+-----
+
+FUNCTION: pgline
+PROTOTYPE: pgline (vector: xpts, ypts)
+DESCRIPTION: draw a polyline (curve defined by line-segments)
+
+-----
+
+FUNCTION: pgmove
+PROTOTYPE: pgmove (real: x, y)
+DESCRIPTION: move pen (change current pen position)
+
+-----
+
+FUNCTION: pgmtxt
+PROTOTYPE: pgmtxt (string: side, real: disp, coord, fjust, string: text)
+DESCRIPTION: write text at position relative to viewport
+
+-----
+
+FUNCTION: pgopen
+PROTOTYPE: pgopen ([string: device])
+DESCRIPTION: open a graphics device
+
+-----
+
+FUNCTION: pgpage
+PROTOTYPE: pgpage ()
+DESCRIPTION: advance to new page
+
+-----
+
+FUNCTION: pgpanl
+PROTOTYPE: pgpanl ([int: x, y])
+DESCRIPTION: switch to a different panel on the view surface
+
+-----
+
+FUNCTION: pgpap
+PROTOTYPE: pgpap (real: width, [aspect])
+DESCRIPTION: change the size of the view surface 
+
+-----
+
+FUNCTION: pgpt
+PROTOTYPE: pgpt (vector: xpts, ypts, [int: symbol])
+DESCRIPTION: draw one or more graph markers
+
+-----
+
+FUNCTION: pgptxt
+PROTOTYPE: pgptxt (real: x, y, angle, fjust, string: text)
+DESCRIPTION: write text at arbitrary position and angle
+
+-----
+
+FUNCTION: pgqah
+PROTOTYPE: pgqah ()
+RETURNS: int: fs, real: angle, vent
+DESCRIPTION: inquire arrow-head style
+
+-----
+
+FUNCTION: pgqcf
+PROTOTYPE: pgqcf ()
+RETURNS: int: cf
+DESCRIPTION: inquire character font
+
+-----
+
+FUNCTION: pgqch
+PROTOTYPE: pgqch ()
+RETURNS: real: ch
+DESCRIPTION: inquire character height
+
+-----
+
+FUNCTION: pgqci
+PROTOTYPE: pgqci ()
+RETURNS: int: ci
+DESCRIPTION: inquire color index
+
+-----
+
+FUNCTION: pgqcir
+PROTOTYPE: pgqcir ()
+RETURNS: int: ci1, ci2
+DESCRIPTION: inquire color index range
+
+-----
+
+FUNCTION: pgqcol
+PROTOTYPE: pgqcol ()
+RETURNS: int: ci1, ci2
+DESCRIPTION: inquire color capability
+
+-----
+
+FUNCTION: pgqcr
+PROTOTYPE: pgqcr ([int: ci])
+RETURNS: real: r, g, b
+DESCRIPTION: inquire color representation
+
+-----
+
+FUNCTION: pgqcs
+PROTOTYPE: pgqcs ([int: units])
+RETURNS: real: xch, ych
+DESCRIPTION: inquire character height in a variety of units
+
+-----
+
+FUNCTION: pgqfs
+PROTOTYPE: pgqfs ()
+RETURNS: int: fs
+DESCRIPTION: inquire fill-area style
+
+-----
+
+FUNCTION: pgqhs
+PROTOTYPE: pgqhs ()
+RETURNS: real: angle, sepn, phase
+DESCRIPTION: inquire hatching style
+
+-----
+
+FUNCTION: pgqid
+PROTOTYPE: pgqid ()
+RETURNS: int: id
+DESCRIPTION: inquire current device identifier
+
+-----
+
+FUNCTION: pgqitf
+PROTOTYPE: pgqitf ()
+RETURNS: int: itf
+DESCRIPTION: inquire image transfer function
+
+-----
+
+FUNCTION: pgqls
+PROTOTYPE: pgqls
+RETURNS: int: ls
+DESCRIPTION: inquire line style
+
+-----
+
+FUNCTION: pgqlw
+PROTOTYPE: pgqlw
+RETURNS: int: lw
+DESCRIPTION:inquire line width
+
+-----
+
+FUNCTION: pgqpos
+PROTOTYPE: pgqpos
+RETURNS: real: x, y
+DESCRIPTION: inquire current pen position
+
+-----
+
+FUNCTION: pgrect
+PROTOTYPE: pgrect (real: x1, x2, y1, y2)
+DESCRIPTION: draw a rectangle, using fill-area attributes
+
+-----
+
+FUNCTION: pgsah
+PROTOTYPE: pgsah ([int: fs, real: angle, vent])
+DESCRIPTION: set arrow-head style
+
+-----
+
+FUNCTION: pgsave
+PROTOTYPE: pgsave ()
+DESCRIPTION: save PGPLOT attributes
+
+-----
+
+FUNCTION: pgunsa
+PROTOTYPE: pgunsa ()
+DESCRIPTION: restore PGPLOT attributes
+
+-----
+
+FUNCTION: pgscf
+PROTOTYPE: pgscf ([int: cf])
+DESCRIPTION: set character font
+
+-----
+
+FUNCTION: pgsch
+PROTOTYPE: pgsch ([int: ch])
+DESCRIPTION: set character height
+
+-----
+
+FUNCTION: pgsci
+PROTOTYPE: pgsci ([int: ci])
+DESCRIPTION: set color index
+
+-----
+
+FUNCTION: pgscir
+PROTOTYPE: pgscir ([int: ci1, ci2])
+DESCRIPTION: set color index range
+
+-----
+
+FUNCTION: pgscr
+PROTOTYPE: pgscr (int: ci, real: r, g, b)
+DESCRIPTION: set color representation
+
+-----
+
+FUNCTION: pgsfs
+PROTOTYPE: pgsfs ([int: fs])
+DESCRIPTION: set fill-area style
+
+-----
+
+FUNCTION: pgshls
+PROTOTYPE: pgshls (int: ci, real: hue, level, saturation)
+DESCRIPTION: set color representation using HLS system
+
+-----
+
+FUNCTION: pgshs
+PROTOTYPE: pgshs (real: angle, sepn, phase)
+DESCRIPTION: set hatching style
+
+-----
+
+FUNCTION: pgsitf
+PROTOTYPE: pgsitf ([int: itf])
+DESCRIPTION: set image transfer function
+
+-----
+
+FUNCTION: pgslct
+PROTOTYPE: pgslct ([int: devid])
+DESCRIPTION: select an open graphics device
+
+-----
+
+FUNCTION: pgsls
+PROTOTYPE: pgsls ([int: ls])
+DESCRIPTION: set line style
+
+-----
+
+FUNCTION: pgslw
+PROTOTYPE: pgslw ([int: lw])
+DESCRIPTION: set line width
+
+-----
+
+FUNCTION: pgstbg
+PROTOTYPE: pgstbg ([int: tbg])
+DESCRIPTION: set text background color index
+
+-----
+
+FUNCTION: pgsubp
+PROTOTYPE: pgsubp ([int: xnsub, ynsub])
+DESCRIPTION: subdivide view surface into panels
+
+-----
+
+FUNCTION: pgsvp
+PROTOTYPE: pgsvp ([real: xleft, xright, ybot, ytop])
+DESCRIPTION: set viewport (normalized device coordinates)
+
+-----
+
+FUNCTION: pgswin
+PROTOTYPE: pgswin ([real: x1, x2, y1, y2])
+DESCRIPTION: set window
+
+-----
+
+FUNCTION: pgtext
+PROTOTYPE: pgtext (real: x, y, string: text)
+DESCRIPTION: write text (horizontal, left-justified)
+
+-----
+
+FUNCTION: pgunsa
+PROTOTYPE: pgunsa ()
+DESCRIPTION: restore PGPLOT attributes
+
+-----
+
+FUNCTION: pgupdt
+PROTOTYPE: pgupdt ()
+DESCRIPTION: update display
+
+-----
+
+FUNCTION: pgvsiz
+PROTOTYPE: pgvsiz (real: xleft, xright, ybot, ytop)
+DESCRIPTION: set viewport (inches)
+
+-----
+
+FUNCTION: pgvstd
+PROTOTYPE: pgvstd ()
+DESCRIPTION: set standard (default) viewport
+
+-----
+
+FUNCTION: pgwedg
+PROTOTYPE: pgwedg (string: side, real: disp, width, fg, bg, string: label)
+DESCRIPTION: annotate an image plot with a wedge
+
+-----
+
+FUNCTION: pgwedg_s
+PROTOTYPE: pgwedg_s (real: fg, bg, 
+                     [string: side, label, real: disp, width])
+DESCRIPTION: annotate an image plot with a wedge. Simplified interface
+
+-----
+
+FUNCTION: pgwnad
+PROTOTYPE: pgwnad (real: x1, x2, y1, y2)
+DESCRIPTION: set window and adjust viewport to same aspect ratio
+
+-----
+
+---------------------------------------------------------------------------
+NOTE: Prototypes Notation.
+---------------------------------------------------------------------------
+
+The prototypes are written like this:
+
+PROTOTYPE: function (type: arg, arg, ..., [type: arg, arg ...])
+
+Square brackets are used to indicate optional arguments.
+
+Python is a self-typed language. This doesn't mean that any function
+can operate sentiently on any data type. (Although it is semantically
+correct to call it with any type of arguments). So ``type'' above,
+simply indicates what kind of object is expected by the function. It
+has the following meaning:
+
+     real:   the function expects a real quantity (an int, 
+             a floating point, etc)
+	 int:    the function expects an integer quantity.
+     bool:   the function expects a boolean value (something evaluated 
+             as `true' or `false').
+	 vector: the function expects an one-dimensional array of FLOATS.
+     matrix: the function expects a two-dimensional array of FLOAT. 
+
+For example ``PROTOTYPE: pgpap (real: width, [aspect])'' means that:
+The ``pgpap'' function takes two arguments. The arguments are expected 
+to be real numbers. The last argument is optional (can be omited from 
+the call).
+
+If the function returns a value (a.k.a something other that None),
+the type of the return value is written like this:
+
+RETURNS: type: val, val, ... type: val, val ...
+
+For example ``RETURNS: real: angle, sepn, phase'' means that the
+function in question return a tupple of 3 elements, all of them beign
+real numbers.
+
+---------------------------------------------------------------------------
+NOTE: Array syntax and storage in python (C) and Fortran
+---------------------------------------------------------------------------
+
+Memory is visualized as a notebook, where you write left to right, and
+when the line (row) ends, you go to the leftmost part of the next 
+one and start again, and so on. This paradigm is used throughout
+the comments in this file, and throughout all the associated 
+documentation. If you like to visualize memory as writting top
+to bottom, then just replace the word "column" with the word 
+"row" (and vice-versa) everywhere.
+
+in python (and C) a matrix looks like: a[i,j] i=rows j=cols. 
+In mem it is: 
+
+         a[1,0],    a[1,1],    a[1,2]   ....a[1,nc-1]
+         c[2,0],    a[2,1],    a[2,2]   ....a[2,nc-1]
+                   ..................
+         a[nr-1,1], a[nr-1,1], a[nr-1,2]....a[nr-1,nc-1]
+
+A.k.a the major (faster running) index is written (spelled) last.
+
+The same matrix in fortran syntax looks like: a(i,j) i=cols 
+j=rows. In mem it is:
+
+         a(1,1),    a(2,1),    a(3,1),  ....a(nc,1)
+         a(1,2),    a(2,2),    a(3,2),  ....a(nc,2)
+                 ..................
+         a(1,nr),   a(2,nr),   a(3,nr), ....a(nc,nr)
+
+A.k.a the major (faster running) index is written (spelled) first.
+
+In this file (and all associated documentation) whenever i'm using
+the () as indexing operators, I'm talking fortran-lingo, and whenever 
+I'm using the [] as an indexing operator, I'm talking C/Python-lingo.
+
+In the pgplot documentation the FORTRAN notation is always used.
+So translating the function prototypes found in the PGPLOT docs, 
+to the variable naming sceme used in the ppgplot function, yields 
+something like this:
+
+idim ---> cd (columns dimension / # of columns)
+jdim ---> rd (rows dimension / # of rows)
+i1   ---> c1 (first column)
+i2   ---> c2 (last column)
+j1   ---> r1 (first row)
+j2   ---> r2 (last row)
+
+I repeat that columns run faster.
+ 
+Also remember than when you use python (even if calling PGPLOT)
+all indices start from 0, *not* 1.
+
+--------------------------------------------------------------------------- 
+NOTE: A word about transformations
+---------------------------------------------------------------------------
+
+In order to plot (map) a matrix 
+
+        a[r1:r2,c1:c2] 
+
+in a viewport scaled as:
+
+        x-axis form x1 to x2
+        y-axis from y1 to y2
+
+having rows run on x and columns on run y, you have to use the 
+following transformation matrix:
+
+        tr = array([t0,t1,t2,t3,t4,t5])
+
+where
+
+        t0 = x1 - (t1 * c1) / 2
+        t1 = (x2-x1) / (c2-c1)
+        t2 = 0.0
+        t3 = y1 - (t1 * r1) / 2
+        t4 = (y2 - y1) / (c2 - c1)
+        t5 = 0.0
+
+The 2 denominator in t0 and t3 is justified by the fact that
+cordinates pin-point the CENTER of the pixels, and not their
+SW corner. t2 and t5 are used only if you want shearing or 
+rotations.
+
+If all these sound just too-much for you, you should 
+consider using pggray_s which is a simplified allternative 
+to pggray. Not the complete but enough of pgray's functionality
+is wrapped around an easy-to-use interface. The basic limitation
+of pggray_s is that it cannot do rotations and shearing
+(it can do flips though!). The same is true for color 
+image-maps (pgimag).
+
+
+
+
+
