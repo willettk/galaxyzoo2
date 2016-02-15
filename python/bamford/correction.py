@@ -1,5 +1,5 @@
-from ppgplot_spb import *
-import pyfits
+#from ppgplot_spb import *
+from astropy.io import fits as pyfits
 import numpy as N
 import cosmology
 from math import log10, e, exp, pi
@@ -20,9 +20,13 @@ import sys
 from combine_fits_tables import combine_fits_tables
 #import get_zoo_data
 
-data_path = '/Users/spb/Work/projects/GalaxyZoo/dr6z7fiddleup/'
+data_path = '/Users/willettk/Astronomy/Research/GalaxyZoo/fits/'
 data_file = 'dr6z7_zoo_selected_counts.fits'
 plots_path = data_path+'plots/'
+
+#data_path = '/Users/spb/Work/projects/GalaxyZoo/dr6z7fiddleup/'
+#data_file = 'dr6z7_zoo_selected_counts.fits'
+#plots_path = data_path+'plots/'
 
 #plots_path = '../plots/bad_seeing/'
 #data_path = '/Users/spb/Work/projects/GalaxyZoo/bad_seeing/'
@@ -2103,37 +2107,37 @@ def do_all(start_at=0, scheme=('WEIGHTS', 'CSUW'), fiddle=None, twiddle=None):
     else:
         min_count = 30
     if start_at < 1:
-	plot_ratio_zbins(scheme=scheme, fiddle=fiddle, twiddle=twiddle)
+        plot_ratio_zbins(scheme=scheme, fiddle=fiddle, twiddle=twiddle)
         plot_ratio(3, scheme=scheme, scale=False, fiddle=fiddle, twiddle=twiddle)
         plot_ratio(8, scheme=scheme, scale=False, fiddle=fiddle, twiddle=twiddle)
     if start_at < 2:
-	determine_baseline(min_count=min_count, scheme=scheme, fiddle=fiddle, twiddle=twiddle)
-	plot_ratio_baseline('data', scheme=scheme)
-	determine_ratio_baseline_sigma(scheme=scheme)
-	plot_ratio_baseline('sigma', scheme=scheme)
+        determine_baseline(min_count=min_count, scheme=scheme, fiddle=fiddle, twiddle=twiddle)
+        plot_ratio_baseline('data', scheme=scheme)
+        determine_ratio_baseline_sigma(scheme=scheme)
+        plot_ratio_baseline('sigma', scheme=scheme)
         fit_ratio_baseline(scheme=scheme)
-	plot_ratio_baseline('fit', scheme=scheme)
-	plot_ratio_baseline('fitres', scheme=scheme)
-	plot_ratio_baseline('fitnormres', scheme=scheme)
-	plot_ratio_baseline_fit(scheme=scheme)
+        plot_ratio_baseline('fit', scheme=scheme)
+        plot_ratio_baseline('fitres', scheme=scheme)
+        plot_ratio_baseline('fitnormres', scheme=scheme)
+        plot_ratio_baseline_fit(scheme=scheme)
     if start_at < 3:
-	determine_baseline_correction(min_count=min_count, scheme=scheme,
-                                      fromfit=False, fill=False, fiddle=fiddle, twiddle=twiddle)
-	plot_baseline_correction_zbins(scheme=scheme, min_count=min_count, fiddle=fiddle, twiddle=twiddle)
-	fit_baseline_correction_zfunc(scheme=scheme)  # just for plot
+        determine_baseline_correction(min_count=min_count, scheme=scheme,
+                                          fromfit=False, fill=False, fiddle=fiddle, twiddle=twiddle)
+        plot_baseline_correction_zbins(scheme=scheme, min_count=min_count, fiddle=fiddle, twiddle=twiddle)
+        fit_baseline_correction_zfunc(scheme=scheme)  # just for plot
     if start_at < 4:
+        #fit_baseline_correction(scheme=scheme, fiddle=fiddle, twiddle=twiddle)  # full fit
+        #plot_baseline_correction_fullfit_zbins(zero=False, scheme=scheme, fiddle=fiddle, twiddle=twiddle)
+        #plot_baseline_correction_fullfit(3, zero=False, scheme=scheme,
+            #                                 scale=False, fiddle=fiddle, twiddle=twiddle)
+        #plot_baseline_correction_fullfit(8, zero=False, scheme=scheme,
+            #                                 scale=False, fiddle=fiddle, twiddle=twiddle)
+        #plot_baseline_correction_fit_zbins(zero=True, scheme=scheme, fiddle=fiddle, twiddle=twiddle)
         pass
-	#fit_baseline_correction(scheme=scheme, fiddle=fiddle, twiddle=twiddle)  # full fit
-	#plot_baseline_correction_fullfit_zbins(zero=False, scheme=scheme, fiddle=fiddle, twiddle=twiddle)
-	#plot_baseline_correction_fullfit(3, zero=False, scheme=scheme,
-        #                                 scale=False, fiddle=fiddle, twiddle=twiddle)
-	#plot_baseline_correction_fullfit(8, zero=False, scheme=scheme,
-        #                                 scale=False, fiddle=fiddle, twiddle=twiddle)
-	#plot_baseline_correction_fit_zbins(zero=True, scheme=scheme, fiddle=fiddle, twiddle=twiddle)
     if start_at < 5:
         correct_dr6z7(fiddle=fiddle, twiddle=twiddle)
-    #if start_at < 6:
-    #    limited_selection()
+    if start_at < 6:
+        limited_selection()
 
 
 def do_fiddle_twiddle():
