@@ -1,0 +1,49 @@
+E, S, A
+e (, not)
+B (, not)
+p (, not)
+0,1,2,3
+O (, not)
+r,i,c
+r,l,d,i,o,m,d (only if Task 06 is set)
+er, eb, en (only if Task 02 is set)
+t,m,l
+1, 2, 3, 4, +, ?
+
+
+    Assume plurality choice MUST be made for:
+
+    elliptical/spiral/artifact
+    bulge shape
+    bulge dominance
+    odd feature
+
+
+Possible types for
+    
+    Ellipticals:
+
+        Er, Ei, Ec          smooth, roundness (3)
+        Er(), ...           smooth, roundness, odd feature (21)
+
+    Features/disk:
+
+        Ser, Seb, Sen       features/disk, edge-on, bulge shape (3)
+        Ser(), ...          features/disk, edge-on, bulge shape, odd feature (21)
+
+S0      Sa, Sa()            features/disk, bulge (odd) (4, 28)
+Sa-d    Sa1t, Sa1t()        features/disk, bulge, spiral, tightness, number (odd) (72, 504)
+SB0     SaB, SaB()          features/disk, bulge, barred (odd) (4, 28)
+SBa-d   SaB1t, SaB1t(d)     features/disk, bulge, barred, spiral, tightness, number (odd) (72, 504)
+    
+    Stars/artifacts:
+
+        A                   star/artifact (1)
+
+    Total: 1265 categories in this scheme
+           genuinely represents the total number of paths, assuming a classification is complete.
+
+
+OK. This shouldn't be too hard to code - just run through literally all the galaxies, apply rules, and add classification. 
+Create FITS table with dr7objid and gz2class?
+
