@@ -12,3 +12,5 @@ Data reduction and analysis codes are stored in idl/ and python/.
 The final catalog products are stored in the tables/ directory. Tables 3-5 (which match their numbering in the paper) are stored as zipped CSV, FITS, and VOTable files. 
 
 Please feel free to fork and to send pull requests if you have a GitHub account. Email me if you have any questions!
+
+The **code** in this repo is licensed under the MIT license. The paper is under the MNRAS copyright.
